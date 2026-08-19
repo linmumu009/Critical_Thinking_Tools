@@ -2,8 +2,23 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import benchmark
+
+
+class FakeResponse:
+    def __init__(self, payload):
+        self.payload = payload
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, traceback):
+        return False
+
+    def read(self):
+        return json.dumps(self.payload).encode("utf-8")
 
 
 class BenchmarkTests(unittest.TestCase):
@@ -75,6 +90,88 @@ class BenchmarkTests(unittest.TestCase):
                     for run in first
                 )
                 self.assertEqual(count, 3)
+
+    def test_completion_endpoint_accepts_base_or_full_url(self):
+        self.assertEqual(
+            "https://example.test/v1/chat/completions",
+            benchmark.completion_endpoint("https://example.test/v1"),
+        )
+        self.assertEqual(
+            "https://example.test/v1/chat/completions",
+            benchmark.completion_endpoint(
+                "https://example.test/v1/chat/completions"
+            ),
+        )
+
+    def test_protocol_field_parser(self):
+        text = "PRE_DECISION: observe\n其他内容"
+        self.assertEqual(
+            "observe", benchmark.parse_protocol_field(text, "PRE_DECISION")
+        )
+        self.assertIsNone(benchmark.parse_protocol_field(text, "DECISION"))
+
+    def test_mode_is_selected_explicitly(self):
+        with patch("builtins.input", return_value="1"):
+            self.assertEqual("api", benchmark.choose_run_mode())
+        with patch("builtins.input", return_value="2"):
+            self.assertEqual("direct", benchmark.choose_run_mode())
+
+    def test_api_request_uses_config_without_exposing_key_in_body(self):
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "top-secret",
+            "model_name": "test-model",
+        }
+        response = FakeResponse(
+            {"choices": [{"message": {"content": "PRE_DECISION: observe"}}]}
+        )
+        with patch.object(
+            benchmark.urllib.request, "urlopen", return_value=response
+        ) as urlopen:
+            text = benchmark.api_chat_completion(
+                config, [{"role": "user", "content": "case"}], model_seed=3
+            )
+
+        self.assertEqual("PRE_DECISION: observe", text)
+        request = urlopen.call_args.args[0]
+        self.assertEqual(
+            "https://example.test/v1/chat/completions", request.full_url
+        )
+        self.assertEqual("Bearer top-secret", request.get_header("Authorization"))
+        body = json.loads(request.data.decode("utf-8"))
+        self.assertEqual("test-model", body["model"])
+        self.assertEqual(3, body["seed"])
+        self.assertNotIn("top-secret", request.data.decode("utf-8"))
+
+    def test_api_session_runs_sequentially_without_hidden_case_leak(self):
+        case = self.cases["product-01"]
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "secret-not-stored-in-session",
+            "model_name": "test-model",
+        }
+        outputs = [
+            "PRE_DECISION: observe",
+            "QUESTION: 下降按设备和浏览器如何分布？",
+            "DECIDE",
+            "DECISION: rollback_release\nRATIONALE: 根据客户端分布先回滚。",
+        ]
+        with patch.object(
+            benchmark, "api_chat_completion", side_effect=outputs
+        ) as completion, patch.object(
+            benchmark, "save_session", return_value=Path("session.json")
+        ) as save:
+            path = benchmark.run_api_session(case, "A", config, model_seed=7)
+
+        self.assertEqual(Path("session.json"), path)
+        self.assertEqual(4, completion.call_count)
+        session = save.call_args.args[1]
+        self.assertEqual("api", session["mode"])
+        self.assertEqual("test-model", session["model_name"])
+        self.assertNotIn("api_key", session)
+        self.assertEqual("f1", session["questions"][0]["fact_id"])
+        first_messages = completion.call_args_list[0].args[1]
+        self.assertNotIn("oracle_facts", first_messages[1]["content"])
 
 
 if __name__ == "__main__":

@@ -36,6 +36,30 @@ python benchmark.py run product-01 --condition A
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
 
+`run` 每次开始都会要求选择一种模式：
+
+1. **API 自动运行**：程序逐轮调用模型、向模型返回 Oracle 答案并保存结果。
+2. **Codex 直接处理**：把公开案例交给当前 Codex 对话，由 Codex 逐题作答，终端负责返回 Oracle 答案和记录结果。
+
+也可在自动化场景显式指定 `--mode api` 或 `--mode direct`，但正式人工启动时建议保留选择步骤。
+
+## API 配置
+
+编辑本目录中的 `model-config.local.json`，只需填写前三项：
+
+```json
+{
+  "url": "https://your-provider.example/v1",
+  "api_key": "YOUR_API_KEY",
+  "model_name": "YOUR_MODEL_NAME"
+}
+```
+
+- `url` 可以是 OpenAI 兼容服务的基础 URL（程序会补上 `/chat/completions`），也可以是完整接口地址。
+- `model-config.local.json` 已被 Git 忽略，不会随正常提交上传；仓库只保存不含真实凭证的 `model-config.example.json`。
+- 可先运行 `python benchmark.py check-config` 检查必填项；这个命令不会发起网络请求，也不会显示密钥。
+- 可选参数 `timeout_seconds`、`temperature` 和 `send_seed` 已提供默认值。若服务不接受 `seed` 参数，将 `send_seed` 改为 `false`。
+
 `run` 会：
 
 1. 展示对应条件提示词和公开案例。
@@ -45,7 +69,7 @@ python benchmark.py run product-01 --condition A
 5. 将不含完整隐藏事实表的会话写入本地 `sessions/`。
 6. 计算决策改善、关键未知命中和单位问题信息效率。
 
-模型输出协议见各条件提示。当前版本采用人工复制模式，不会产生 API 费用。
+模型输出协议见各条件提示。API 模式可能产生服务商费用；直接模式不调用外部模型 API。
 
 ## 防泄漏规则
 
@@ -54,6 +78,7 @@ python benchmark.py run product-01 --condition A
 - 创建案例的人不应担任唯一盲评者。
 - 同一模型运行不同条件时使用全新对话，清除缓存与先前案例内容。
 - 条件标签和输出顺序在人工评分前应随机化。
+- 不要把 `model-config.local.json`、终端输出或任何包含密钥的内容提交到仓库。
 
 ## 自动指标
 

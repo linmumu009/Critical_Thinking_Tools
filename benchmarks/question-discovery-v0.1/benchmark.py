@@ -4,6 +4,8 @@ import argparse
 import json
 import random
 import re
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -14,12 +16,14 @@ CASES_DIR = ROOT / "cases"
 PROMPTS_DIR = ROOT / "prompts"
 SESSIONS_DIR = ROOT / "sessions"
 RESULTS_DIR = ROOT / "results"
+DEFAULT_CONFIG_PATH = ROOT / "model-config.local.json"
 CONDITION_FILES = {
     "A": "baseline.md",
     "B": "tool-chain.md",
     "C": "discovery-funnel.md",
 }
 CRITICALITY_RANK = {"distractor": 0, "supporting": 1, "critical": 2}
+RUN_MODES = {"api", "direct"}
 
 
 def load_cases() -> dict[str, dict[str, Any]]:
@@ -213,6 +217,97 @@ def build_schedule(
     return runs
 
 
+def load_model_config(path: Path = DEFAULT_CONFIG_PATH) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(
+            f"找不到模型配置文件：{path}。请复制 model-config.example.json "
+            "为 model-config.local.json 并填写 url、api_key、model_name。"
+        )
+    config = json.loads(path.read_text(encoding="utf-8"))
+    missing = [name for name in ("url", "model_name") if not config.get(name)]
+    if missing:
+        raise ValueError(f"模型配置缺少必填项：{', '.join(missing)}")
+    return config
+
+
+def completion_endpoint(url: str) -> str:
+    stripped = url.rstrip("/")
+    if stripped.endswith("/chat/completions"):
+        return stripped
+    return f"{stripped}/chat/completions"
+
+
+def api_chat_completion(
+    config: dict[str, Any], messages: list[dict[str, str]], model_seed: int | None
+) -> str:
+    body: dict[str, Any] = {
+        "model": config["model_name"],
+        "messages": messages,
+        "temperature": float(config.get("temperature", 0.2)),
+    }
+    if model_seed is not None and config.get("send_seed", True):
+        body["seed"] = model_seed
+    headers = {"Content-Type": "application/json"}
+    if config.get("api_key"):
+        headers["Authorization"] = f"Bearer {config['api_key']}"
+    request = urllib.request.Request(
+        completion_endpoint(config["url"]),
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(
+            request, timeout=float(config.get("timeout_seconds", 120))
+        ) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"模型 API 返回 HTTP {error.code}: {detail[:500]}") from error
+    except urllib.error.URLError as error:
+        raise RuntimeError(f"无法连接模型 API：{error.reason}") from error
+
+    try:
+        content = payload["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as error:
+        raise RuntimeError("模型 API 响应不包含 choices[0].message.content") from error
+    if isinstance(content, list):
+        content = "".join(
+            item.get("text", "") for item in content if isinstance(item, dict)
+        )
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError("模型 API 返回了空文本")
+    return content.strip()
+
+
+def parse_protocol_field(text: str, field: str) -> str | None:
+    match = re.search(rf"(?im)^\s*{re.escape(field)}\s*:\s*(.+?)\s*$", text)
+    return match.group(1).strip() if match else None
+
+
+def validate_option(case: dict[str, Any], option_id: str, field: str) -> str:
+    options = {option["id"] for option in case["decision"]["options"]}
+    if option_id not in options:
+        raise ValueError(
+            f"模型的 {field} 不是有效 option_id：{option_id!r}；"
+            f"有效值为 {', '.join(sorted(options))}"
+        )
+    return option_id
+
+
+def choose_run_mode() -> str:
+    print("请选择本次运行模式：")
+    print("1. API 自动运行")
+    print("2. 由当前 Codex 对话直接处理（人工交互）")
+    while True:
+        choice = input("模式 [1/2]> ").strip().lower()
+        if choice in {"1", "api"}:
+            return "api"
+        if choice in {"2", "direct"}:
+            return "direct"
+        print("请输入 1 或 2。")
+
+
 def choose_option(case: dict[str, Any], label: str) -> str:
     options = {option["id"] for option in case["decision"]["options"]}
     while True:
@@ -222,7 +317,22 @@ def choose_option(case: dict[str, Any], label: str) -> str:
         print(f"无效选项，请输入：{', '.join(sorted(options))}")
 
 
-def run_session(case: dict[str, Any], condition: str) -> Path:
+def save_session(case: dict[str, Any], session: dict[str, Any]) -> Path:
+    session["automatic_metrics"] = score_session(case, session)
+    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+    now = datetime.fromisoformat(session["started_at_utc"])
+    stamp = now.strftime("%Y%m%dT%H%M%SZ")
+    path = SESSIONS_DIR / (
+        f"{case['case_id']}-{session['condition']}-{session['mode']}-{stamp}.json"
+    )
+    path.write_text(json.dumps(session, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("\n自动指标：")
+    print(json.dumps(session["automatic_metrics"], ensure_ascii=False, indent=2))
+    print(f"会话已保存：{path}")
+    return path
+
+
+def run_direct_session(case: dict[str, Any], condition: str) -> Path:
     prompt = (PROMPTS_DIR / CONDITION_FILES[condition]).read_text(encoding="utf-8")
     payload = public_case(case)
     print(prompt)
@@ -263,6 +373,7 @@ def run_session(case: dict[str, Any], condition: str) -> Path:
         "benchmark_version": "0.1",
         "case_id": case["case_id"],
         "condition": condition,
+        "mode": "direct",
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
         "questions": questions,
@@ -277,15 +388,124 @@ def run_session(case: dict[str, Any], condition: str) -> Path:
             "notes": None,
         },
     }
-    session["automatic_metrics"] = score_session(case, session)
-    SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
-    stamp = now.strftime("%Y%m%dT%H%M%SZ")
-    path = SESSIONS_DIR / f"{case['case_id']}-{condition}-{stamp}.json"
-    path.write_text(json.dumps(session, ensure_ascii=False, indent=2), encoding="utf-8")
-    print("\n自动指标：")
-    print(json.dumps(session["automatic_metrics"], ensure_ascii=False, indent=2))
-    print(f"会话已保存：{path}")
-    return path
+    return save_session(case, session)
+
+
+def run_api_session(
+    case: dict[str, Any],
+    condition: str,
+    config: dict[str, Any],
+    model_seed: int | None = None,
+) -> Path:
+    condition_prompt = (PROMPTS_DIR / CONDITION_FILES[condition]).read_text(
+        encoding="utf-8"
+    )
+    options = ", ".join(option["id"] for option in case["decision"]["options"])
+    controller = (
+        "\n\n你正由逐轮实验控制器调用。必须服从每条用户消息要求，"
+        "每轮只输出所要求的一个协议字段，不要提前输出后续问题或结论。"
+    )
+    messages: list[dict[str, str]] = [
+        {"role": "system", "content": condition_prompt + controller},
+        {
+            "role": "user",
+            "content": (
+                "## 公开案例\n"
+                + json.dumps(public_case(case), ensure_ascii=False, indent=2)
+                + f"\n\n现在只输出 PRE_DECISION: <option_id>。有效选项：{options}"
+            ),
+        },
+    ]
+    raw_pre = api_chat_completion(config, messages, model_seed)
+    messages.append({"role": "assistant", "content": raw_pre})
+    pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
+    if pre_value is None:
+        raise ValueError(f"模型未按协议返回 PRE_DECISION：{raw_pre[:300]}")
+    pre_decision = validate_option(case, pre_value, "PRE_DECISION")
+    print(f"PRE_DECISION: {pre_decision}")
+
+    revealed: set[str] = set()
+    questions: list[dict[str, Any]] = []
+    budget = case.get("question_budget", 5)
+    for index in range(1, budget + 1):
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    f"现在是第 {index}/{budget} 次提问机会。只输出 QUESTION: <一个问题>；"
+                    "如果已经足够决策，只输出 DECIDE。"
+                ),
+            }
+        )
+        raw_question = api_chat_completion(config, messages, model_seed)
+        messages.append({"role": "assistant", "content": raw_question})
+        if re.search(r"(?im)^\s*DECIDE\s*$", raw_question):
+            break
+        question = parse_protocol_field(raw_question, "QUESTION")
+        if question is None:
+            raise ValueError(f"模型未按协议返回 QUESTION 或 DECIDE：{raw_question[:300]}")
+        fact_id, answer = answer_question(case, question, revealed)
+        if fact_id:
+            revealed.add(fact_id)
+        questions.append(
+            {
+                "question": question,
+                "fact_id": fact_id,
+                "oracle_answer": answer,
+                "manual_annotations": {
+                    "decision_changing": None,
+                    "discriminative": None,
+                    "unsupported_premise": None,
+                    "answerable": None,
+                },
+            }
+        )
+        print(f"QUESTION: {question}")
+        print(f"ORACLE: {answer}")
+        messages.append({"role": "user", "content": f"ORACLE: {answer}"})
+
+    messages.append(
+        {
+            "role": "user",
+            "content": (
+                "提问阶段结束。现在只输出两行：\n"
+                f"DECISION: <option_id>（有效选项：{options}）\n"
+                "RATIONALE: <不超过 100 字>"
+            ),
+        }
+    )
+    raw_final = api_chat_completion(config, messages, model_seed)
+    decision_value = parse_protocol_field(raw_final, "DECISION")
+    rationale = parse_protocol_field(raw_final, "RATIONALE")
+    if decision_value is None or rationale is None:
+        raise ValueError(f"模型未按协议返回 DECISION/RATIONALE：{raw_final[:300]}")
+    post_decision = validate_option(case, decision_value, "DECISION")
+    print(f"DECISION: {post_decision}")
+    print(f"RATIONALE: {rationale}")
+
+    now = datetime.now(timezone.utc)
+    session = {
+        "benchmark_version": "0.1",
+        "case_id": case["case_id"],
+        "condition": condition,
+        "mode": "api",
+        "model_name": config["model_name"],
+        "model_seed": model_seed,
+        "started_at_utc": now.isoformat(),
+        "pre_decision": pre_decision,
+        "questions": questions,
+        "post_decision": post_decision,
+        "rationale": rationale,
+        "manual_review": {
+            "reviewer_id": None,
+            "false_balance": None,
+            "sensitive_information_risk": None,
+            "user_burden_1_to_5": None,
+            "oracle_errors": [],
+            "notes": None,
+        },
+    }
+    return save_session(case, session)
 
 
 def main() -> int:
@@ -298,8 +518,13 @@ def main() -> int:
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument("case_id")
     run_parser.add_argument("--condition", choices=CONDITION_FILES, required=True)
+    run_parser.add_argument("--mode", choices=RUN_MODES)
+    run_parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    run_parser.add_argument("--model-seed", type=int)
     score_parser = subparsers.add_parser("score")
     score_parser.add_argument("session_file", type=Path)
+    config_parser = subparsers.add_parser("check-config")
+    config_parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
     schedule_parser = subparsers.add_parser("schedule")
     schedule_parser.add_argument("--seed", type=int, default=20260819)
     schedule_parser.add_argument("--output", type=Path)
@@ -337,13 +562,40 @@ def main() -> int:
         else:
             print(rendered)
         return 0
+    if args.command == "check-config":
+        try:
+            config = load_model_config(args.config)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
+            print(f"配置无效：{error}")
+            return 1
+        print("配置有效：")
+        print(f"- endpoint: {completion_endpoint(config['url'])}")
+        print(f"- model_name: {config['model_name']}")
+        print(f"- api_key: {'已填写' if config.get('api_key') else '未填写'}")
+        return 0
     if args.command in {"show", "run"} and args.case_id not in cases:
         parser.error(f"unknown case_id: {args.case_id}")
     if args.command == "show":
         print(json.dumps(public_case(cases[args.case_id]), ensure_ascii=False, indent=2))
         return 0
     if args.command == "run":
-        run_session(cases[args.case_id], args.condition)
+        mode = args.mode or choose_run_mode()
+        if mode == "api":
+            try:
+                config = load_model_config(args.config)
+                run_api_session(
+                    cases[args.case_id], args.condition, config, args.model_seed
+                )
+            except (
+                FileNotFoundError,
+                ValueError,
+                RuntimeError,
+                json.JSONDecodeError,
+            ) as error:
+                print(f"API 运行失败：{error}")
+                return 1
+        else:
+            run_direct_session(cases[args.case_id], args.condition)
         return 0
     if args.command == "score":
         session = json.loads(args.session_file.read_text(encoding="utf-8"))

@@ -1,4 +1,4 @@
 sessions/*.json
 results/*.json
 __pycache__/
-
+model-config.local.json
