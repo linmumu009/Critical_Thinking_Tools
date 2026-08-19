@@ -81,6 +81,8 @@ python paired_benchmark.py schedule --repeats 1 --output results/paired-schedule
 
 首次 API 预检已经通过，完整结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。该历史预检只包含 A/B/C；N 从完整成对校准开始纳入主要比较。
 
+首个产品案例的 N/A/B/C 完整成对烟雾测试也已完成，详见 [SMOKE-REPORT-v0.3-product.md](SMOKE-REPORT-v0.3-product.md)。
+
 ## 下一阶段门槛
 
 1. 4 对案例的公开载荷逐字相同，最佳行动相反，且无隐藏词泄漏。
