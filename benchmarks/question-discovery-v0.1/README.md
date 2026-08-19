@@ -8,6 +8,8 @@ v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选
 
 v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组反事实成对案例和独立预检入口，设计与命令见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)，首次 API 结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。
 
+完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗四个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。

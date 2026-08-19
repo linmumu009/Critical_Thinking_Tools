@@ -588,8 +588,15 @@ def save_session(case: dict[str, Any], session: dict[str, Any]) -> Path:
     return path
 
 
-def run_direct_session(case: dict[str, Any], condition: str) -> Path:
-    prompt = (PROMPTS_DIR / CONDITION_FILES[condition]).read_text(encoding="utf-8")
+def run_direct_session(
+    case: dict[str, Any],
+    condition: str,
+    prompt_file: str | None = None,
+    benchmark_version: str | None = None,
+) -> Path:
+    prompt = (PROMPTS_DIR / (prompt_file or CONDITION_FILES[condition])).read_text(
+        encoding="utf-8"
+    )
     payload = public_case(case)
     print(prompt)
     print("\n## 公开案例\n")
@@ -620,6 +627,10 @@ def run_direct_session(case: dict[str, Any], condition: str) -> Path:
                     "discriminative": None,
                     "unsupported_premise": None,
                     "answerable": None,
+                    "decision_relevance_0_to_2": None,
+                    "branch_discrimination_0_to_2": None,
+                    "specificity_0_to_2": None,
+                    "data_gap_value": None,
                 },
             }
         )
@@ -632,8 +643,11 @@ def run_direct_session(case: dict[str, Any], condition: str) -> Path:
     rationale = input("RATIONALE> ").strip()
     now = datetime.now(timezone.utc)
     session = {
-        "benchmark_version": BENCHMARK_VERSION,
+        "benchmark_version": benchmark_version or BENCHMARK_VERSION,
         "case_id": case["case_id"],
+        "public_case_id": case.get("public_case_id"),
+        "pair_id": case.get("pair_id"),
+        "variant_id": case.get("variant_id"),
         "condition": condition,
         "mode": "direct",
         "started_at_utc": now.isoformat(),
@@ -660,10 +674,12 @@ def run_api_session(
     condition: str,
     config: dict[str, Any],
     model_seed: int | None = None,
+    prompt_file: str | None = None,
+    benchmark_version: str | None = None,
 ) -> Path:
-    condition_prompt = (PROMPTS_DIR / CONDITION_FILES[condition]).read_text(
-        encoding="utf-8"
-    )
+    condition_prompt = (
+        PROMPTS_DIR / (prompt_file or CONDITION_FILES[condition])
+    ).read_text(encoding="utf-8")
     options = ", ".join(public_option_map(case))
     controller = (
         "\n\n你正由逐轮实验控制器调用。必须服从每条用户消息要求，"
@@ -793,6 +809,10 @@ def run_api_session(
                     "discriminative": None,
                     "unsupported_premise": None,
                     "answerable": None,
+                    "decision_relevance_0_to_2": None,
+                    "branch_discrimination_0_to_2": None,
+                    "specificity_0_to_2": None,
+                    "data_gap_value": None,
                 },
             }
         )
@@ -858,8 +878,11 @@ def run_api_session(
 
     now = datetime.now(timezone.utc)
     session = {
-        "benchmark_version": BENCHMARK_VERSION,
+        "benchmark_version": benchmark_version or BENCHMARK_VERSION,
         "case_id": case["case_id"],
+        "public_case_id": case.get("public_case_id"),
+        "pair_id": case.get("pair_id"),
+        "variant_id": case.get("variant_id"),
         "condition": condition,
         "mode": "api",
         "model_name": config["model_name"],

@@ -48,7 +48,28 @@ python paired_benchmark.py preflight --mode api --model-seed 11
 python paired_benchmark.py preflight --mode direct
 ```
 
-API 预检对每个“公开案例 × 条件”只调用一次，共 12 次；不会把两个隐藏分支发送给受测模型。结果保存在被 Git 忽略的 `results/paired-preflight-v0.3.json`。
+API 预检对每个“公开案例 × 条件”只调用一次。加入 N 原生对照后，一轮为 4 个案例 × 4 个条件，共 16 次；不会把两个隐藏分支发送给受测模型。首次预检完成于加入 N 之前，因此历史报告仍是 A/B/C 共 12 次。结果保存在被 Git 忽略的 `results/paired-preflight-v0.3.json`。
+
+完整运行一对隐藏分支：
+
+```powershell
+python paired_benchmark.py run-pair product-pair-01 --condition N --mode api --model-seed 1
+```
+
+可选条件为：
+
+- `N`：原生模型，仅有协议控制；
+- `A`：普通提问基线；
+- `B`：QFT、STORM、双向钢人串联；
+- `C`：问题发现漏斗。
+
+生成一轮均衡计划：
+
+```powershell
+python paired_benchmark.py schedule --repeats 1 --output results/paired-schedule-v0.3.json
+```
+
+一轮包含 16 个成对单元、32 个模型会话。成对主指标与护栏定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
 ## 预检指标
 
@@ -58,7 +79,7 @@ API 预检对每个“公开案例 × 条件”只调用一次，共 12 次；�
 
 预检通过不代表思考工具有效。它只证明案例不会让模型在提问前同时猜对两个世界。正式效果指标还必须比较：提问后能否根据被抽中的隐藏事实，把概率从错误分支移动到正确分支。
 
-首次 API 预检已经通过，完整结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。
+首次 API 预检已经通过，完整结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。该历史预检只包含 A/B/C；N 从完整成对校准开始纳入主要比较。
 
 ## 下一阶段门槛
 
