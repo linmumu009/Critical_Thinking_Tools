@@ -129,6 +129,13 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f2", fact_id)
         self.assertIn("命中率", answer)
 
+    def test_largest_cloud_cost_category_reaches_cost_breakdown(self):
+        case = self.cases["project-03"]
+        question = "在本月新增云成本中，哪个资源类别贡献的绝对增量最大？"
+        fact_id, answer = benchmark.answer_question(case, question, set())
+        self.assertEqual("f1", fact_id)
+        self.assertIn("81%", answer)
+
     def test_score_session(self):
         case = next(iter(self.cases.values()))
         best = case["utility"]["best_option"]
