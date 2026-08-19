@@ -270,6 +270,27 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(3, body["seed"])
         self.assertNotIn("top-secret", request.data.decode("utf-8"))
 
+    def test_api_request_retries_one_transient_timeout(self):
+        config = {
+            "url": "https://example.test/v1",
+            "model_name": "test-model",
+            "api_max_retries": 1,
+        }
+        response = FakeResponse(
+            {"choices": [{"message": {"content": "DECIDE"}}]}
+        )
+        with patch.object(
+            benchmark.urllib.request,
+            "urlopen",
+            side_effect=[TimeoutError("read timed out"), response],
+        ) as urlopen:
+            text = benchmark.api_chat_completion(
+                config, [{"role": "user", "content": "case"}], model_seed=1
+            )
+
+        self.assertEqual("DECIDE", text)
+        self.assertEqual(2, urlopen.call_count)
+
     def test_semantic_oracle_selects_fixed_fact_without_rewriting_answer(self):
         case = self.cases["project-03"]
         config = {

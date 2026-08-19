@@ -440,16 +440,38 @@ def api_chat_completion(
         headers=headers,
         method="POST",
     )
-    try:
-        with urllib.request.urlopen(
-            request, timeout=float(config.get("timeout_seconds", 120))
-        ) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as error:
-        detail = error.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"模型 API 返回 HTTP {error.code}: {detail[:500]}") from error
-    except urllib.error.URLError as error:
-        raise RuntimeError(f"无法连接模型 API：{error.reason}") from error
+    max_retries = max(0, int(config.get("api_max_retries", 1)))
+    payload: dict[str, Any] | None = None
+    for attempt in range(max_retries + 1):
+        try:
+            with urllib.request.urlopen(
+                request, timeout=float(config.get("timeout_seconds", 120))
+            ) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError as error:
+            detail = error.read().decode("utf-8", errors="replace")
+            retryable = error.code == 429 or 500 <= error.code < 600
+            if retryable and attempt < max_retries:
+                print(
+                    f"API_RETRY: HTTP {error.code}，"
+                    f"正在进行第 {attempt + 1}/{max_retries} 次重试。"
+                )
+                continue
+            raise RuntimeError(
+                f"模型 API 返回 HTTP {error.code}: {detail[:500]}"
+            ) from error
+        except (urllib.error.URLError, TimeoutError) as error:
+            if attempt < max_retries:
+                print(
+                    "API_RETRY: 连接或读取超时，"
+                    f"正在进行第 {attempt + 1}/{max_retries} 次重试。"
+                )
+                continue
+            reason = getattr(error, "reason", str(error))
+            raise RuntimeError(f"无法连接模型 API：{reason}") from error
+    if payload is None:
+        raise RuntimeError("模型 API 重试后没有返回响应")
 
     try:
         content = payload["choices"][0]["message"]["content"]

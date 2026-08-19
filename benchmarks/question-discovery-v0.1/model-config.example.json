@@ -3,6 +3,7 @@
   "api_key": "YOUR_API_KEY",
   "model_name": "YOUR_MODEL_NAME",
   "timeout_seconds": 120,
+  "api_max_retries": 1,
   "temperature": 0.2,
   "send_seed": true,
   "oracle_mode": "semantic_api",
