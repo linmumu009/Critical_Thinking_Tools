@@ -426,6 +426,7 @@ def run_api_session(
 
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
+    protocol_deviations: list[dict[str, str]] = []
     budget = case.get("question_budget", 5)
     for index in range(1, budget + 1):
         messages.append(
@@ -442,6 +443,21 @@ def run_api_session(
         if re.search(r"(?im)^\s*DECIDE\s*$", raw_question):
             break
         question = parse_protocol_field(raw_question, "QUESTION")
+        early_decision = parse_protocol_field(raw_question, "DECISION")
+        if question is None and early_decision is not None:
+            validate_option(case, early_decision, "DECISION")
+            protocol_deviations.append(
+                {
+                    "stage": f"question_{index}",
+                    "type": "early_decision_field",
+                    "raw_output": raw_question,
+                }
+            )
+            print(
+                "PROTOCOL_DEVIATION: 模型使用 DECISION 提前结束提问；"
+                "控制器将继续请求最终决定与理由。"
+            )
+            break
         if question is None:
             raise ValueError(f"模型未按协议返回 QUESTION 或 DECIDE：{raw_question[:300]}")
         fact_id, answer = answer_question(case, question, revealed)
@@ -496,6 +512,7 @@ def run_api_session(
         "questions": questions,
         "post_decision": post_decision,
         "rationale": rationale,
+        "protocol_deviations": protocol_deviations,
         "manual_review": {
             "reviewer_id": None,
             "false_balance": None,

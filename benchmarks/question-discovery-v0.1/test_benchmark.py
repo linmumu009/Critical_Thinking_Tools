@@ -183,6 +183,33 @@ class BenchmarkTests(unittest.TestCase):
         first_messages = completion.call_args_list[0].args[1]
         self.assertNotIn("oracle_facts", first_messages[1]["content"])
 
+    def test_api_session_records_early_decision_as_protocol_deviation(self):
+        case = self.cases["product-01"]
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "secret",
+            "model_name": "test-model",
+        }
+        outputs = [
+            "PRE_DECISION: rollback_release",
+            "QUESTION: 最近版本具体改了什么？",
+            "DECISION: rollback_release",
+            "DECISION: rollback_release\nRATIONALE: 版本变更提供了可复现机制。",
+        ]
+        with patch.object(
+            benchmark, "api_chat_completion", side_effect=outputs
+        ), patch.object(
+            benchmark, "save_session", return_value=Path("session.json")
+        ) as save:
+            benchmark.run_api_session(case, "A", config, model_seed=1)
+
+        session = save.call_args.args[1]
+        self.assertEqual(1, len(session["questions"]))
+        self.assertEqual(1, len(session["protocol_deviations"]))
+        self.assertEqual(
+            "early_decision_field", session["protocol_deviations"][0]["type"]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
