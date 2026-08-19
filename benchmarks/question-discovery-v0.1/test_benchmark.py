@@ -62,6 +62,15 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f2", fact_id)
         self.assertIn("第 6 周", answer)
 
+    def test_research_outcome_distance_question_reaches_endpoint_timing(self):
+        case = self.cases["research-01"]
+        question = (
+            "复制研究的主要结局测量距离干预结束的时间是否与试点研究一致？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, set())
+        self.assertEqual("f1", fact_id)
+        self.assertIn("第 12 周", answer)
+
     def test_carrier_capacity_question_does_not_match_region_fact(self):
         case = self.cases["operations-01"]
         question = (
