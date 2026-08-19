@@ -6,6 +6,8 @@
 
 v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选项位置均衡，并新增提问前后的完整概率分布及 Brier 质量改善指标。详细定义见 [METRICS-v0.2.md](METRICS-v0.2.md)。目录名暂时保留 `question-discovery-v0.1`，以避免破坏已有本地会话和外部链接；会话内的 `benchmark_version` 才是权威版本。
 
+v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组反事实成对案例和独立预检入口，设计与命令见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。

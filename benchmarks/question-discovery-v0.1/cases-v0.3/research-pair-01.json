@@ -1,0 +1,44 @@
+{
+  "pair_id": "research-pair-01",
+  "domain": "research",
+  "title": "干预效果在两项同期变化后接近于零",
+  "brief": "一项线上干预试验的总体效应接近于零。试验期间既迁移了行为事件采集管线，也发现招募样本的构成与计划不同。团队本周需要决定如何处理这项研究。",
+  "question_budget": 5,
+  "option_rotation": 0,
+  "decision": {
+    "deadline": "本周五前",
+    "options": [
+      {"id": "repair_measurement", "label": "修复测量并重算", "public_label": "修复测量管线并重新分析"},
+      {"id": "publish_null", "label": "按当前结果报告零效应", "public_label": "按当前样本报告零效应"},
+      {"id": "recruit_segment", "label": "补招目标子群", "public_label": "补招计划中的目标子群"},
+      {"id": "stop_program", "label": "停止该干预方向", "public_label": "停止继续研究该干预"}
+    ]
+  },
+  "leakage_terms": ["事件丢失", "低基线子群", "暴露日志"],
+  "variants": [
+    {
+      "variant_id": "measurement",
+      "hypotheses": [{"id": "measurement_failure", "label": "测量失真"}, {"id": "heterogeneous_effect", "label": "样本异质性"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "新采集管线漏记了 43% 的干预暴露事件，且漏记集中在实际完成干预的用户。", "triggers": ["采集管线", "暴露事件", "漏记", "完成干预", "测量"]},
+        {"id": "f2", "criticality": "critical", "answer": "用服务端日志补回暴露后，主要结局效应为 +8.1%，置信区间不再包含零。", "triggers": ["服务端日志", "补回", "重新分析", "效应", "置信区间"]},
+        {"id": "f3", "criticality": "supporting", "answer": "按预设子群重加权后，未修复测量的效应仍接近于零。", "triggers": ["子群", "重加权", "样本构成", "预设"]},
+        {"id": "f4", "criticality": "distractor", "answer": "随机分配比例、失访率和基线量表在两组间保持平衡。", "triggers": ["随机分配", "失访", "基线", "平衡"]}
+      ],
+      "key_unknowns": [{"id": "measurement_integrity", "weight": 2, "fact_ids": ["f1"]}, {"id": "corrected_effect", "weight": 3, "fact_ids": ["f2"]}],
+      "utility": {"best_option": "repair_measurement", "option_scores": {"repair_measurement": 10, "publish_null": 3, "recruit_segment": 4, "stop_program": 1}}
+    },
+    {
+      "variant_id": "segment",
+      "hypotheses": [{"id": "measurement_failure", "label": "测量失真"}, {"id": "heterogeneous_effect", "label": "样本异质性"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "客户端、服务端与审计样本的暴露记录一致率为 99.2%，迁移前后没有系统性漏记。", "triggers": ["采集管线", "服务端", "审计", "暴露记录", "漏记"]},
+        {"id": "f2", "criticality": "critical", "answer": "预注册的低基线子群仅占样本 9%，该子群效应为 +12%；其余子群效应接近零。", "triggers": ["预注册", "低基线", "子群", "样本构成", "异质效应"]},
+        {"id": "f3", "criticality": "supporting", "answer": "按原计划补足低基线子群后，模拟功效达到 87%，可以检验预设交互作用。", "triggers": ["补足", "招募", "功效", "交互作用", "模拟"]},
+        {"id": "f4", "criticality": "distractor", "answer": "随机分配比例、失访率和基线量表在两组间保持平衡。", "triggers": ["随机分配", "失访", "基线", "平衡"]}
+      ],
+      "key_unknowns": [{"id": "pipeline_validity", "weight": 2, "fact_ids": ["f1"]}, {"id": "subgroup_effect", "weight": 3, "fact_ids": ["f2", "f3"]}],
+      "utility": {"best_option": "recruit_segment", "option_scores": {"repair_measurement": 3, "publish_null": 4, "recruit_segment": 10, "stop_program": 1}}
+    }
+  ]
+}

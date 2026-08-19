@@ -1,0 +1,44 @@
+{
+  "pair_id": "operations-pair-01",
+  "domain": "operations",
+  "title": "履约延迟在路由与运力同期变化后上升",
+  "brief": "某区域订单按时送达率从 93% 降至 76%。此前同一天启用了新的自动路由策略，承运商也调整了区域运力。订单量和商品结构基本稳定，团队需要在今天决定止损方案。",
+  "question_budget": 5,
+  "option_rotation": 0,
+  "decision": {
+    "deadline": "今天 18:00 前",
+    "options": [
+      {"id": "limit_orders", "label": "限制区域新订单", "public_label": "临时限制该区域新订单"},
+      {"id": "observe", "label": "维持现状观察", "public_label": "维持现状观察两天"},
+      {"id": "rollback_routing", "label": "回滚自动路由策略", "public_label": "暂时回滚自动路由策略"},
+      {"id": "buy_capacity", "label": "采购临时替代运力", "public_label": "采购临时替代运力"}
+    ]
+  },
+  "leakage_terms": ["错误权重", "容量下降", "临时车队"],
+  "variants": [
+    {
+      "variant_id": "routing",
+      "hypotheses": [{"id": "routing_bug", "label": "路由策略异常"}, {"id": "capacity_shortage", "label": "承运运力不足"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "延迟订单中 84% 被新策略错误分配到跨区中转点，而旧策略不会选择该节点。", "triggers": ["延迟订单", "路由", "中转点", "节点", "分配"]},
+        {"id": "f2", "criticality": "critical", "answer": "用昨日订单回放旧策略后，预计按时送达率恢复到 91%，不需要增加车辆。", "triggers": ["回放", "旧策略", "按时送达", "车辆", "验证"]},
+        {"id": "f3", "criticality": "supporting", "answer": "承运商在该区域实际可用车辆数与上周相同，装载率仍低于 78%。", "triggers": ["承运商", "车辆", "运力", "装载率", "容量"]},
+        {"id": "f4", "criticality": "distractor", "answer": "订单量、重量和收货时段分布与上周相差不到 3%。", "triggers": ["订单量", "重量", "时段", "结构"]}
+      ],
+      "key_unknowns": [{"id": "delay_route", "weight": 2, "fact_ids": ["f1"]}, {"id": "rollback_test", "weight": 3, "fact_ids": ["f2"]}],
+      "utility": {"best_option": "rollback_routing", "option_scores": {"limit_orders": 3, "observe": 1, "rollback_routing": 10, "buy_capacity": 4}}
+    },
+    {
+      "variant_id": "capacity",
+      "hypotheses": [{"id": "routing_bug", "label": "路由策略异常"}, {"id": "capacity_shortage", "label": "承运运力不足"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "承运商临时调走了 38% 的区域车辆，剩余线路装载率超过 99%。", "triggers": ["承运商", "车辆", "运力", "装载率", "容量"]},
+        {"id": "f2", "criticality": "critical", "answer": "两家备选车队可在 6 小时内补足缺口；历史回放估计按时送达率可恢复到 90%。", "triggers": ["备选", "车队", "补足", "回放", "恢复"]},
+        {"id": "f3", "criticality": "supporting", "answer": "新旧路由策略对同一批订单给出的节点和里程分布几乎相同。", "triggers": ["新旧路由", "节点", "里程", "策略对比"]},
+        {"id": "f4", "criticality": "distractor", "answer": "订单量、重量和收货时段分布与上周相差不到 3%。", "triggers": ["订单量", "重量", "时段", "结构"]}
+      ],
+      "key_unknowns": [{"id": "capacity_gap", "weight": 2, "fact_ids": ["f1"]}, {"id": "replacement_test", "weight": 3, "fact_ids": ["f2"]}],
+      "utility": {"best_option": "buy_capacity", "option_scores": {"limit_orders": 3, "observe": 1, "rollback_routing": 4, "buy_capacity": 10}}
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "pair_id": "project-pair-01",
+  "domain": "project",
+  "title": "协作工具试点采用率低于目标",
+  "brief": "一个跨部门协作工具试点四周后，每周活跃率只有 34%，目标为 70%。试点同时启用了新的单点登录接入和新的审批工作流。管理层下周决定是否扩大推广。",
+  "question_budget": 5,
+  "option_rotation": 0,
+  "decision": {
+    "deadline": "下周一前",
+    "options": [
+      {"id": "mandate_training", "label": "强制培训与使用", "public_label": "增加强制培训与使用要求"},
+      {"id": "fix_access", "label": "修复接入后继续试点", "public_label": "先修复账号接入再继续试点"},
+      {"id": "end_pilot", "label": "结束试点", "public_label": "结束试点并停止投入"},
+      {"id": "redesign_workflow", "label": "重设工作流后继续", "public_label": "重设审批工作流后继续试点"}
+    ]
+  },
+  "leakage_terms": ["entitlement", "额外审批", "两步减少"],
+  "variants": [
+    {
+      "variant_id": "access",
+      "hypotheses": [{"id": "access_block", "label": "接入障碍"}, {"id": "workflow_rejection", "label": "工作流不适配"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "目标员工中有 61% 缺少正确的单点登录权限，首次访问会直接看到无权限错误。", "triggers": ["登录", "权限", "账号", "接入", "错误"]},
+        {"id": "f2", "criticality": "critical", "answer": "拥有正确权限的员工每周活跃率为 79%，其中 72% 表示新工作流节省了协调时间。", "triggers": ["有权限", "每周活跃", "工作流", "协调时间", "采用率拆分"]},
+        {"id": "f3", "criticality": "supporting", "answer": "批量补齐权限可在半天内完成，不需要修改工具或审批流程。", "triggers": ["补齐权限", "修复", "时间", "审批流程"]},
+        {"id": "f4", "criticality": "distractor", "answer": "培训出席率为 93%，课后任务通过率为 90%。", "triggers": ["培训", "出席", "任务", "通过率"]}
+      ],
+      "key_unknowns": [{"id": "access_rate", "weight": 2, "fact_ids": ["f1"]}, {"id": "adoption_if_accessible", "weight": 3, "fact_ids": ["f2", "f3"]}],
+      "utility": {"best_option": "fix_access", "option_scores": {"mandate_training": 3, "fix_access": 10, "end_pilot": 1, "redesign_workflow": 4}}
+    },
+    {
+      "variant_id": "workflow",
+      "hypotheses": [{"id": "access_block", "label": "接入障碍"}, {"id": "workflow_rejection", "label": "工作流不适配"}],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "目标员工中 98% 已获得正确权限，登录成功率为 97%，设备和网络没有异常。", "triggers": ["登录", "权限", "账号", "接入", "设备", "网络"]},
+        {"id": "f2", "criticality": "critical", "answer": "新工作流为每个任务增加两次额外审批；已登录员工中 64% 在首次提交后转回旧流程。", "triggers": ["工作流", "审批", "已登录", "旧流程", "放弃"]},
+        {"id": "f3", "criticality": "supporting", "answer": "移除额外审批的原型测试把任务完成率从 36% 提高到 75%，合规检查仍通过。", "triggers": ["移除审批", "原型", "任务完成率", "合规", "测试"]},
+        {"id": "f4", "criticality": "distractor", "answer": "培训出席率为 93%，课后任务通过率为 90%。", "triggers": ["培训", "出席", "任务", "通过率"]}
+      ],
+      "key_unknowns": [{"id": "access_validity", "weight": 2, "fact_ids": ["f1"]}, {"id": "workflow_cost", "weight": 3, "fact_ids": ["f2", "f3"]}],
+      "utility": {"best_option": "redesign_workflow", "option_scores": {"mandate_training": 3, "fix_access": 4, "end_pilot": 1, "redesign_workflow": 10}}
+    }
+  ]
+}

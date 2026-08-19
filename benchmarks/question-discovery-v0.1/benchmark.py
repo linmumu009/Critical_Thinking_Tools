@@ -40,9 +40,12 @@ def load_cases() -> dict[str, dict[str, Any]]:
 
 
 def public_option_map(case: dict[str, Any]) -> dict[str, str]:
-    domain_offsets = {"product": 0, "operations": 1, "research": 2, "project": 3}
-    case_number = int(case["case_id"].rsplit("-", 1)[1])
-    rotation = (domain_offsets[case["domain"]] + case_number - 1) % 4
+    if "option_rotation" in case:
+        rotation = int(case["option_rotation"]) % 4
+    else:
+        domain_offsets = {"product": 0, "operations": 1, "research": 2, "project": 3}
+        case_number = int(case["case_id"].rsplit("-", 1)[1])
+        rotation = (domain_offsets[case["domain"]] + case_number - 1) % 4
     internal_ids = [option["id"] for option in case["decision"]["options"]]
     rotated_ids = internal_ids[rotation:] + internal_ids[:rotation]
     return {
@@ -84,7 +87,7 @@ def best_public_option(case: dict[str, Any]) -> str:
 
 def public_case(case: dict[str, Any]) -> dict[str, Any]:
     return {
-        "case_id": case["case_id"],
+        "case_id": case.get("public_case_id", case["case_id"]),
         "domain": case["domain"],
         "title": case["title"],
         "brief": case["brief"],

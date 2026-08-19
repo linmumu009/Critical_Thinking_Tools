@@ -1,0 +1,56 @@
+{
+  "pair_id": "product-pair-01",
+  "domain": "product",
+  "title": "注册完成率在两项同期变更后下降",
+  "brief": "某 SaaS 产品的新用户注册完成率在一周内从 48% 降至 31%。下降前同一天上线了新版引导流程，也调整了套餐资格规则。总访问量基本稳定，负责人明天需要决定先处理哪一项。",
+  "question_budget": 5,
+  "option_rotation": 0,
+  "decision": {
+    "deadline": "明天 12:00 前",
+    "options": [
+      {"id": "rollback_flow", "label": "回滚新版引导流程", "public_label": "暂时回滚新版引导流程"},
+      {"id": "restore_eligibility", "label": "恢复旧套餐资格规则", "public_label": "暂时恢复旧套餐资格规则"},
+      {"id": "targeted_support", "label": "为受影响用户提供定向支持", "public_label": "先增加定向注册支持"},
+      {"id": "observe", "label": "维持现状继续观察", "public_label": "维持现状再观察一周"}
+    ]
+  },
+  "leakage_terms": ["Safari 脚本错误", "月付套餐", "资格过滤"],
+  "variants": [
+    {
+      "variant_id": "flow",
+      "hypotheses": [
+        {"id": "flow_regression", "label": "引导流程回归"},
+        {"id": "eligibility_rule", "label": "资格规则影响"}
+      ],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "完成率下降几乎全部来自 iPhone Safari；该浏览器在新版引导第二步出现脚本错误。", "triggers": ["浏览器", "设备", "Safari", "第二步", "错误分布"]},
+        {"id": "f2", "criticality": "critical", "answer": "在同一流量回放中恢复旧引导后，完成率回到 47%，套餐资格规则保持不变。", "triggers": ["回放", "回滚", "旧引导", "恢复", "因果验证"]},
+        {"id": "f3", "criticality": "supporting", "answer": "新旧资格规则下进入注册页的用户数量与构成相差不到 2%。", "triggers": ["资格", "规则", "用户构成", "进入注册页"]},
+        {"id": "f4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
+      ],
+      "key_unknowns": [
+        {"id": "where_drop", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "intervention_test", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "rollback_flow", "option_scores": {"rollback_flow": 10, "restore_eligibility": 3, "targeted_support": 4, "observe": 1}}
+    },
+    {
+      "variant_id": "eligibility",
+      "hypotheses": [
+        {"id": "flow_regression", "label": "引导流程回归"},
+        {"id": "eligibility_rule", "label": "资格规则影响"}
+      ],
+      "oracle_facts": [
+        {"id": "f1", "criticality": "critical", "answer": "在仍符合资格并进入注册页的用户中，新版引导完成率为 49%，没有浏览器或设备异常。", "triggers": ["符合资格", "进入注册页", "浏览器", "设备", "引导完成率"]},
+        {"id": "f2", "criticality": "critical", "answer": "新资格规则误将月付套餐用户排除；离线重放旧规则后，总体完成率估算恢复到 46%。", "triggers": ["资格规则", "月付", "排除", "旧规则", "重放"]},
+        {"id": "f3", "criticality": "supporting", "answer": "新版与旧版引导的逐步回放结果相同，错误日志没有新增异常。", "triggers": ["引导", "逐步", "回放", "错误日志", "异常"]},
+        {"id": "f4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
+      ],
+      "key_unknowns": [
+        {"id": "eligible_conversion", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "rule_counterfactual", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "restore_eligibility", "option_scores": {"rollback_flow": 3, "restore_eligibility": 10, "targeted_support": 4, "observe": 1}}
+    }
+  ]
+}
