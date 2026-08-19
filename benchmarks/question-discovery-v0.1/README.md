@@ -14,6 +14,8 @@ v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组�
 
 跨案例长批次使用 `paired_benchmark.py calibrate`；它会在每个成对单元后保存进度并支持安全续跑，详细参数见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)。
 
+首轮包含 N 原生模型的四条件完整校准已经结束，汇总、验证与结论边界见 [CALIBRATION-REPORT-v0.3-seed1.md](CALIBRATION-REPORT-v0.3-seed1.md)。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。

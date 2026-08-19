@@ -93,6 +93,8 @@ python paired_benchmark.py calibrate --mode api --progress results/paired-calibr
 
 首个产品案例的 N/A/B/C 完整成对烟雾测试也已完成，详见 [SMOKE-REPORT-v0.3-product.md](SMOKE-REPORT-v0.3-product.md)。
 
+首轮 4 案例、4 条件、1 种子的完整开发校准见 [CALIBRATION-REPORT-v0.3-seed1.md](CALIBRATION-REPORT-v0.3-seed1.md)。
+
 ## 下一阶段门槛
 
 1. 4 对案例的公开载荷逐字相同，最佳行动相反，且无隐藏词泄漏。
