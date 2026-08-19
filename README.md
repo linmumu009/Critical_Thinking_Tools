@@ -16,10 +16,11 @@
 
 ## 工具库
 
-进入 [思考工具索引](tools/) 按思考阶段选工具。当前收录：
+进入 [思考工具索引](tools/) 按思考阶段选工具。若尚未确定真正的问题，优先从[问题发现漏斗](tools/question-discovery-funnel/)开始。当前收录：
 
 | 类别 | 工具 |
 | --- | --- |
+| 完整问题发现 | [问题发现漏斗](tools/question-discovery-funnel/)、[Six Honest Serving Men](tools/six-honest-serving-men/) |
 | 生成问题 | [QFT 问题形成技术](tools/question-formulation-technique/)、[STORM / Co-STORM](tools/storm-costorm/) |
 | 深挖与重构 | [苏格拉底式追问](tools/socratic-questioning/)、[双向钢人论证](tools/bidirectional-steelman/) |
 | 反证与结构检查 | [考虑相反面](tools/consider-the-opposite/)、[论证地图](tools/argument-mapping/)、[竞争性假设分析](tools/analysis-of-competing-hypotheses/) |
@@ -51,6 +52,15 @@
 3. 将提交推送至 GitHub 远程仓库。
 
 ## 版本更新记录
+
+### v0.3.0 - 2026-08-19
+
+- 调查问题构造、Double Diamond、FINER、信息价值、Strong Inference 与自动问题生成评估研究。
+- 新增 Six Honest Serving Men 工具卡，用 5W1H 在问题生成前系统重构初始框架。
+- 新增“问题发现漏斗”，从现实信号、决策目标、问题重构、发散、去重、决策分叉、信息价值到廉价现实试探形成闭环。
+- 新增完整主持提示词、好问题评分卡和问题契约模板。
+- 新增 A/B/C 对照实验方案，以决策改善和决策改变问题率为主要指标，并设置虚构前提、不可回答率、成本和用户负担护栏。
+- 明确完整漏斗是基于研究的原创组合，尚未独立验证；在取得基线数据前不设置武断的效果目标。
 
 ### v0.2.0 - 2026-08-19
 
