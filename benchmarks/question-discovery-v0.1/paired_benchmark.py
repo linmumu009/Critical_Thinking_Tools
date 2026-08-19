@@ -344,6 +344,109 @@ def build_paired_schedule(
     return runs
 
 
+def calibration_run_key(pair_id: str, condition: str, model_seed: int) -> str:
+    return f"{pair_id}|{condition}|seed-{model_seed}"
+
+
+def run_calibration(
+    pairs: dict[str, list[dict[str, Any]]],
+    conditions: list[str],
+    excluded_pairs: set[str],
+    mode: str,
+    config: dict[str, Any] | None,
+    model_seed: int,
+    randomization_seed: int,
+    progress_path: Path,
+    max_pair_runs: int | None,
+) -> Path:
+    if progress_path.exists():
+        progress = json.loads(progress_path.read_text(encoding="utf-8"))
+        if progress.get("model_seed") != model_seed or progress.get("mode") != mode:
+            raise ValueError(
+                "进度文件的 mode/model_seed 与当前运行不一致；请使用新进度文件。"
+            )
+    else:
+        progress = {
+            "benchmark_version": "0.3",
+            "created_at_utc": datetime.now(timezone.utc).isoformat(),
+            "mode": mode,
+            "model_name": config["model_name"] if config else "direct",
+            "model_seed": model_seed,
+            "randomization_seed": randomization_seed,
+            "excluded_pairs": sorted(excluded_pairs),
+            "conditions": conditions,
+            "completed": [],
+            "failures": [],
+        }
+
+    completed_keys = {item["run_key"] for item in progress["completed"]}
+    schedule = build_paired_schedule(pairs, randomization_seed, repeats=1)
+    eligible = [
+        run
+        for run in schedule
+        if run["pair_id"] not in excluded_pairs
+        and run["condition"] in conditions
+    ]
+    executed = 0
+    progress_path.parent.mkdir(parents=True, exist_ok=True)
+    for run in eligible:
+        key = calibration_run_key(run["pair_id"], run["condition"], model_seed)
+        if key in completed_keys:
+            print(f"SKIP_COMPLETED: {key}")
+            continue
+        if max_pair_runs is not None and executed >= max_pair_runs:
+            break
+        print(f"\nCALIBRATION_RUN: {key}")
+        try:
+            result_path = run_pair(
+                pairs[run["pair_id"]],
+                run["condition"],
+                mode,
+                config,
+                model_seed,
+            )
+        except Exception as error:
+            progress["failures"].append(
+                {
+                    "run_key": key,
+                    "failed_at_utc": datetime.now(timezone.utc).isoformat(),
+                    "error_type": type(error).__name__,
+                    "error": str(error)[:500],
+                }
+            )
+            progress["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+            progress_path.write_text(
+                json.dumps(progress, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            raise
+        progress["completed"].append(
+            {
+                "run_key": key,
+                "pair_id": run["pair_id"],
+                "condition": run["condition"],
+                "model_seed": model_seed,
+                "result_file": str(result_path),
+                "completed_at_utc": datetime.now(timezone.utc).isoformat(),
+            }
+        )
+        completed_keys.add(key)
+        executed += 1
+        progress["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+        progress_path.write_text(
+            json.dumps(progress, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    remaining = sum(
+        calibration_run_key(run["pair_id"], run["condition"], model_seed)
+        not in completed_keys
+        for run in eligible
+    )
+    print(
+        f"CALIBRATION_PROGRESS: completed={len(progress['completed'])}, "
+        f"remaining={remaining}, progress={progress_path}"
+    )
+    return progress_path
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Question Discovery v0.3 paired preflight")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -367,6 +470,24 @@ def main() -> int:
     schedule.add_argument("--seed", type=int, default=20260819)
     schedule.add_argument("--repeats", type=int, default=1)
     schedule.add_argument("--output", type=Path)
+    calibrate = subparsers.add_parser("calibrate")
+    calibrate.add_argument("--mode", choices=benchmark.RUN_MODES)
+    calibrate.add_argument("--config", type=Path, default=benchmark.DEFAULT_CONFIG_PATH)
+    calibrate.add_argument("--model-seed", type=int, default=1)
+    calibrate.add_argument("--randomization-seed", type=int, default=20260819)
+    calibrate.add_argument(
+        "--conditions",
+        choices=PAIRED_CONDITION_FILES,
+        nargs="+",
+        default=list(PAIRED_CONDITION_FILES),
+    )
+    calibrate.add_argument("--exclude-pair", action="append", default=[])
+    calibrate.add_argument("--max-pair-runs", type=int)
+    calibrate.add_argument(
+        "--progress",
+        type=Path,
+        default=RESULTS_DIR / "paired-calibration-progress-v0.3.json",
+    )
     args = parser.parse_args()
 
     pairs = load_pairs()
@@ -453,6 +574,29 @@ def main() -> int:
             print(f"Paired schedule saved: {output}")
         else:
             print(rendered)
+        return 0
+    if args.command == "calibrate":
+        unknown_pairs = set(args.exclude_pair) - set(pairs)
+        if unknown_pairs:
+            parser.error(f"unknown excluded pair(s): {sorted(unknown_pairs)}")
+        if args.max_pair_runs is not None and args.max_pair_runs < 1:
+            parser.error("--max-pair-runs must be positive")
+        mode = args.mode or benchmark.choose_run_mode()
+        config = benchmark.load_model_config(args.config) if mode == "api" else None
+        progress_path = (
+            args.progress if args.progress.is_absolute() else ROOT / args.progress
+        )
+        run_calibration(
+            pairs,
+            list(dict.fromkeys(args.conditions)),
+            set(args.exclude_pair),
+            mode,
+            config,
+            args.model_seed,
+            args.randomization_seed,
+            progress_path,
+            args.max_pair_runs,
+        )
         return 0
     return 1
 

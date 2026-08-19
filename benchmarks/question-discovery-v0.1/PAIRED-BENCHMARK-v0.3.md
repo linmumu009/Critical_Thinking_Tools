@@ -71,6 +71,16 @@ python paired_benchmark.py schedule --repeats 1 --output results/paired-schedule
 
 一轮包含 16 个成对单元、32 个模型会话。成对主指标与护栏定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
+可恢复地运行校准：
+
+```powershell
+python paired_benchmark.py calibrate --mode api --progress results/paired-calibration-progress-v0.3.json
+```
+
+每完成一个成对单元就会更新进度文件。相同命令重新启动时会跳过已完成单元。可以用 `--max-pair-runs 2` 将长批次拆成小段；如果某个案例已经单独完成，可用 `--exclude-pair product-pair-01` 排除。
+
+进度文件和会话均在 Git 忽略目录中，不保存 API Key。修改模式或模型种子时必须使用新的进度文件，避免混合不同实验设置。
+
 ## 预检指标
 
 - `pre_choice_accuracy`：同一公开回答分别按两个隐藏分支计分，理论上限为 0.5。

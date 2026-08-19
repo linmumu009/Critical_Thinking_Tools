@@ -1,5 +1,8 @@
 import json
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 import benchmark
 import paired_benchmark
@@ -93,6 +96,45 @@ class PairedBenchmarkTests(unittest.TestCase):
         self.assertEqual(
             {"N", "A", "B", "C"}, {run["condition"] for run in runs}
         )
+
+    def test_calibration_progress_resumes_completed_units(self):
+        with tempfile.TemporaryDirectory() as directory:
+            progress_path = Path(directory) / "progress.json"
+            with patch.object(
+                paired_benchmark,
+                "run_pair",
+                side_effect=[Path("one.json"), Path("two.json")],
+            ) as first_run:
+                paired_benchmark.run_calibration(
+                    self.pairs,
+                    ["N"],
+                    {"product-pair-01"},
+                    "api",
+                    {"model_name": "test-model"},
+                    1,
+                    7,
+                    progress_path,
+                    2,
+                )
+            self.assertEqual(2, first_run.call_count)
+
+            with patch.object(
+                paired_benchmark, "run_pair", return_value=Path("three.json")
+            ) as resumed:
+                paired_benchmark.run_calibration(
+                    self.pairs,
+                    ["N"],
+                    {"product-pair-01"},
+                    "api",
+                    {"model_name": "test-model"},
+                    1,
+                    7,
+                    progress_path,
+                    2,
+                )
+            self.assertEqual(1, resumed.call_count)
+            progress = json.loads(progress_path.read_text(encoding="utf-8"))
+            self.assertEqual(3, len(progress["completed"]))
 
 
 if __name__ == "__main__":
