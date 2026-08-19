@@ -609,15 +609,49 @@ def run_api_session(
             ),
         },
     ]
+    protocol_deviations: list[dict[str, str]] = []
     raw_pre = api_chat_completion(config, messages, model_seed)
     messages.append({"role": "assistant", "content": raw_pre})
-    pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
-    pre_probabilities = parse_probability_field(case, raw_pre, "PRE_PROBABILITIES")
-    if pre_value is None or pre_probabilities is None:
-        raise ValueError(
-            f"模型未按协议返回 PRE_DECISION/PRE_PROBABILITIES：{raw_pre[:300]}"
+    try:
+        pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
+        pre_probabilities = parse_probability_field(
+            case, raw_pre, "PRE_PROBABILITIES"
         )
-    pre_decision = validate_option(case, pre_value, "PRE_DECISION")
+        if pre_value is None or pre_probabilities is None:
+            raise ValueError("缺少 PRE_DECISION 或 PRE_PROBABILITIES")
+        pre_decision = validate_option(case, pre_value, "PRE_DECISION")
+    except ValueError as error:
+        protocol_deviations.append(
+            {
+                "stage": "pre_decision",
+                "type": "invalid_pre_protocol_repaired",
+                "error": str(error),
+                "raw_output": raw_pre,
+            }
+        )
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    f"格式无效：{error}。不要改变对案例的判断；仅修正格式。"
+                    "重新只输出 PRE_DECISION 和 PRE_PROBABILITIES，概率必须包含"
+                    " option_a、option_b、option_c、option_d 且总和为 1。"
+                ),
+            }
+        )
+        raw_pre = api_chat_completion(config, messages, model_seed)
+        messages.append({"role": "assistant", "content": raw_pre})
+        pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
+        pre_probabilities = parse_probability_field(
+            case, raw_pre, "PRE_PROBABILITIES"
+        )
+        if pre_value is None or pre_probabilities is None:
+            raise ValueError(
+                "模型在一次格式修复后仍未返回 PRE_DECISION/PRE_PROBABILITIES："
+                f"{raw_pre[:300]}"
+            )
+        pre_decision = validate_option(case, pre_value, "PRE_DECISION")
+        print("PROTOCOL_DEVIATION: 初始概率格式无效，已在一次重试后修复。")
     print(f"PRE_DECISION: {pre_decision}")
     print(
         "PRE_PROBABILITIES: "
@@ -626,7 +660,6 @@ def run_api_session(
 
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
-    protocol_deviations: list[dict[str, str]] = []
     budget = case.get("question_budget", 5)
     for index in range(1, budget + 1):
         messages.append(
@@ -692,14 +725,43 @@ def run_api_session(
         }
     )
     raw_final = api_chat_completion(config, messages, model_seed)
-    decision_value = parse_protocol_field(raw_final, "DECISION")
-    post_probabilities = parse_probability_field(case, raw_final, "PROBABILITIES")
-    rationale = parse_protocol_field(raw_final, "RATIONALE")
-    if decision_value is None or post_probabilities is None or rationale is None:
-        raise ValueError(
-            f"模型未按协议返回 DECISION/PROBABILITIES/RATIONALE：{raw_final[:300]}"
+    messages.append({"role": "assistant", "content": raw_final})
+    try:
+        decision_value = parse_protocol_field(raw_final, "DECISION")
+        post_probabilities = parse_probability_field(case, raw_final, "PROBABILITIES")
+        rationale = parse_protocol_field(raw_final, "RATIONALE")
+        if decision_value is None or post_probabilities is None or rationale is None:
+            raise ValueError("缺少 DECISION、PROBABILITIES 或 RATIONALE")
+        post_decision = validate_option(case, decision_value, "DECISION")
+    except ValueError as error:
+        protocol_deviations.append(
+            {
+                "stage": "final_decision",
+                "type": "invalid_final_protocol_repaired",
+                "error": str(error),
+                "raw_output": raw_final,
+            }
         )
-    post_decision = validate_option(case, decision_value, "DECISION")
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    f"格式无效：{error}。不要改变判断；仅修正格式。重新只输出 "
+                    "DECISION、PROBABILITIES、RATIONALE；四项概率之和必须为 1。"
+                ),
+            }
+        )
+        raw_final = api_chat_completion(config, messages, model_seed)
+        decision_value = parse_protocol_field(raw_final, "DECISION")
+        post_probabilities = parse_probability_field(case, raw_final, "PROBABILITIES")
+        rationale = parse_protocol_field(raw_final, "RATIONALE")
+        if decision_value is None or post_probabilities is None or rationale is None:
+            raise ValueError(
+                "模型在一次格式修复后仍未返回完整最终协议："
+                f"{raw_final[:300]}"
+            )
+        post_decision = validate_option(case, decision_value, "DECISION")
+        print("PROTOCOL_DEVIATION: 最终概率格式无效，已在一次重试后修复。")
     print(f"DECISION: {post_decision}")
     print(
         "PROBABILITIES: "

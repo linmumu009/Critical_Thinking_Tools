@@ -310,6 +310,34 @@ class BenchmarkTests(unittest.TestCase):
             "early_decision_field", session["protocol_deviations"][0]["type"]
         )
 
+    def test_api_session_repairs_invalid_probability_sum_once(self):
+        case = self.cases["product-01"]
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "secret",
+            "model_name": "test-model",
+        }
+        outputs = [
+            'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.5,"option_b":0.1,"option_c":0.1,"option_d":0.1}',
+            'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.7,"option_b":0.1,"option_c":0.1,"option_d":0.1}',
+            "DECIDE",
+            'DECISION: option_a\nPROBABILITIES: {"option_a":0.8,"option_b":0.05,"option_c":0.05,"option_d":0.1}\nRATIONALE: 修正格式后继续。',
+        ]
+        with patch.object(
+            benchmark, "api_chat_completion", side_effect=outputs
+        ) as completion, patch.object(
+            benchmark, "save_session", return_value=Path("session.json")
+        ) as save:
+            benchmark.run_api_session(case, "A", config, model_seed=1)
+
+        self.assertEqual(4, completion.call_count)
+        session = save.call_args.args[1]
+        self.assertEqual(1, len(session["protocol_deviations"]))
+        self.assertEqual(
+            "invalid_pre_protocol_repaired",
+            session["protocol_deviations"][0]["type"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
