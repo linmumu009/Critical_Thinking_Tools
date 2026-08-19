@@ -38,7 +38,7 @@ decision_improvement = post_utility - pre_utility
 
 ## 护栏
 
-- `no_fact_answer_rate`：Oracle 没有可返回新事实的问题比例。
+- `no_fact_answer_rate`：Oracle 没有可返回新事实的问题比例。它衡量事实表覆盖和交互负担，不等同于问题质量差；具体且与决策相关的无答案问题可能揭示有价值的数据缺口。
 - `oracle_match_disagreement_rate`：隔离语义 Oracle 与关键词原型的事实选择不一致率。
 - `protocol_deviation_count`：可恢复的输出协议偏离次数。
 - `questions_used`：实际问题数。
