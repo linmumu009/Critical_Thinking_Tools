@@ -62,6 +62,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f2", fact_id)
         self.assertIn("第 6 周", answer)
 
+    def test_carrier_capacity_question_does_not_match_region_fact(self):
+        case = self.cases["operations-01"]
+        question = (
+            "目前是否有其他承运商或干线方案在东区具备可立即承接的剩余运力，"
+            "能在今天内切换 H3 枢纽的货量？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, {"f2", "f3"})
+        self.assertEqual("f6", fact_id)
+        self.assertIn("足够余量", answer)
+
     def test_score_session(self):
         case = next(iter(self.cases.values()))
         best = case["utility"]["best_option"]
