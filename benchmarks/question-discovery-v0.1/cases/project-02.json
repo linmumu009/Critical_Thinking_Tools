@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "本周试点评审会前",
     "options": [
-      {"id": "fix_permissions", "label": "修复单点登录授权并主动恢复受影响账户"},
-      {"id": "more_training", "label": "安排第二轮全员培训"},
-      {"id": "mandate_use", "label": "将每周使用设为强制要求"},
-      {"id": "cancel", "label": "终止试点并恢复原工具"}
+      {"id": "fix_permissions", "label": "修复单点登录授权并主动恢复受影响账户", "public_label": "优先修复试点用户的技术接入问题"},
+      {"id": "more_training", "label": "安排第二轮全员培训", "public_label": "安排第二轮全员培训"},
+      {"id": "mandate_use", "label": "将每周使用设为强制要求", "public_label": "将每周使用设为强制要求"},
+      {"id": "cancel", "label": "终止试点并恢复原工具", "public_label": "终止试点并恢复原工具"}
     ]
   },
   "hypotheses": [

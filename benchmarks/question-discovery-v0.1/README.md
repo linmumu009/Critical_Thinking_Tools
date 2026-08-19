@@ -1,14 +1,17 @@
-# Question Discovery Benchmark v0.1
+# Question Discovery Benchmark v0.2
 
 这是“问题发现漏斗”的首个最小可行基准，用于比较三种提问条件是否能在固定问题预算内改善决策。
 
 首次 9 次 API 小批次的结果与停止规则见 [PILOT-01.md](PILOT-01.md)：运行链路可用，但案例出现严重决策天花板，剩余 99 次在修订案例前暂停。
+
+v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选项位置均衡，并新增提问前后的完整概率分布及 Brier 质量改善指标。详细定义见 [METRICS-v0.2.md](METRICS-v0.2.md)。目录名暂时保留 `question-discovery-v0.1`，以避免破坏已有本地会话和外部链接；会话内的 `benchmark_version` 才是权威版本。
 
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。
 - 产品、运营、研究、项目四个领域，每类 3 个。
 - 每例包含公开简报、隐藏事实、关键未知、行动选项和预先定义的效用。
+- 公开选项只使用 `option_a`～`option_d`，不暴露内部机制型标识；最佳选项位置在全体案例中均衡。
 - 每次最多提出 5 个问题。
 - A/B/C 三种条件共需 `12 × 3 × 3 = 108` 次运行（每条件 3 个随机种子）。
 
@@ -33,10 +36,13 @@ python benchmark.py validate
 python benchmark.py list
 python benchmark.py show product-01
 python benchmark.py schedule --output results/run-plan.json
+python benchmark.py calibration-schedule --output results/calibration-v0.2.json
 python benchmark.py run product-01 --condition A
 ```
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
+
+`calibration-schedule` 生成 v0.2 的 12 次校准集：每个案例运行一次，并保证每个领域内 A/B/C 各出现一次。只有该校准集达到 [v0.2 指标门槛](METRICS-v0.2.md#进入完整实验的门槛)后，才恢复 108 次正式矩阵。
 
 `run` 每次开始都会要求选择一种模式：
 
@@ -67,7 +73,7 @@ python benchmark.py run product-01 --condition A
 1. 展示对应条件提示词和公开案例。
 2. 要求记录模型在提问前的初始决策。
 3. 接收最多 5 个模型问题，并由隐藏事实 oracle 返回一条最匹配事实。
-4. 记录模型最终决策。
+4. 记录提问前后的选项概率分布与最终决策。
 5. 将不含完整隐藏事实表的会话写入本地 `sessions/`。
 6. 计算决策改善、关键未知命中和单位问题信息效率。
 
@@ -90,6 +96,11 @@ python benchmark.py run product-01 --condition A
 - `key_unknown_recall`：已揭示关键事实权重占全部关键事实权重。
 - `critical_fact_hit_rate`：已揭示关键事实数占全部关键事实数。
 - `information_efficiency`：决策改善除以实际问题数。
+- `pre_probability_quality` / `post_probability_quality`：基于完整选项概率的归一化多分类 Brier 质量。
+- `probability_quality_improvement`：提问后的概率质量减去提问前质量，是 v0.2 首要指标。
+- `best_option_probability_change`：最佳选项概率变化。
+- `probability_information_efficiency`：每个问题带来的概率质量改善。
+- `no_fact_answer_rate`、`protocol_deviation_count`：自动护栏。
 
 ## 需要盲评的指标
 
@@ -104,7 +115,7 @@ python benchmark.py run product-01 --condition A
 
 ## 已知限制
 
-- v0.1 oracle 使用关键词匹配，不具备完整语义理解；若合理问题没有命中，应记录为 oracle 错误，而不是把责任算给模型。
+- 当前 oracle 使用关键词匹配，不具备完整语义理解；若合理问题没有命中，应记录为 oracle 错误，而不是把责任算给模型。
 - 正式批量运行前必须先做校准调用；若校准发现合理问题未命中，先扩充触发词、添加回归测试，并废弃该次校准结果。
 - API 控制器会记录可恢复的格式偏离；例如模型用 `DECISION` 而非 `DECIDE` 提前结束时，会继续收集最终理由，并将偏离写入 `protocol_deviations`。
 - 合成案例的效用函数比真实世界明确，可能高估“决策分叉”方法的优势。

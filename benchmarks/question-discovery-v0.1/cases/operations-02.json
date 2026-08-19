@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "本周五前",
     "options": [
-      {"id": "rollback_verification", "label": "回退新身份核验流程并修复超时"},
-      {"id": "add_staff", "label": "临时增配一线客服人员"},
-      {"id": "deflect_chat", "label": "引导更多客户转向在线聊天"},
-      {"id": "wait", "label": "保持现状，等待需求回落"}
+      {"id": "rollback_verification", "label": "回退新身份核验流程并修复超时", "public_label": "回退最近上线的客服流程并排查"},
+      {"id": "add_staff", "label": "临时增配一线客服人员", "public_label": "临时增加一线客服人员"},
+      {"id": "deflect_chat", "label": "引导更多客户转向在线聊天", "public_label": "将更多需求引导至在线渠道"},
+      {"id": "wait", "label": "保持现状，等待需求回落", "public_label": "保持现状并等待需求回落"}
     ]
   },
   "hypotheses": [

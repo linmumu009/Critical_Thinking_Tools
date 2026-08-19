@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "三天内确定修复计划",
     "options": [
-      {"id": "fix_normalization", "label": "修复查询和商品编码的规范化逻辑"},
-      {"id": "add_content", "label": "补充商品标题、描述和同义词"},
-      {"id": "tune_ranking", "label": "重新训练搜索排序模型"},
-      {"id": "wait", "label": "继续收集查询日志"}
+      {"id": "fix_normalization", "label": "修复查询和商品编码的规范化逻辑", "public_label": "优先检查并修复搜索处理变更"},
+      {"id": "add_content", "label": "补充商品标题、描述和同义词", "public_label": "补充商品内容与搜索词覆盖"},
+      {"id": "tune_ranking", "label": "重新训练搜索排序模型", "public_label": "调整搜索排序模型"},
+      {"id": "wait", "label": "继续收集查询日志", "public_label": "保持现状并继续收集日志"}
     ]
   },
   "hypotheses": [

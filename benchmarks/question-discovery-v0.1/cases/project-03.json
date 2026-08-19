@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "三天后的预算评审前",
     "options": [
-      {"id": "fix_cache", "label": "修复缓存命名空间并恢复命中率"},
-      {"id": "renegotiate_vendor", "label": "优先与云厂商重谈折扣"},
-      {"id": "cap_users", "label": "限制高频用户请求量"},
-      {"id": "resize_db", "label": "缩减数据库实例规格"}
+      {"id": "fix_cache", "label": "修复缓存命名空间并恢复命中率", "public_label": "优先修复最近的应用层效率变更"},
+      {"id": "renegotiate_vendor", "label": "优先与云厂商重谈折扣", "public_label": "优先与云厂商重新协商价格"},
+      {"id": "cap_users", "label": "限制高频用户请求量", "public_label": "限制高频用户请求量"},
+      {"id": "resize_db", "label": "缩减数据库实例规格", "public_label": "调整数据库资源规格"}
     ]
   },
   "hypotheses": [

@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "明天 12:00 前",
     "options": [
-      {"id": "rollback_release", "label": "回滚最近版本并修复注册流程"},
-      {"id": "increase_acquisition", "label": "增加获客投放弥补注册量"},
-      {"id": "change_offer", "label": "调整价格或新用户优惠"},
-      {"id": "observe", "label": "保持现状，再观察一周"}
+      {"id": "rollback_release", "label": "回滚最近版本并修复注册流程", "public_label": "暂时回滚最近版本并排查"},
+      {"id": "increase_acquisition", "label": "增加获客投放弥补注册量", "public_label": "增加获客投入以补充注册量"},
+      {"id": "change_offer", "label": "调整价格或新用户优惠", "public_label": "调整新用户商业方案"},
+      {"id": "observe", "label": "保持现状，再观察一周", "public_label": "保持现状并继续观察"}
     ]
   },
   "hypotheses": [

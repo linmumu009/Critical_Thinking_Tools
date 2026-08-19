@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "本周产品评审会",
     "options": [
-      {"id": "fix_quota_banner", "label": "修复上传额度提示与拦截逻辑"},
-      {"id": "retention_discount", "label": "向不活跃创作者发放订阅折扣"},
-      {"id": "add_tutorial", "label": "增加创作和上传教学"},
-      {"id": "wait", "label": "等待更多留存数据"}
+      {"id": "fix_quota_banner", "label": "修复上传额度提示与拦截逻辑", "public_label": "优先检查并修复创作流程的近期变更"},
+      {"id": "retention_discount", "label": "向不活跃创作者发放订阅折扣", "public_label": "向不活跃创作者提供激励"},
+      {"id": "add_tutorial", "label": "增加创作和上传教学", "public_label": "增加新手教学和操作引导"},
+      {"id": "wait", "label": "等待更多留存数据", "public_label": "保持现状并收集更多留存数据"}
     ]
   },
   "hypotheses": [

@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "下一次模型发布前",
     "options": [
-      {"id": "fix_label_pipeline", "label": "修复标签映射并重新计算评估"},
-      {"id": "retrain_latest", "label": "立即用最新数据重训模型"},
-      {"id": "revert_model", "label": "回退到上一个模型版本"},
-      {"id": "raise_threshold", "label": "统一提高分类置信度阈值"}
+      {"id": "fix_label_pipeline", "label": "修复标签映射并重新计算评估", "public_label": "先复核并修正最新评估流程"},
+      {"id": "retrain_latest", "label": "立即用最新数据重训模型", "public_label": "立即使用最新数据重训模型"},
+      {"id": "revert_model", "label": "回退到上一个模型版本", "public_label": "回退到上一个模型版本"},
+      {"id": "raise_threshold", "label": "统一提高分类置信度阈值", "public_label": "调整分类决策阈值"}
     ]
   },
   "hypotheses": [

@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "明天项目委员会前",
     "options": [
-      {"id": "replan_dependency", "label": "围绕关键外部依赖重排计划并建立替代测试路径"},
-      {"id": "freeze_scope", "label": "立即冻结全部功能范围"},
-      {"id": "add_engineers", "label": "向开发团队增加工程师"},
-      {"id": "replace_vendor", "label": "更换当前交付供应商"}
+      {"id": "replan_dependency", "label": "围绕关键外部依赖重排计划并建立替代测试路径", "public_label": "重排关键依赖并建立替代验证路径"},
+      {"id": "freeze_scope", "label": "立即冻结全部功能范围", "public_label": "立即冻结全部功能范围"},
+      {"id": "add_engineers", "label": "向开发团队增加工程师", "public_label": "向开发团队增加工程师"},
+      {"id": "replace_vendor", "label": "更换当前交付供应商", "public_label": "更换当前外部交付方"}
     ]
   },
   "hypotheses": [

@@ -21,9 +21,12 @@
 
 ```text
 PRE_DECISION: <option_id>
+PRE_PROBABILITIES: {"option_a": <0到1>, "option_b": <0到1>, "option_c": <0到1>, "option_d": <0到1>}
 QUESTION: <一个问题>
 QUESTION: <下一个问题>
 DECISION: <option_id>
+PROBABILITIES: {"option_a": <0到1>, "option_b": <0到1>, "option_c": <0到1>, "option_d": <0到1>}
 RATIONALE: <不超过 100 字>
 ```
 
+两次概率均须包含全部选项且总和为 1。概率代表在当前信息下，每个选项成为最佳行动的主观概率。

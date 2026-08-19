@@ -32,7 +32,25 @@ class BenchmarkTests(unittest.TestCase):
     def test_public_case_does_not_expose_hidden_fields(self):
         hidden = {"oracle_facts", "key_unknowns", "utility", "hypotheses", "leakage_terms"}
         for case in self.cases.values():
-            self.assertTrue(hidden.isdisjoint(benchmark.public_case(case)))
+            public = benchmark.public_case(case)
+            self.assertTrue(hidden.isdisjoint(public))
+            self.assertEqual(
+                ["option_a", "option_b", "option_c", "option_d"],
+                [option["id"] for option in public["options"]],
+            )
+            internal_ids = {option["id"] for option in case["decision"]["options"]}
+            self.assertTrue(
+                internal_ids.isdisjoint(option["id"] for option in public["options"])
+            )
+
+    def test_best_public_option_positions_are_balanced(self):
+        counts = {f"option_{letter}": 0 for letter in "abcd"}
+        for case in self.cases.values():
+            counts[benchmark.best_public_option(case)] += 1
+        self.assertEqual(
+            {"option_a": 3, "option_b": 3, "option_c": 3, "option_d": 3},
+            counts,
+        )
 
     def test_oracle_reveals_at_most_one_new_fact(self):
         for case in self.cases.values():
@@ -101,6 +119,39 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(1.0, metrics["normalized_post_utility"])
         self.assertGreater(metrics["critical_fact_hit_rate"], 0)
 
+    def test_probability_quality_improves_without_changing_top_choice(self):
+        case = self.cases["product-01"]
+        session = {
+            "pre_decision": "option_a",
+            "pre_probabilities": {
+                "option_a": 0.40,
+                "option_b": 0.20,
+                "option_c": 0.20,
+                "option_d": 0.20,
+            },
+            "post_decision": "option_a",
+            "post_probabilities": {
+                "option_a": 0.85,
+                "option_b": 0.05,
+                "option_c": 0.05,
+                "option_d": 0.05,
+            },
+            "questions": [],
+        }
+        metrics = benchmark.score_session(case, session)
+        self.assertEqual(0.0, metrics["decision_improvement"])
+        self.assertGreater(metrics["probability_quality_improvement"], 0)
+        self.assertAlmostEqual(0.45, metrics["best_option_probability_change"])
+
+    def test_probability_distribution_rejects_missing_option(self):
+        case = self.cases["product-01"]
+        with self.assertRaises(ValueError):
+            benchmark.validate_probabilities(
+                case,
+                {"option_a": 0.5, "option_b": 0.25, "option_c": 0.25},
+                "probabilities",
+            )
+
     def test_schedule_is_reproducible_and_balanced(self):
         first = benchmark.build_schedule(self.cases, 123)
         second = benchmark.build_schedule(self.cases, 123)
@@ -119,6 +170,16 @@ class BenchmarkTests(unittest.TestCase):
                     for run in first
                 )
                 self.assertEqual(count, 3)
+
+    def test_calibration_schedule_balances_conditions_within_domains(self):
+        runs = benchmark.build_calibration_schedule(self.cases, 456)
+        self.assertEqual(12, len(runs))
+        self.assertEqual(runs, benchmark.build_calibration_schedule(self.cases, 456))
+        for domain in {case["domain"] for case in self.cases.values()}:
+            domain_runs = [run for run in runs if run["domain"] == domain]
+            self.assertEqual(
+                {"A", "B", "C"}, {run["condition"] for run in domain_runs}
+            )
 
     def test_completion_endpoint_accepts_base_or_full_url(self):
         self.assertEqual(
@@ -180,10 +241,10 @@ class BenchmarkTests(unittest.TestCase):
             "model_name": "test-model",
         }
         outputs = [
-            "PRE_DECISION: observe",
+            'PRE_DECISION: option_d\nPRE_PROBABILITIES: {"option_a":0.25,"option_b":0.25,"option_c":0.25,"option_d":0.25}',
             "QUESTION: 下降按设备和浏览器如何分布？",
             "DECIDE",
-            "DECISION: rollback_release\nRATIONALE: 根据客户端分布先回滚。",
+            'DECISION: option_a\nPROBABILITIES: {"option_a":0.7,"option_b":0.1,"option_c":0.1,"option_d":0.1}\nRATIONALE: 根据客户端分布先回滚。',
         ]
         with patch.object(
             benchmark, "api_chat_completion", side_effect=outputs
@@ -210,10 +271,10 @@ class BenchmarkTests(unittest.TestCase):
             "model_name": "test-model",
         }
         outputs = [
-            "PRE_DECISION: rollback_release",
+            'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.4,"option_b":0.2,"option_c":0.2,"option_d":0.2}',
             "QUESTION: 最近版本具体改了什么？",
-            "DECISION: rollback_release",
-            "DECISION: rollback_release\nRATIONALE: 版本变更提供了可复现机制。",
+            "DECISION: option_a",
+            'DECISION: option_a\nPROBABILITIES: {"option_a":0.8,"option_b":0.05,"option_c":0.05,"option_d":0.1}\nRATIONALE: 版本变更提供了可复现机制。',
         ]
         with patch.object(
             benchmark, "api_chat_completion", side_effect=outputs

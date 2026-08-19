@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "下季度研究计划确定前",
     "options": [
-      {"id": "resample_including_churned", "label": "纳入流失客户重新抽样并验证"},
-      {"id": "trust_survey", "label": "采信高满意度，视续费下降为短期波动"},
-      {"id": "improve_product", "label": "直接按现有开放题反馈投入产品改进"},
-      {"id": "add_incentives", "label": "提高问卷奖励以增加回复数量"}
+      {"id": "resample_including_churned", "label": "纳入流失客户重新抽样并验证", "public_label": "重新设计样本并验证调查代表性"},
+      {"id": "trust_survey", "label": "采信高满意度，视续费下降为短期波动", "public_label": "采信当前调查并继续观察续费"},
+      {"id": "improve_product", "label": "直接按现有开放题反馈投入产品改进", "public_label": "按现有开放题反馈投入产品改进"},
+      {"id": "add_incentives", "label": "提高问卷奖励以增加回复数量", "public_label": "提高问卷激励以增加回复"}
     ]
   },
   "hypotheses": [

@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "下周补货前",
     "options": [
-      {"id": "replace_carton", "label": "更换包装箱并隔离现有薄箱库存"},
-      {"id": "inspect_product", "label": "暂停销售并全面复检产品"},
-      {"id": "tighten_return_policy", "label": "收紧退货政策"},
-      {"id": "wait", "label": "继续销售并再观察一个月"}
+      {"id": "replace_carton", "label": "更换包装箱并隔离现有薄箱库存", "public_label": "隔离近期更换的履约材料并复核"},
+      {"id": "inspect_product", "label": "暂停销售并全面复检产品", "public_label": "暂停销售并全面复检产品"},
+      {"id": "tighten_return_policy", "label": "收紧退货政策", "public_label": "收紧退货与退款政策"},
+      {"id": "wait", "label": "继续销售并再观察一个月", "public_label": "保持现状并继续观察"}
     ]
   },
   "hypotheses": [

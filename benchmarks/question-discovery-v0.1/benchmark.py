@@ -24,6 +24,7 @@ CONDITION_FILES = {
 }
 CRITICALITY_RANK = {"distractor": 0, "supporting": 1, "critical": 2}
 RUN_MODES = {"api", "direct"}
+BENCHMARK_VERSION = "0.2"
 
 
 def load_cases() -> dict[str, dict[str, Any]]:
@@ -38,6 +39,49 @@ def load_cases() -> dict[str, dict[str, Any]]:
     return cases
 
 
+def public_option_map(case: dict[str, Any]) -> dict[str, str]:
+    domain_offsets = {"product": 0, "operations": 1, "research": 2, "project": 3}
+    case_number = int(case["case_id"].rsplit("-", 1)[1])
+    rotation = (domain_offsets[case["domain"]] + case_number - 1) % 4
+    internal_ids = [option["id"] for option in case["decision"]["options"]]
+    rotated_ids = internal_ids[rotation:] + internal_ids[:rotation]
+    return {
+        f"option_{chr(ord('a') + index)}": internal_id
+        for index, internal_id in enumerate(rotated_ids)
+    }
+
+
+def public_options(case: dict[str, Any]) -> list[dict[str, str]]:
+    mapping = public_option_map(case)
+    internal_options = {option["id"]: option for option in case["decision"]["options"]}
+    return [
+        {
+            "id": public_id,
+            "label": internal_options[internal_id]["public_label"],
+        }
+        for public_id, internal_id in mapping.items()
+    ]
+
+
+def resolve_internal_option(case: dict[str, Any], option_id: str) -> str:
+    mapping = public_option_map(case)
+    if option_id in mapping:
+        return mapping[option_id]
+    internal_ids = {option["id"] for option in case["decision"]["options"]}
+    if option_id in internal_ids:
+        return option_id
+    raise ValueError(f"unknown option_id: {option_id}")
+
+
+def best_public_option(case: dict[str, Any]) -> str:
+    best_internal = case["utility"]["best_option"]
+    return next(
+        public_id
+        for public_id, internal_id in public_option_map(case).items()
+        if internal_id == best_internal
+    )
+
+
 def public_case(case: dict[str, Any]) -> dict[str, Any]:
     return {
         "case_id": case["case_id"],
@@ -45,7 +89,7 @@ def public_case(case: dict[str, Any]) -> dict[str, Any]:
         "title": case["title"],
         "brief": case["brief"],
         "decision_deadline": case["decision"]["deadline"],
-        "options": case["decision"]["options"],
+        "options": public_options(case),
         "question_budget": case.get("question_budget", 5),
     }
 
@@ -102,8 +146,11 @@ def validate_case(case: dict[str, Any]) -> list[str]:
         return errors
 
     option_ids = [option["id"] for option in case["decision"].get("options", [])]
-    if len(option_ids) < 2 or len(option_ids) != len(set(option_ids)):
-        errors.append("decision options must contain at least two unique ids")
+    if len(option_ids) != 4 or len(option_ids) != len(set(option_ids)):
+        errors.append("v0.2 decision options must contain exactly four unique ids")
+    for option in case["decision"].get("options", []):
+        if not option.get("public_label"):
+            errors.append(f"option {option.get('id')} has no public_label")
 
     scores = case["utility"].get("option_scores", {})
     if set(scores) != set(option_ids):
@@ -136,13 +183,17 @@ def validate_case(case: dict[str, Any]) -> list[str]:
                     f"key unknown {unknown.get('id')} references missing fact {fact_id}"
                 )
 
-    public_text = normalize(case["title"] + case["brief"])
+    public_text = normalize(
+        case["title"]
+        + case["brief"]
+        + " ".join(option.get("public_label", "") for option in case["decision"]["options"])
+    )
     for term in case["leakage_terms"]:
         if normalize(term) in public_text:
             errors.append(f"hidden leakage term appears in public text: {term}")
 
     if case.get("question_budget", 5) != 5:
-        errors.append("v0.1 cases must use a five-question budget")
+        errors.append("benchmark cases must use a five-question budget")
     return errors
 
 
@@ -157,16 +208,67 @@ def validate_all(cases: dict[str, dict[str, Any]]) -> list[str]:
     expected_domains = {"product": 3, "operations": 3, "research": 3, "project": 3}
     if domain_counts != expected_domains:
         errors.append(f"unexpected domain distribution: {domain_counts}")
+    best_position_counts = {f"option_{letter}": 0 for letter in "abcd"}
+    for case in cases.values():
+        best_position_counts[best_public_option(case)] += 1
+    if best_position_counts != {key: 3 for key in best_position_counts}:
+        errors.append(f"best public option positions are not balanced: {best_position_counts}")
     for condition, filename in CONDITION_FILES.items():
         if not (PROMPTS_DIR / filename).exists():
             errors.append(f"missing prompt for condition {condition}: {filename}")
     return errors
 
 
+def validate_probabilities(
+    case: dict[str, Any], probabilities: dict[str, Any], field: str
+) -> dict[str, float]:
+    expected = set(public_option_map(case))
+    if set(probabilities) != expected:
+        raise ValueError(
+            f"{field} 必须且只能包含：{', '.join(sorted(expected))}"
+        )
+    try:
+        converted = {key: float(value) for key, value in probabilities.items()}
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"{field} 的概率必须是数字") from error
+    if any(value < 0 or value > 1 for value in converted.values()):
+        raise ValueError(f"{field} 的每个概率必须在 0 到 1 之间")
+    if abs(sum(converted.values()) - 1.0) > 0.02:
+        raise ValueError(f"{field} 的概率之和必须约等于 1")
+    total = sum(converted.values())
+    return {key: round(value / total, 12) for key, value in converted.items()}
+
+
+def parse_probability_field(
+    case: dict[str, Any], text: str, field: str
+) -> dict[str, float] | None:
+    raw = parse_protocol_field(text, field)
+    if raw is None:
+        return None
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"{field} 不是有效 JSON 对象：{raw[:200]}") from error
+    if not isinstance(payload, dict):
+        raise ValueError(f"{field} 必须是 JSON 对象")
+    return validate_probabilities(case, payload, field)
+
+
+def probability_quality(case: dict[str, Any], probabilities: dict[str, float]) -> float:
+    best = best_public_option(case)
+    brier = sum(
+        (probability - (1.0 if option_id == best else 0.0)) ** 2
+        for option_id, probability in probabilities.items()
+    )
+    return 1.0 - brier / 2.0
+
+
 def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, float]:
     scores = case["utility"]["option_scores"]
-    pre_utility = float(scores[session["pre_decision"]])
-    post_utility = float(scores[session["post_decision"]])
+    pre_internal = resolve_internal_option(case, session["pre_decision"])
+    post_internal = resolve_internal_option(case, session["post_decision"])
+    pre_utility = float(scores[pre_internal])
+    post_utility = float(scores[post_internal])
     questions = session.get("questions", [])
     revealed = {item["fact_id"] for item in questions if item.get("fact_id")}
 
@@ -183,7 +285,7 @@ def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, fl
     }
     improvement = post_utility - pre_utility
     question_count = len(questions)
-    return {
+    metrics = {
         "pre_utility": pre_utility,
         "post_utility": post_utility,
         "decision_improvement": improvement,
@@ -192,7 +294,49 @@ def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, fl
         "critical_fact_hit_rate": len(revealed & critical_ids) / len(critical_ids),
         "information_efficiency": improvement / question_count if question_count else 0.0,
         "questions_used": float(question_count),
+        "no_fact_answer_rate": (
+            sum(1 for item in questions if not item.get("fact_id")) / question_count
+            if question_count
+            else 0.0
+        ),
+        "protocol_deviation_count": float(
+            len(session.get("protocol_deviations") or [])
+        ),
     }
+    if session.get("pre_probabilities") and session.get("post_probabilities"):
+        pre_probabilities = validate_probabilities(
+            case, session["pre_probabilities"], "pre_probabilities"
+        )
+        post_probabilities = validate_probabilities(
+            case, session["post_probabilities"], "post_probabilities"
+        )
+        pre_quality = probability_quality(case, pre_probabilities)
+        post_quality = probability_quality(case, post_probabilities)
+        best = best_public_option(case)
+        metrics.update(
+            {
+                "pre_probability_quality": pre_quality,
+                "post_probability_quality": post_quality,
+                "probability_quality_improvement": post_quality - pre_quality,
+                "best_option_probability_change": (
+                    post_probabilities[best] - pre_probabilities[best]
+                ),
+                "probability_information_efficiency": (
+                    (post_quality - pre_quality) / question_count
+                    if question_count
+                    else 0.0
+                ),
+                "pre_choice_probability_consistent": float(
+                    pre_probabilities[session["pre_decision"]]
+                    == max(pre_probabilities.values())
+                ),
+                "post_choice_probability_consistent": float(
+                    post_probabilities[session["post_decision"]]
+                    == max(post_probabilities.values())
+                ),
+            }
+        )
+    return metrics
 
 
 def build_schedule(
@@ -214,6 +358,33 @@ def build_schedule(
     for index, run in enumerate(runs, start=1):
         run["run_order"] = index
         run["blind_run_id"] = f"QD-{index:03d}"
+    return runs
+
+
+def build_calibration_schedule(
+    cases: dict[str, dict[str, Any]], randomization_seed: int = 20260819
+) -> list[dict[str, Any]]:
+    """Create a 12-run schedule balanced within every domain across A/B/C."""
+    domain_offsets = {"product": 0, "operations": 1, "research": 2, "project": 0}
+    conditions = tuple(sorted(CONDITION_FILES))
+    runs: list[dict[str, Any]] = []
+    for case_id, case in sorted(cases.items()):
+        case_number = int(case_id.rsplit("-", 1)[1])
+        condition = conditions[
+            (case_number - 1 + domain_offsets[case["domain"]]) % len(conditions)
+        ]
+        runs.append(
+            {
+                "case_id": case_id,
+                "domain": case["domain"],
+                "condition": condition,
+                "model_seed": case_number,
+            }
+        )
+    random.Random(randomization_seed).shuffle(runs)
+    for index, run in enumerate(runs, start=1):
+        run["run_order"] = index
+        run["calibration_run_id"] = f"CAL2-{index:03d}"
     return runs
 
 
@@ -286,7 +457,7 @@ def parse_protocol_field(text: str, field: str) -> str | None:
 
 
 def validate_option(case: dict[str, Any], option_id: str, field: str) -> str:
-    options = {option["id"] for option in case["decision"]["options"]}
+    options = set(public_option_map(case))
     if option_id not in options:
         raise ValueError(
             f"模型的 {field} 不是有效 option_id：{option_id!r}；"
@@ -309,12 +480,24 @@ def choose_run_mode() -> str:
 
 
 def choose_option(case: dict[str, Any], label: str) -> str:
-    options = {option["id"] for option in case["decision"]["options"]}
+    options = set(public_option_map(case))
     while True:
         value = input(label).strip()
         if value in options:
             return value
         print(f"无效选项，请输入：{', '.join(sorted(options))}")
+
+
+def choose_probabilities(case: dict[str, Any], label: str) -> dict[str, float]:
+    while True:
+        raw = input(label).strip()
+        try:
+            payload = json.loads(raw)
+            if not isinstance(payload, dict):
+                raise ValueError("概率必须是 JSON 对象")
+            return validate_probabilities(case, payload, label.strip())
+        except (json.JSONDecodeError, ValueError) as error:
+            print(f"概率格式无效：{error}")
 
 
 def save_session(case: dict[str, Any], session: dict[str, Any]) -> Path:
@@ -341,6 +524,9 @@ def run_direct_session(case: dict[str, Any], condition: str) -> Path:
     print("\n请在全新模型对话中使用以上内容，并把模型输出复制回来。\n")
 
     pre_decision = choose_option(case, "PRE_DECISION option_id> ")
+    pre_probabilities = choose_probabilities(
+        case, 'PRE_PROBABILITIES JSON（例如 {"option_a":0.25,...}）> '
+    )
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
     budget = payload["question_budget"]
@@ -367,17 +553,22 @@ def run_direct_session(case: dict[str, Any], condition: str) -> Path:
         print(f"ORACLE: {answer}")
 
     post_decision = choose_option(case, "DECISION option_id> ")
+    post_probabilities = choose_probabilities(
+        case, 'PROBABILITIES JSON（例如 {"option_a":0.25,...}）> '
+    )
     rationale = input("RATIONALE> ").strip()
     now = datetime.now(timezone.utc)
     session = {
-        "benchmark_version": "0.1",
+        "benchmark_version": BENCHMARK_VERSION,
         "case_id": case["case_id"],
         "condition": condition,
         "mode": "direct",
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
+        "pre_probabilities": pre_probabilities,
         "questions": questions,
         "post_decision": post_decision,
+        "post_probabilities": post_probabilities,
         "rationale": rationale,
         "manual_review": {
             "reviewer_id": None,
@@ -400,7 +591,7 @@ def run_api_session(
     condition_prompt = (PROMPTS_DIR / CONDITION_FILES[condition]).read_text(
         encoding="utf-8"
     )
-    options = ", ".join(option["id"] for option in case["decision"]["options"])
+    options = ", ".join(public_option_map(case))
     controller = (
         "\n\n你正由逐轮实验控制器调用。必须服从每条用户消息要求，"
         "每轮只输出所要求的一个协议字段，不要提前输出后续问题或结论。"
@@ -412,17 +603,26 @@ def run_api_session(
             "content": (
                 "## 公开案例\n"
                 + json.dumps(public_case(case), ensure_ascii=False, indent=2)
-                + f"\n\n现在只输出 PRE_DECISION: <option_id>。有效选项：{options}"
+                + "\n\n现在只输出两行：\n"
+                + f"PRE_DECISION: <option_id>（有效选项：{options}）\n"
+                + "PRE_PROBABILITIES: <JSON 对象；包含全部选项，概率之和为 1>"
             ),
         },
     ]
     raw_pre = api_chat_completion(config, messages, model_seed)
     messages.append({"role": "assistant", "content": raw_pre})
     pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
-    if pre_value is None:
-        raise ValueError(f"模型未按协议返回 PRE_DECISION：{raw_pre[:300]}")
+    pre_probabilities = parse_probability_field(case, raw_pre, "PRE_PROBABILITIES")
+    if pre_value is None or pre_probabilities is None:
+        raise ValueError(
+            f"模型未按协议返回 PRE_DECISION/PRE_PROBABILITIES：{raw_pre[:300]}"
+        )
     pre_decision = validate_option(case, pre_value, "PRE_DECISION")
     print(f"PRE_DECISION: {pre_decision}")
+    print(
+        "PRE_PROBABILITIES: "
+        + json.dumps(pre_probabilities, ensure_ascii=False, separators=(",", ":"))
+    )
 
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
@@ -484,24 +684,32 @@ def run_api_session(
         {
             "role": "user",
             "content": (
-                "提问阶段结束。现在只输出两行：\n"
+                "提问阶段结束。现在只输出三行：\n"
                 f"DECISION: <option_id>（有效选项：{options}）\n"
+                "PROBABILITIES: <JSON 对象；包含全部选项，概率之和为 1>\n"
                 "RATIONALE: <不超过 100 字>"
             ),
         }
     )
     raw_final = api_chat_completion(config, messages, model_seed)
     decision_value = parse_protocol_field(raw_final, "DECISION")
+    post_probabilities = parse_probability_field(case, raw_final, "PROBABILITIES")
     rationale = parse_protocol_field(raw_final, "RATIONALE")
-    if decision_value is None or rationale is None:
-        raise ValueError(f"模型未按协议返回 DECISION/RATIONALE：{raw_final[:300]}")
+    if decision_value is None or post_probabilities is None or rationale is None:
+        raise ValueError(
+            f"模型未按协议返回 DECISION/PROBABILITIES/RATIONALE：{raw_final[:300]}"
+        )
     post_decision = validate_option(case, decision_value, "DECISION")
     print(f"DECISION: {post_decision}")
+    print(
+        "PROBABILITIES: "
+        + json.dumps(post_probabilities, ensure_ascii=False, separators=(",", ":"))
+    )
     print(f"RATIONALE: {rationale}")
 
     now = datetime.now(timezone.utc)
     session = {
-        "benchmark_version": "0.1",
+        "benchmark_version": BENCHMARK_VERSION,
         "case_id": case["case_id"],
         "condition": condition,
         "mode": "api",
@@ -509,8 +717,10 @@ def run_api_session(
         "model_seed": model_seed,
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
+        "pre_probabilities": pre_probabilities,
         "questions": questions,
         "post_decision": post_decision,
+        "post_probabilities": post_probabilities,
         "rationale": rationale,
         "protocol_deviations": protocol_deviations,
         "manual_review": {
@@ -526,7 +736,9 @@ def run_api_session(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Question Discovery Benchmark v0.1")
+    parser = argparse.ArgumentParser(
+        description=f"Question Discovery Benchmark v{BENCHMARK_VERSION}"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("validate")
     subparsers.add_parser("list")
@@ -545,6 +757,9 @@ def main() -> int:
     schedule_parser = subparsers.add_parser("schedule")
     schedule_parser.add_argument("--seed", type=int, default=20260819)
     schedule_parser.add_argument("--output", type=Path)
+    calibration_parser = subparsers.add_parser("calibration-schedule")
+    calibration_parser.add_argument("--seed", type=int, default=20260819)
+    calibration_parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
     cases = load_cases()
@@ -563,7 +778,7 @@ def main() -> int:
         return 0
     if args.command == "schedule":
         schedule = {
-            "benchmark_version": "0.1",
+            "benchmark_version": BENCHMARK_VERSION,
             "randomization_seed": args.seed,
             "total_runs": len(cases) * len(CONDITION_FILES) * 3,
             "runs": build_schedule(cases, args.seed),
@@ -576,6 +791,24 @@ def main() -> int:
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_text(rendered, encoding="utf-8")
             print(f"Schedule saved: {output} ({schedule['total_runs']} runs)")
+        else:
+            print(rendered)
+        return 0
+    if args.command == "calibration-schedule":
+        schedule = {
+            "benchmark_version": BENCHMARK_VERSION,
+            "randomization_seed": args.seed,
+            "total_runs": len(cases),
+            "runs": build_calibration_schedule(cases, args.seed),
+        }
+        rendered = json.dumps(schedule, ensure_ascii=False, indent=2)
+        if args.output:
+            output = args.output
+            if not output.is_absolute():
+                output = ROOT / output
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(rendered, encoding="utf-8")
+            print(f"Calibration schedule saved: {output} ({schedule['total_runs']} runs)")
         else:
             print(rendered)
         return 0

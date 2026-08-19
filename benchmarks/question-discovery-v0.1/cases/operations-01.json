@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "今天 18:00 前",
     "options": [
-      {"id": "switch_hub_carrier", "label": "切换问题枢纽的承运方案并升级处理"},
-      {"id": "warehouse_overtime", "label": "增加仓库夜班与加班"},
-      {"id": "extend_promise", "label": "统一延长对客承诺时效"},
-      {"id": "investigate", "label": "暂不调整，继续观察两周"}
+      {"id": "switch_hub_carrier", "label": "切换问题枢纽的承运方案并升级处理", "public_label": "调整运输路由并升级承运处理"},
+      {"id": "warehouse_overtime", "label": "增加仓库夜班与加班", "public_label": "增加仓内夜班与加班"},
+      {"id": "extend_promise", "label": "统一延长对客承诺时效", "public_label": "统一延长对客承诺时效"},
+      {"id": "investigate", "label": "暂不调整，继续观察两周", "public_label": "暂不调整并继续观察"}
     ]
   },
   "hypotheses": [

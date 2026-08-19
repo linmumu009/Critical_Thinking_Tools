@@ -7,10 +7,10 @@
   "decision": {
     "deadline": "研究例会前",
     "options": [
-      {"id": "test_decay_mechanism", "label": "设计随时间追踪的研究检验效应衰减"},
-      {"id": "abandon", "label": "认定干预无效并终止研究"},
-      {"id": "repeat_same", "label": "按当前终点再原样重复一次"},
-      {"id": "publish_null", "label": "只报告复制研究的零结果"}
+      {"id": "test_decay_mechanism", "label": "设计随时间追踪的研究检验效应衰减", "public_label": "设计补充研究区分时间与实施解释"},
+      {"id": "abandon", "label": "认定干预无效并终止研究", "public_label": "认定干预无效并终止研究"},
+      {"id": "repeat_same", "label": "按当前终点再原样重复一次", "public_label": "按当前设计再原样重复一次"},
+      {"id": "publish_null", "label": "只报告复制研究的零结果", "public_label": "只报告本次复制研究结果"}
     ]
   },
   "hypotheses": [
