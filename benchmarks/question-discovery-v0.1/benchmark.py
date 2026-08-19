@@ -302,6 +302,16 @@ def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, fl
         "protocol_deviation_count": float(
             len(session.get("protocol_deviations") or [])
         ),
+        "oracle_match_disagreement_rate": (
+            sum(
+                1
+                for item in questions
+                if item.get("oracle_match_disagreement") is True
+            )
+            / question_count
+            if question_count
+            else 0.0
+        ),
     }
     if session.get("pre_probabilities") and session.get("post_probabilities"):
         pre_probabilities = validate_probabilities(
@@ -449,6 +459,66 @@ def api_chat_completion(
     if not isinstance(content, str) or not content.strip():
         raise RuntimeError("模型 API 返回了空文本")
     return content.strip()
+
+
+def oracle_api_config(config: dict[str, Any]) -> dict[str, Any]:
+    oracle_config = dict(config)
+    oracle_config["url"] = config.get("oracle_url") or config["url"]
+    oracle_config["api_key"] = config.get("oracle_api_key") or config.get("api_key", "")
+    oracle_config["model_name"] = (
+        config.get("oracle_model_name") or config["model_name"]
+    )
+    oracle_config["temperature"] = 0
+    return oracle_config
+
+
+def semantic_answer_question(
+    case: dict[str, Any],
+    question: str,
+    revealed_ids: set[str],
+    config: dict[str, Any],
+) -> tuple[str | None, str, str]:
+    candidates = [
+        {"fact_id": fact["id"], "fact": fact["answer"]}
+        for fact in case["oracle_facts"]
+        if fact["id"] not in revealed_ids
+    ]
+    if not candidates:
+        return None, "现有事实表没有尚未揭示的相关事实。", "ORACLE_FACT_ID: NONE"
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "你是与受测对话隔离的事实选择器。只能判断候选事实是否直接回答问题，"
+                "不能补充、推断或改写事实。相关但没有回答所问对象、比较、时间或指标的"
+                "事实不能选择。若问题包含多个子句，选择最直接回答主要决策分叉的一条。"
+                "严格只输出 ORACLE_FACT_ID: <fact_id> 或 ORACLE_FACT_ID: NONE。"
+            ),
+        },
+        {
+            "role": "user",
+            "content": json.dumps(
+                {"question": question, "candidate_facts": candidates},
+                ensure_ascii=False,
+                indent=2,
+            ),
+        },
+    ]
+    raw = api_chat_completion(oracle_api_config(config), messages, model_seed=0)
+    selected = parse_protocol_field(raw, "ORACLE_FACT_ID")
+    valid_ids = {candidate["fact_id"] for candidate in candidates}
+    if selected is None:
+        raise ValueError(f"语义 Oracle 未返回 ORACLE_FACT_ID：{raw[:300]}")
+    if selected.upper() == "NONE":
+        return (
+            None,
+            "现有事实表无法回答这个问题。请把问题缩小到可观察的对象、分组、时间、流程或指标。",
+            raw,
+        )
+    if selected not in valid_ids:
+        raise ValueError(f"语义 Oracle 返回无效或已揭示 fact_id：{selected!r}")
+    fact = next(fact for fact in case["oracle_facts"] if fact["id"] == selected)
+    return selected, fact["answer"], raw
 
 
 def parse_protocol_field(text: str, field: str) -> str | None:
@@ -693,7 +763,17 @@ def run_api_session(
             break
         if question is None:
             raise ValueError(f"模型未按协议返回 QUESTION 或 DECIDE：{raw_question[:300]}")
-        fact_id, answer = answer_question(case, question, revealed)
+        keyword_fact_id, keyword_answer = answer_question(case, question, revealed)
+        oracle_mode = config.get("oracle_mode", "semantic_api")
+        semantic_raw: str | None = None
+        if oracle_mode == "semantic_api":
+            fact_id, answer, semantic_raw = semantic_answer_question(
+                case, question, revealed, config
+            )
+        elif oracle_mode == "keyword":
+            fact_id, answer = keyword_fact_id, keyword_answer
+        else:
+            raise ValueError(f"不支持的 oracle_mode：{oracle_mode!r}")
         if fact_id:
             revealed.add(fact_id)
         questions.append(
@@ -701,6 +781,10 @@ def run_api_session(
                 "question": question,
                 "fact_id": fact_id,
                 "oracle_answer": answer,
+                "oracle_mode": oracle_mode,
+                "keyword_fact_id": keyword_fact_id,
+                "oracle_match_disagreement": keyword_fact_id != fact_id,
+                "semantic_oracle_raw": semantic_raw,
                 "manual_annotations": {
                     "decision_changing": None,
                     "discriminative": None,
@@ -776,6 +860,12 @@ def run_api_session(
         "condition": condition,
         "mode": "api",
         "model_name": config["model_name"],
+        "oracle_mode": config.get("oracle_mode", "semantic_api"),
+        "oracle_model_name": (
+            (config.get("oracle_model_name") or config["model_name"])
+            if config.get("oracle_mode", "semantic_api") == "semantic_api"
+            else None
+        ),
         "model_seed": model_seed,
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
@@ -884,6 +974,12 @@ def main() -> int:
         print(f"- endpoint: {completion_endpoint(config['url'])}")
         print(f"- model_name: {config['model_name']}")
         print(f"- api_key: {'已填写' if config.get('api_key') else '未填写'}")
+        print(f"- oracle_mode: {config.get('oracle_mode', 'semantic_api')}")
+        if config.get("oracle_mode", "semantic_api") == "semantic_api":
+            print(
+                "- oracle_model_name: "
+                f"{config.get('oracle_model_name') or config['model_name']}"
+            )
         return 0
     if args.command in {"show", "run"} and args.case_id not in cases:
         parser.error(f"unknown case_id: {args.case_id}")

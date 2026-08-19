@@ -39,6 +39,7 @@ decision_improvement = post_utility - pre_utility
 ## 护栏
 
 - `no_fact_answer_rate`：Oracle 没有可返回新事实的问题比例。
+- `oracle_match_disagreement_rate`：隔离语义 Oracle 与关键词原型的事实选择不一致率。
 - `protocol_deviation_count`：可恢复的输出协议偏离次数。
 - `questions_used`：实际问题数。
 - `pre_choice_probability_consistent` / `post_choice_probability_consistent`：选择的行动是否具有最高主观概率。
@@ -64,3 +65,5 @@ decision_improvement = post_utility - pre_utility
 这些是继续投入完整实验的运行门槛，不是宣称方法有效的效果目标。正式效果判断仍需预注册比较规则和更大样本。
 
 关键词 Oracle 只作为原型执行器。完整实验还要求独立语义 Oracle 或逐题人工复核；不能把“未命中触发词”等同于问题不可回答。机器返回与人工复核不一致时，以预先定义的事实表和人工审计为准，并单独报告不一致率。
+
+语义 Oracle 只返回候选 `fact_id`，不能生成答案；系统随后返回固定事实原文。它使用与受测对话隔离的请求。同一模型兼任受测者与 Oracle 只能用于校准，正式比较必须使用独立模型或人工复核，以降低自我措辞偏好。

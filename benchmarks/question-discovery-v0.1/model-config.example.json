@@ -4,5 +4,9 @@
   "model_name": "YOUR_MODEL_NAME",
   "timeout_seconds": 120,
   "temperature": 0.2,
-  "send_seed": true
+  "send_seed": true,
+  "oracle_mode": "semantic_api",
+  "oracle_url": "",
+  "oracle_api_key": "",
+  "oracle_model_name": ""
 }

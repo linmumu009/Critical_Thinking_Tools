@@ -59,7 +59,11 @@ python benchmark.py run product-01 --condition A
 {
   "url": "https://your-provider.example/v1",
   "api_key": "YOUR_API_KEY",
-  "model_name": "YOUR_MODEL_NAME"
+  "model_name": "YOUR_MODEL_NAME",
+  "oracle_mode": "semantic_api",
+  "oracle_url": "",
+  "oracle_api_key": "",
+  "oracle_model_name": ""
 }
 ```
 
@@ -67,6 +71,9 @@ python benchmark.py run product-01 --condition A
 - `model-config.local.json` 已被 Git 忽略，不会随正常提交上传；仓库只保存不含真实凭证的 `model-config.example.json`。
 - 可先运行 `python benchmark.py check-config` 检查必填项；这个命令不会发起网络请求，也不会显示密钥。
 - 可选参数 `timeout_seconds`、`temperature` 和 `send_seed` 已提供默认值。若服务不接受 `seed` 参数，将 `send_seed` 改为 `false`。
+- `semantic_api` 会在与受测对话隔离的请求中，从尚未揭示的固定事实里只选择一个 `fact_id`；答案仍由本地事实表返回，受测对话看不到事实表。
+- Oracle 三项留空时会复用同一 API 和模型，适合校准但不满足正式独立性要求。正式实验应填写独立的 Oracle 端点/密钥/模型，或逐题人工复核。
+- 若只想复现旧的关键词行为，可将 `oracle_mode` 设为 `keyword`。语义模式每个问题会增加一次 API 调用。
 
 `run` 会：
 
@@ -101,6 +108,7 @@ python benchmark.py run product-01 --condition A
 - `best_option_probability_change`：最佳选项概率变化。
 - `probability_information_efficiency`：每个问题带来的概率质量改善。
 - `no_fact_answer_rate`、`protocol_deviation_count`：自动护栏。
+- `oracle_match_disagreement_rate`：语义 Oracle 与关键词原型选择不同事实的比例，用于审计关键词脆弱性。
 
 ## 需要盲评的指标
 

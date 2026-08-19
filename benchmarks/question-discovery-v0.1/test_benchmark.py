@@ -270,16 +270,47 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(3, body["seed"])
         self.assertNotIn("top-secret", request.data.decode("utf-8"))
 
+    def test_semantic_oracle_selects_fixed_fact_without_rewriting_answer(self):
+        case = self.cases["project-03"]
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "secret",
+            "model_name": "tested-model",
+            "oracle_model_name": "oracle-model",
+        }
+        with patch.object(
+            benchmark,
+            "api_chat_completion",
+            return_value="ORACLE_FACT_ID: f3",
+        ) as completion:
+            fact_id, answer, raw = benchmark.semantic_answer_question(
+                case,
+                "回滚修复后能否降低单位请求计算成本？",
+                {"f1", "f2"},
+                config,
+            )
+
+        self.assertEqual("f3", fact_id)
+        self.assertIn("下降 46%", answer)
+        self.assertEqual("ORACLE_FACT_ID: f3", raw)
+        oracle_config = completion.call_args.args[0]
+        self.assertEqual("oracle-model", oracle_config["model_name"])
+        messages = completion.call_args.args[1]
+        self.assertIn("candidate_facts", messages[1]["content"])
+
     def test_api_session_runs_sequentially_without_hidden_case_leak(self):
         case = self.cases["product-01"]
         config = {
             "url": "https://example.test/v1",
             "api_key": "secret-not-stored-in-session",
             "model_name": "test-model",
+            "oracle_mode": "semantic_api",
+            "oracle_model_name": "oracle-model",
         }
         outputs = [
             'PRE_DECISION: option_d\nPRE_PROBABILITIES: {"option_a":0.25,"option_b":0.25,"option_c":0.25,"option_d":0.25}',
             "QUESTION: 下降按设备和浏览器如何分布？",
+            "ORACLE_FACT_ID: f1",
             "DECIDE",
             'DECISION: option_a\nPROBABILITIES: {"option_a":0.7,"option_b":0.1,"option_c":0.1,"option_d":0.1}\nRATIONALE: 根据客户端分布先回滚。',
         ]
@@ -291,14 +322,18 @@ class BenchmarkTests(unittest.TestCase):
             path = benchmark.run_api_session(case, "A", config, model_seed=7)
 
         self.assertEqual(Path("session.json"), path)
-        self.assertEqual(4, completion.call_count)
+        self.assertEqual(5, completion.call_count)
         session = save.call_args.args[1]
         self.assertEqual("api", session["mode"])
         self.assertEqual("test-model", session["model_name"])
         self.assertNotIn("api_key", session)
         self.assertEqual("f1", session["questions"][0]["fact_id"])
+        self.assertEqual("semantic_api", session["questions"][0]["oracle_mode"])
+        self.assertEqual("oracle-model", session["oracle_model_name"])
         first_messages = completion.call_args_list[0].args[1]
         self.assertNotIn("oracle_facts", first_messages[1]["content"])
+        oracle_messages = completion.call_args_list[2].args[1]
+        self.assertIn("candidate_facts", oracle_messages[1]["content"])
 
     def test_api_session_records_early_decision_as_protocol_deviation(self):
         case = self.cases["product-01"]
@@ -306,6 +341,7 @@ class BenchmarkTests(unittest.TestCase):
             "url": "https://example.test/v1",
             "api_key": "secret",
             "model_name": "test-model",
+            "oracle_mode": "keyword",
         }
         outputs = [
             'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.4,"option_b":0.2,"option_c":0.2,"option_d":0.2}',
@@ -333,6 +369,7 @@ class BenchmarkTests(unittest.TestCase):
             "url": "https://example.test/v1",
             "api_key": "secret",
             "model_name": "test-model",
+            "oracle_mode": "keyword",
         }
         outputs = [
             'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.5,"option_b":0.1,"option_c":0.1,"option_d":0.1}',
