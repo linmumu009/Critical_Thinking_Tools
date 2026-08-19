@@ -99,6 +99,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f6", fact_id)
         self.assertIn("足够余量", answer)
 
+    def test_reroute_capacity_paraphrase_reaches_alternative_route_fact(self):
+        case = self.cases["operations-01"]
+        question = (
+            "是否可以临时改用其他承运商或其他路由绕开 H3，"
+            "这些方案是否有足够能力恢复准时率？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, {"f1", "f2"})
+        self.assertEqual("f6", fact_id)
+        self.assertIn("H2、H4", answer)
+
     def test_content_publish_rate_does_not_match_software_release_fact(self):
         case = self.cases["product-02"]
         question = (
