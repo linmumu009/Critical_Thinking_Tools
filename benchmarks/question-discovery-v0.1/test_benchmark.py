@@ -52,6 +52,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertIsNone(fact_id)
         self.assertIn("无法回答", answer)
 
+    def test_research_timeline_follow_up_reaches_weekly_trajectory(self):
+        case = self.cases["research-01"]
+        question = (
+            "复制研究在第 12 周主终点之前，是否收集过与试点相同的短期结局"
+            "指标（如第 2 周），如果有，结果如何？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, {"f1"})
+        self.assertEqual("f2", fact_id)
+        self.assertIn("第 6 周", answer)
+
     def test_score_session(self):
         case = next(iter(self.cases.values()))
         best = case["utility"]["best_option"]
