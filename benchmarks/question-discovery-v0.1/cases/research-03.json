@@ -1,0 +1,76 @@
+{
+  "case_id": "research-03",
+  "domain": "research",
+  "title": "高满意度与续费下降相矛盾",
+  "brief": "一项客户调查显示满意度达到 91%，但同季度实际续费率下降了 9 个百分点。研究负责人需要判断是信任调查结论、调整产品，还是重新设计取样与验证。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "下季度研究计划确定前",
+    "options": [
+      {"id": "resample_including_churned", "label": "纳入流失客户重新抽样并验证"},
+      {"id": "trust_survey", "label": "采信高满意度，视续费下降为短期波动"},
+      {"id": "improve_product", "label": "直接按现有开放题反馈投入产品改进"},
+      {"id": "add_incentives", "label": "提高问卷奖励以增加回复数量"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "true_satisfaction", "label": "客户满意但受外部因素影响续费"},
+    {"id": "sampling_bias", "label": "调查样本系统性遗漏不满意客户"},
+    {"id": "response_volume", "label": "回复数量不足导致随机误差"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "问卷只发送给调查日仍处于活跃状态的账户，过去 90 天已取消或到期未续费的账户没有进入抽样框。",
+      "triggers": ["抽样框", "发给谁", "样本", "流失客户", "取消", "未续费", "覆盖"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "在另行联系的 60 名流失客户中，只有 24% 表示满意，主要不满集中在价格与关键功能缺失。",
+      "triggers": ["流失客户反馈", "离开客户", "不续费原因", "外部验证", "补访", "价格", "功能缺失"]
+    },
+    {
+      "id": "f3",
+      "criticality": "supporting",
+      "answer": "活跃账户的问卷回复率为 18%，回复者的周使用频次约为未回复者的 2.4 倍。",
+      "triggers": ["回复率", "未回复", "响应偏差", "使用频次", "参与度", "18%"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "91% 的满意度计算只基于完成问卷的人，没有做无响应加权或分层校正。",
+      "triggers": ["计算方法", "加权", "校正", "满意度口径", "无响应", "分层"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "续费下降主要发生在调查抽样框排除的到期账户群体，账单系统记录完整。",
+      "triggers": ["续费数据", "账单", "哪个群体", "到期账户", "数据质量", "下降分布"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "调查发送、页面加载和奖励发放没有技术故障。",
+      "triggers": ["技术故障", "问卷页面", "奖励", "发送失败", "加载", "系统"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "调查抽样框是否覆盖关键决策人群", "fact_ids": ["f1", "f5"], "weight": 3},
+    {"id": "u2", "description": "被遗漏人群的满意度与流失原因", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "回复者与未回复者是否系统不同", "fact_ids": ["f3", "f4"], "weight": 2},
+    {"id": "u4", "description": "技术故障能否解释低覆盖", "fact_ids": ["f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "resample_including_churned",
+    "option_scores": {
+      "resample_including_churned": 10,
+      "trust_survey": 0,
+      "improve_product": 4,
+      "add_incentives": 3
+    },
+    "rationale": "当前调查同时存在覆盖偏差和无响应偏差，先纳入流失客户重构样本才能回答续费决策问题。"
+  },
+  "leakage_terms": ["流失客户没有进入抽样框", "24%", "回复者的周使用频次", "无响应加权"]
+}

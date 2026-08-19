@@ -1,0 +1,76 @@
+{
+  "case_id": "product-02",
+  "domain": "product",
+  "title": "创作者活跃度下降",
+  "brief": "内容创作平台的周活跃创作者数在两周内下降了 18%，但注册用户数和内容浏览量没有同步下降。团队正在讨论是做留存折扣、增加新手教学，还是修复产品问题。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "本周产品评审会",
+    "options": [
+      {"id": "fix_quota_banner", "label": "修复上传额度提示与拦截逻辑"},
+      {"id": "retention_discount", "label": "向不活跃创作者发放订阅折扣"},
+      {"id": "add_tutorial", "label": "增加创作和上传教学"},
+      {"id": "wait", "label": "等待更多留存数据"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "upload_block", "label": "上传路径被错误阻断"},
+    {"id": "motivation", "label": "创作者动机或价格敏感度变化"},
+    {"id": "learning", "label": "新用户不会使用创作功能"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "下降只出现在免费套餐；付费创作者的周活跃率稳定。",
+      "triggers": ["套餐", "免费", "付费", "用户分层", "会员", "群体", "细分"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "免费用户在上传用量达到额度的约 60% 时就会看到“额度已满”，且上传按钮被禁用。",
+      "triggers": ["上传", "额度", "按钮", "拦截", "提示", "用量", "失败环节"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "两周前上线了新的额度进度条；百分比计算把 MB 和 MiB 混用，导致部分免费用户被提前判满。",
+      "triggers": ["版本", "上线", "发布", "进度条", "计算", "单位", "MB", "MiB", "改动"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "受影响用户仍频繁打开编辑器，但在上传素材步骤退出，说明浏览与创作意愿并未同时消失。",
+      "triggers": ["行为路径", "编辑器", "退出", "会话", "使用路径", "创作意愿"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "同期竞品发布了新功能，但竞品曝光地区与本产品活跃度下降没有明显对应关系。",
+      "triggers": ["竞品", "竞争", "市场", "外部", "替代产品"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "新手教学完成率和首次作品发布率没有显著变化。",
+      "triggers": ["教学", "新手", "首次", "引导", "学习", "onboarding"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "下降集中在哪类用户", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "具体受阻的行为与机制", "fact_ids": ["f2", "f4"], "weight": 3},
+    {"id": "u3", "description": "问题是否与近期变更一致", "fact_ids": ["f3"], "weight": 3},
+    {"id": "u4", "description": "教学或竞争能否解释变化", "fact_ids": ["f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "fix_quota_banner",
+    "option_scores": {
+      "fix_quota_banner": 10,
+      "retention_discount": 2,
+      "add_tutorial": 1,
+      "wait": 3
+    },
+    "rationale": "活跃下降来自可定位的额度计算错误，直接修复比折扣或教学更贴合机制。"
+  },
+  "leakage_terms": ["免费套餐", "额度已满", "MB 和 MiB", "提前判满"]
+}

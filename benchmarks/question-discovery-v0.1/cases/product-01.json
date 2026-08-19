@@ -1,0 +1,76 @@
+{
+  "case_id": "product-01",
+  "domain": "product",
+  "title": "注册完成率突然下降",
+  "brief": "某 SaaS 产品过去 7 天的新用户注册完成率从 61% 降至 43%。同期总访问量基本稳定，下降发生在一次常规版本发布之后，但团队还没有确定两者是否相关。负责人明天需要决定如何处理。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "明天 12:00 前",
+    "options": [
+      {"id": "rollback_release", "label": "回滚最近版本并修复注册流程"},
+      {"id": "increase_acquisition", "label": "增加获客投放弥补注册量"},
+      {"id": "change_offer", "label": "调整价格或新用户优惠"},
+      {"id": "observe", "label": "保持现状，再观察一周"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "client_regression", "label": "特定客户端的注册交互回归"},
+    {"id": "traffic_quality", "label": "流量质量下降"},
+    {"id": "offer_problem", "label": "价格或优惠吸引力下降"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "按设备和浏览器拆分后，下降几乎全部来自 iPhone 上的 Safari；其他平台完成率在正常波动范围内。",
+      "triggers": ["平台", "设备", "浏览器", "客户端", "系统", "手机", "iPhone", "Safari", "端别"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "漏斗显示流失集中在输入一次性验证码的页面：该页进入人数正常，但提交成功率显著下降。",
+      "triggers": ["漏斗", "步骤", "环节", "页面", "流失点", "提交", "验证码", "转化路径"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "最近版本修改了验证码输入框的自动聚焦逻辑；受影响客户端上，自动填充后提交按钮仍保持禁用。",
+      "triggers": ["发布", "版本", "代码", "改动", "变更", "部署", "自动聚焦", "自动填充", "输入框"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "Android、桌面 Chrome 和桌面 Safari 的注册完成率没有显著变化。",
+      "triggers": ["Android", "安卓", "桌面", "其他平台", "对照平台"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "各获客渠道的流量占比、地区构成和落地页与前四周基本一致。",
+      "triggers": ["流量", "渠道", "获客", "地区", "来源", "广告", "访客质量"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "价格、新用户优惠和付款要求在最近一个月均未改变。",
+      "triggers": ["价格", "优惠", "付款", "套餐", "促销", "offer"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "问题是否集中在特定客户端", "fact_ids": ["f1", "f4"], "weight": 3},
+    {"id": "u2", "description": "注册流程中的具体失败环节", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "发布变更是否提供可复现机制", "fact_ids": ["f3"], "weight": 3},
+    {"id": "u4", "description": "流量或商业条件是否变化", "fact_ids": ["f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "rollback_release",
+    "option_scores": {
+      "rollback_release": 10,
+      "increase_acquisition": 0,
+      "change_offer": 1,
+      "observe": 3
+    },
+    "rationale": "存在可复现的客户端回归；回滚能最快恢复注册并避免把预算投入无关渠道。"
+  },
+  "leakage_terms": ["iPhone Safari", "一次性验证码页面", "自动聚焦逻辑", "提交按钮仍保持禁用"]
+}

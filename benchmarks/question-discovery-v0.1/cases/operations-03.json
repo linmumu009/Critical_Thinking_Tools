@@ -1,0 +1,76 @@
+{
+  "case_id": "operations-03",
+  "domain": "operations",
+  "title": "商品退货率显著上升",
+  "brief": "某家居商品近三周的退货率从 8% 升至 15%。商品、仓储、客服团队分别怀疑质量、包装和客户政策，负责人需要在下周补货前决定干预方向。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "下周补货前",
+    "options": [
+      {"id": "replace_carton", "label": "更换包装箱并隔离现有薄箱库存"},
+      {"id": "inspect_product", "label": "暂停销售并全面复检产品"},
+      {"id": "tighten_return_policy", "label": "收紧退货政策"},
+      {"id": "wait", "label": "继续销售并再观察一个月"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "product_defect", "label": "产品本体缺陷增加"},
+    {"id": "packaging_damage", "label": "包装变化导致运输损坏"},
+    {"id": "policy_abuse", "label": "退货政策被滥用"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "退货增长集中在由 DC2 配送中心发出的订单；DC1 和 DC3 的退货率没有显著变化。",
+      "triggers": ["仓库", "配送中心", "地区", "来源", "DC", "分布", "集中"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "DC2 新增退货中，约 72% 的原因是到货破损，照片主要显示包装箱角部压溃。",
+      "triggers": ["退货原因", "破损", "照片", "损坏", "客户反馈", "压溃", "外观"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "DC2 三周前切换为一家新供应商的薄壁包装箱，时间与退货上升一致。",
+      "triggers": ["包装", "纸箱", "供应商", "最近变更", "材料", "时间", "切换"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "仓内跌落和堆码复测中，新包装箱的角部抗压强度比原包装低 38%。",
+      "triggers": ["测试", "抗压", "跌落", "堆码", "强度", "复测", "验证"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "产品出厂抽检的不良率仍为 0.7%，与过去半年一致。",
+      "triggers": ["产品质量", "抽检", "不良率", "缺陷", "生产", "工厂"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "客户构成、退货政策和退款审核规则在最近两个月均未变化。",
+      "triggers": ["客户构成", "退货政策", "退款", "审核", "滥用", "规则"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "异常是否集中在特定履约节点", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "新增退货的直接表现是什么", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "是否存在与时间吻合且经验证的包装机制", "fact_ids": ["f3", "f4"], "weight": 3},
+    {"id": "u4", "description": "产品质量或政策是否是替代解释", "fact_ids": ["f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "replace_carton",
+    "option_scores": {
+      "replace_carton": 10,
+      "inspect_product": 3,
+      "tighten_return_policy": 0,
+      "wait": 2
+    },
+    "rationale": "异常、损伤模式、材料切换与复测证据共同指向 DC2 的薄壁包装箱，应立即更换并隔离。"
+  },
+  "leakage_terms": ["DC2", "72%", "薄壁包装箱", "角部抗压强度"]
+}

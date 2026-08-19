@@ -1,0 +1,4 @@
+sessions/*.json
+results/*.json
+__pycache__/
+

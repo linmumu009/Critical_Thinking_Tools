@@ -1,0 +1,76 @@
+{
+  "case_id": "operations-02",
+  "domain": "operations",
+  "title": "客服等待时间突然翻倍",
+  "brief": "客户服务热线的平均等待时间在一周内从 3 分钟升至 7 分钟，投诉随之增加。管理层需要在本周内决定是增配人员、调整渠道还是处理系统问题。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "本周五前",
+    "options": [
+      {"id": "rollback_verification", "label": "回退新身份核验流程并修复超时"},
+      {"id": "add_staff", "label": "临时增配一线客服人员"},
+      {"id": "deflect_chat", "label": "引导更多客户转向在线聊天"},
+      {"id": "wait", "label": "保持现状，等待需求回落"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "volume_spike", "label": "来电量激增"},
+    {"id": "staff_shortage", "label": "人员短缺或排班异常"},
+    {"id": "handling_regression", "label": "特定业务的处理时长异常"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "distractor",
+      "answer": "总来电量仅比过去四周均值高 3%，不足以解释等待时间翻倍。",
+      "triggers": ["来电量", "呼入", "需求", "电话数量", "峰值", "流量"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "平均处理时长的增加几乎全部来自账户找回业务，其他来电类型保持稳定。",
+      "triggers": ["处理时长", "业务类型", "问题类型", "账户找回", "分类", "通话时长"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "账户找回上周启用了新的身份核验服务；约 28% 的请求超时，坐席必须手工重试。",
+      "triggers": ["系统", "核验", "身份", "最近变更", "超时", "手工", "重试", "上线"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "坐席到岗率、排班覆盖和平均并发数均在正常范围内。",
+      "triggers": ["人员", "排班", "到岗", "缺勤", "坐席", "并发", "产能"]
+    },
+    {
+      "id": "f5",
+      "criticality": "supporting",
+      "answer": "可完成自动核验的账户找回来电，其处理时长与历史水平相同。",
+      "triggers": ["成功核验", "正常请求", "对照", "历史", "自动核验"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "在线聊天队列的主要需求是订单咨询，与账户找回来电人群重叠很低。",
+      "triggers": ["在线聊天", "聊天", "渠道", "转移", "重叠", "订单咨询"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "等待上升来自需求量还是处理时长", "fact_ids": ["f1", "f2"], "weight": 3},
+    {"id": "u2", "description": "是否存在具体的系统性处理瓶颈", "fact_ids": ["f3", "f5"], "weight": 3},
+    {"id": "u3", "description": "人员供给是否异常", "fact_ids": ["f4"], "weight": 2},
+    {"id": "u4", "description": "渠道分流能否触达问题人群", "fact_ids": ["f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "rollback_verification",
+    "option_scores": {
+      "rollback_verification": 10,
+      "add_staff": 4,
+      "deflect_chat": 1,
+      "wait": 2
+    },
+    "rationale": "核心问题是新核验服务超时拉长处理时间；回退并修复比扩员或渠道转移更直接。"
+  },
+  "leakage_terms": ["账户找回业务", "身份核验服务", "28%", "手工重试"]
+}

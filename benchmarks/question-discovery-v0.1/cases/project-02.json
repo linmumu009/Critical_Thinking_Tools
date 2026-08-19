@@ -1,0 +1,76 @@
+{
+  "case_id": "project-02",
+  "domain": "project",
+  "title": "新工具试点采用率偏低",
+  "brief": "公司在两个部门试点一款协作工具，四周后只有 31% 的目标员工达到每周使用标准。项目组需要决定增加培训、强制使用、修复技术接入，还是终止试点。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "本周试点评审会前",
+    "options": [
+      {"id": "fix_permissions", "label": "修复单点登录授权并主动恢复受影响账户"},
+      {"id": "more_training", "label": "安排第二轮全员培训"},
+      {"id": "mandate_use", "label": "将每周使用设为强制要求"},
+      {"id": "cancel", "label": "终止试点并恢复原工具"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "low_value", "label": "工具不符合实际工作需求"},
+    {"id": "skill_gap", "label": "员工不会使用"},
+    {"id": "access_failure", "label": "账户接入阻碍采用"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "目标员工中有 60% 未获得正确的单点登录 entitlement，首次登录会看到无权限错误。",
+      "triggers": ["登录", "权限", "账户", "接入", "错误", "SSO", "单点登录", "能否使用"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "在拥有正确权限的员工中，达到每周使用标准的比例为 78%。",
+      "triggers": ["有权限用户", "可访问", "分组", "采用率拆分", "成功登录", "对照"]
+    },
+    {
+      "id": "f3",
+      "criticality": "supporting",
+      "answer": "培训出席率为 91%，课后操作测验通过率为 88%。",
+      "triggers": ["培训", "出席", "测验", "会不会用", "学习", "通过率"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "已正常使用的员工中，74% 表示工具替代了原有的手工协调步骤。",
+      "triggers": ["价值", "需求", "工作流", "反馈", "替代", "有用", "满意"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "两个试点部门的直属经理都已在周会上明确支持试点，没有禁止或负面激励。",
+      "triggers": ["经理", "支持", "文化", "激励", "阻力", "管理层"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "终端设备和浏览器版本均满足工具要求，网络可用性没有异常。",
+      "triggers": ["设备", "浏览器", "网络", "兼容", "终端", "基础设施"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "目标用户能否实际登录和访问", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "排除访问障碍后的真实采用率", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "培训不足或产品价值是否是主要障碍", "fact_ids": ["f3", "f4"], "weight": 2},
+    {"id": "u4", "description": "管理支持或设备条件是否构成替代解释", "fact_ids": ["f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "fix_permissions",
+    "option_scores": {
+      "fix_permissions": 10,
+      "more_training": 3,
+      "mandate_use": 1,
+      "cancel": 0
+    },
+    "rationale": "总体采用率被大规模授权错误压低；可访问用户的采用和价值信号都较强，应先修复接入。"
+  },
+  "leakage_terms": ["60% 未获得", "entitlement", "无权限错误", "78%"]
+}

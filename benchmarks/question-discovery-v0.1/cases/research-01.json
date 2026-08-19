@@ -1,0 +1,76 @@
+{
+  "case_id": "research-01",
+  "domain": "research",
+  "title": "干预试验的复制效应消失",
+  "brief": "一个行为干预在小规模试点中显示出明显效果，但扩大样本后的复制研究没有得到显著结果。研究团队需要决定这是方法失败、执行偏差，还是效应只在特定条件下存在。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "研究例会前",
+    "options": [
+      {"id": "test_decay_mechanism", "label": "设计随时间追踪的研究检验效应衰减"},
+      {"id": "abandon", "label": "认定干预无效并终止研究"},
+      {"id": "repeat_same", "label": "按当前终点再原样重复一次"},
+      {"id": "publish_null", "label": "只报告复制研究的零结果"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "false_positive", "label": "试点是假阳性"},
+    {"id": "implementation", "label": "扩大后执行质量下降"},
+    {"id": "effect_decay", "label": "效应存在但会随时间衰减"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "试点的主要终点在干预后第 2 周测量，而复制研究的主要终点在第 12 周测量。",
+      "triggers": ["测量时间", "终点", "随访", "第几周", "时间点", "设计差异"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "复制研究的探索性周度数据在第 2 周显示与试点相近的效应，但从第 6 周开始接近于零。",
+      "triggers": ["周度", "时间趋势", "早期效果", "衰减", "探索性", "中间测量", "轨迹"]
+    },
+    {
+      "id": "f3",
+      "criticality": "supporting",
+      "answer": "两项研究的目标人群、招募标准和基线特征高度相似。",
+      "triggers": ["人群", "样本", "基线", "招募", "外部效度", "构成"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "执行审计显示，干预材料送达率和参与完成率在两项研究中相差不到 3 个百分点。",
+      "triggers": ["执行", "依从", "完成率", "送达", "保真度", "实施", "审计"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "复制研究按预注册方案完成，样本量足以检测到试点报告效应的 60%。",
+      "triggers": ["样本量", "功效", "统计", "预注册", "检验力", "显著性"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "随机化后各组在主要基线变量上平衡，失访率也没有组间差异。",
+      "triggers": ["随机", "平衡", "失访", "偏差", "基线差异", "分组"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "两次研究的结果测量窗口是否一致", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "复制数据是否显示可解释的时间轨迹", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "样本和执行差异能否解释结果", "fact_ids": ["f3", "f4"], "weight": 2},
+    {"id": "u4", "description": "统计功效或随机化问题是否构成替代解释", "fact_ids": ["f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "test_decay_mechanism",
+    "option_scores": {
+      "test_decay_mechanism": 10,
+      "abandon": 2,
+      "repeat_same": 4,
+      "publish_null": 3
+    },
+    "rationale": "两项研究的关键差异是终点时间，且复制数据已呈现早期有效、随后衰减的轨迹，应直接检验持续性机制。"
+  },
+  "leakage_terms": ["第 2 周", "第 12 周", "第 6 周", "效应衰减"]
+}

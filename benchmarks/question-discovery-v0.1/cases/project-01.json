@@ -1,0 +1,76 @@
+{
+  "case_id": "project-01",
+  "domain": "project",
+  "title": "关键版本连续延期",
+  "brief": "一个跨团队软件项目连续两次错过发布日期，当前预测还会再延迟三周。管理层需要决定冻结范围、增加工程师、调整外部合作方，还是重排项目依赖。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "明天项目委员会前",
+    "options": [
+      {"id": "replan_dependency", "label": "围绕关键外部依赖重排计划并建立替代测试路径"},
+      {"id": "freeze_scope", "label": "立即冻结全部功能范围"},
+      {"id": "add_engineers", "label": "向开发团队增加工程师"},
+      {"id": "replace_vendor", "label": "更换当前交付供应商"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "scope_growth", "label": "范围持续膨胀"},
+    {"id": "capacity_shortage", "label": "团队工程能力不足"},
+    {"id": "critical_dependency", "label": "关键外部依赖阻塞验证"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "当前关键路径上的合规接口集成测试已被阻塞 16 个工作日，原因是监管方测试沙箱不可用。",
+      "triggers": ["关键路径", "阻塞", "依赖", "集成测试", "沙箱", "合规接口", "延迟在哪里"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "除合规接口外，其余开发任务已完成 92%，但端到端验收必须通过该接口才能开始。",
+      "triggers": ["完成度", "剩余工作", "验收", "端到端", "必须", "前置条件"]
+    },
+    {
+      "id": "f3",
+      "criticality": "supporting",
+      "answer": "过去六周没有新增范围；已批准需求的故事点总量反而减少了 4%。",
+      "triggers": ["范围", "需求", "新增", "故事点", "变更", "范围膨胀"]
+    },
+    {
+      "id": "f4",
+      "criticality": "distractor",
+      "answer": "开发团队利用率约为 78%，代码交付速度与最初计划基本一致。",
+      "triggers": ["人员", "工程师", "利用率", "速度", "产能", "开发效率"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "外部交付供应商负责的三个模块均按合同日期完成，并已通过单元验收。",
+      "triggers": ["供应商", "外包", "合同", "交付", "模块", "是否延期"]
+    },
+    {
+      "id": "f6",
+      "criticality": "supporting",
+      "answer": "监管方允许使用录制回放数据完成大部分预验收；正式沙箱只需用于最后一轮认证。",
+      "triggers": ["替代方案", "绕过", "模拟", "回放", "预验收", "监管方允许", "如何解锁"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "真正的关键路径阻塞是什么", "fact_ids": ["f1", "f2"], "weight": 3},
+    {"id": "u2", "description": "是否存在可用的替代验证路径", "fact_ids": ["f6"], "weight": 3},
+    {"id": "u3", "description": "范围增长是否导致延期", "fact_ids": ["f3"], "weight": 1},
+    {"id": "u4", "description": "内部产能或供应商交付是否构成瓶颈", "fact_ids": ["f4", "f5"], "weight": 2}
+  ],
+  "utility": {
+    "best_option": "replan_dependency",
+    "option_scores": {
+      "replan_dependency": 10,
+      "freeze_scope": 4,
+      "add_engineers": 2,
+      "replace_vendor": 0
+    },
+    "rationale": "延期由单一外部测试依赖造成，且存在获准的预验收替代路径；重排依赖比扩员或换供应商有效。"
+  },
+  "leakage_terms": ["监管方测试沙箱", "16 个工作日", "完成 92%", "录制回放数据"]
+}

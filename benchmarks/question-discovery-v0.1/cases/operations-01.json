@@ -1,0 +1,76 @@
+{
+  "case_id": "operations-01",
+  "domain": "operations",
+  "title": "区域订单准时送达率下降",
+  "brief": "一家电商过去两周的准时送达率从 94% 降至 82%，同时订单量增长了约 12%。仓储和运输团队对原因判断不一，运营负责人需要在今天决定优先采取哪项措施。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "今天 18:00 前",
+    "options": [
+      {"id": "switch_hub_carrier", "label": "切换问题枢纽的承运方案并升级处理"},
+      {"id": "warehouse_overtime", "label": "增加仓库夜班与加班"},
+      {"id": "extend_promise", "label": "统一延长对客承诺时效"},
+      {"id": "investigate", "label": "暂不调整，继续观察两周"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "warehouse_capacity", "label": "仓库容量不足导致出库延迟"},
+    {"id": "carrier_bottleneck", "label": "运输网络中的局部枢纽拥堵"},
+    {"id": "demand_mix", "label": "订单结构变化导致履约变慢"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "按地区拆分后，准时率下降的 87% 来自东区；其余地区仍接近历史水平。",
+      "triggers": ["地区", "区域", "分布", "东区", "拆分", "集中", "哪里"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "东区包裹在承运商 H3 枢纽的平均停留时间由 4 小时升至 19 小时，并频繁错过当晚干线。",
+      "triggers": ["枢纽", "承运商", "运输", "停留", "干线", "节点", "路径", "扫描"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "仓库扫描记录显示 96% 的受影响订单仍在截单时间前完成拣选、打包和交接。",
+      "triggers": ["仓库", "出库", "拣选", "打包", "交接", "截单", "加班", "扫描记录"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "同一承运商的其他枢纽没有出现类似停留时间上升。",
+      "triggers": ["其他枢纽", "对照", "承运商其他", "网络", "是否普遍"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "订单的品类、重量和加急订单占比与前四周基本一致。",
+      "triggers": ["订单结构", "品类", "重量", "加急", "组合", "需求"]
+    },
+    {
+      "id": "f6",
+      "criticality": "supporting",
+      "answer": "H3 枢纽上周上线了新的自动分拣线，承运商已确认夜间积压，但尚未主动切换线路。",
+      "triggers": ["最近变更", "分拣线", "上线", "积压", "承运商确认", "原因", "故障"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "延迟是否集中在特定区域", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "时间损失发生在仓内还是承运环节", "fact_ids": ["f2", "f3"], "weight": 3},
+    {"id": "u3", "description": "问题是否能定位到具体且可干预的机制", "fact_ids": ["f4", "f6"], "weight": 3},
+    {"id": "u4", "description": "订单结构是否构成替代解释", "fact_ids": ["f5"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "switch_hub_carrier",
+    "option_scores": {
+      "switch_hub_carrier": 10,
+      "warehouse_overtime": 1,
+      "extend_promise": 4,
+      "investigate": 2
+    },
+    "rationale": "延迟集中在一个已确认积压的承运枢纽，而仓内作业正常；切换线路直接处理关键瓶颈。"
+  },
+  "leakage_terms": ["东区", "H3 枢纽", "19 小时", "新的自动分拣线"]
+}

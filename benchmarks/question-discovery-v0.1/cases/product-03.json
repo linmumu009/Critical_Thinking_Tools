@@ -1,0 +1,76 @@
+{
+  "case_id": "product-03",
+  "domain": "product",
+  "title": "站内搜索无结果率升高",
+  "brief": "电商平台扩充商品目录后，站内搜索的无结果率从 7% 升到 13%，转化率也小幅下降。搜索、内容和商品团队对应该优先增加内容、调整排序还是修复查询处理存在分歧。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "三天内确定修复计划",
+    "options": [
+      {"id": "fix_normalization", "label": "修复查询和商品编码的规范化逻辑"},
+      {"id": "add_content", "label": "补充商品标题、描述和同义词"},
+      {"id": "tune_ranking", "label": "重新训练搜索排序模型"},
+      {"id": "wait", "label": "继续收集查询日志"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "normalization", "label": "新目录编码与查询规范化不一致"},
+    {"id": "content_gap", "label": "新商品元数据不足"},
+    {"id": "ranking", "label": "排序相关性变差"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "无结果增长主要来自西班牙语站点，其他语言站点基本稳定。",
+      "triggers": ["语言", "地区", "站点", "国家", "西班牙语", "locale", "地域", "分组"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "失败查询大量包含带连字符的商品型号；去掉连字符后，同一商品可以正常搜到。",
+      "triggers": ["查询样本", "关键词", "型号", "连字符", "字符", "失败查询", "搜不到", "格式"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "新目录导入器保留了型号中的连字符，但西班牙语查询处理器会删除连字符；索引与查询因此无法匹配。",
+      "triggers": ["导入", "索引", "规范化", "处理器", "匹配", "目录变更", "pipeline", "查询处理"]
+    },
+    {
+      "id": "f4",
+      "criticality": "supporting",
+      "answer": "对有结果的查询，点击率和购买转化没有下降，排序质量指标也保持稳定。",
+      "triggers": ["排序", "点击率", "有结果", "相关性", "购买转化", "质量指标"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "新增商品的标题和描述完整度与旧目录相当，同义词覆盖率没有明显下降。",
+      "triggers": ["内容", "标题", "描述", "同义词", "元数据", "完整度"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "搜索集群健康、索引延迟和错误率均在正常范围。",
+      "triggers": ["集群", "服务健康", "延迟", "错误率", "基础设施", "宕机"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "无结果增长的分布边界", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "失败查询共有的可复现特征", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "查询与索引不一致的机制", "fact_ids": ["f3"], "weight": 3},
+    {"id": "u4", "description": "排序和内容质量是否异常", "fact_ids": ["f4", "f5"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "fix_normalization",
+    "option_scores": {
+      "fix_normalization": 10,
+      "add_content": 2,
+      "tune_ranking": 1,
+      "wait": 4
+    },
+    "rationale": "无结果由可复现的索引/查询规范化不一致导致，修复匹配逻辑是直接措施。"
+  },
+  "leakage_terms": ["西班牙语站点", "带连字符", "删除连字符", "无法匹配"]
+}

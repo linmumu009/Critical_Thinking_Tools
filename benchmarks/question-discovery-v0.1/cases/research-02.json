@@ -1,0 +1,76 @@
+{
+  "case_id": "research-02",
+  "domain": "research",
+  "title": "文本分类模型离线指标下降",
+  "brief": "一个已稳定运行的三分类文本模型在最新月度评估中，宏平均 F1 从 0.81 降至 0.69。团队需要判断应该重训模型、回退版本、调整阈值，还是先修复评估环节。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "下一次模型发布前",
+    "options": [
+      {"id": "fix_label_pipeline", "label": "修复标签映射并重新计算评估"},
+      {"id": "retrain_latest", "label": "立即用最新数据重训模型"},
+      {"id": "revert_model", "label": "回退到上一个模型版本"},
+      {"id": "raise_threshold", "label": "统一提高分类置信度阈值"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "model_regression", "label": "模型版本本身回归"},
+    {"id": "distribution_shift", "label": "输入分布发生漂移"},
+    {"id": "evaluation_error", "label": "标签或评估流水线错误"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "本月首次使用新标注供应商，供应商交付文件中的 neutral 标签被内部导入脚本映射成 negative。",
+      "triggers": ["标签", "标注", "供应商", "映射", "导入", "neutral", "negative", "评估数据"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "修正映射后在同一批样本上重算，宏平均 F1 为 0.80。",
+      "triggers": ["修正", "重算", "复核", "映射后", "重新评估", "验证"]
+    },
+    {
+      "id": "f3",
+      "criticality": "supporting",
+      "answer": "固定金标准测试集上的 F1 仍为 0.81，与过去三个版本一致。",
+      "triggers": ["金标准", "固定测试集", "历史对照", "旧数据", "基准集", "稳定"]
+    },
+    {
+      "id": "f4",
+      "criticality": "distractor",
+      "answer": "词频、文本长度、语言和来源渠道的分布漂移指标均低于告警阈值。",
+      "triggers": ["分布", "漂移", "输入", "词频", "文本长度", "渠道", "语言"]
+    },
+    {
+      "id": "f5",
+      "criticality": "supporting",
+      "answer": "人工抽查显示分歧几乎都集中在 neutral 类，positive 与 negative 的一致率没有下降。",
+      "triggers": ["混淆矩阵", "类别", "分歧", "人工抽查", "neutral类", "哪一类"]
+    },
+    {
+      "id": "f6",
+      "criticality": "distractor",
+      "answer": "线上投诉代理指标和人工质检结果在本月没有显著恶化。",
+      "triggers": ["线上", "生产", "投诉", "人工质检", "实际表现", "代理指标"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "本月评估数据或流水线发生了什么变化", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "修正可疑环节后指标是否恢复", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "独立基准是否支持模型真实退化", "fact_ids": ["f3", "f6"], "weight": 2},
+    {"id": "u4", "description": "分布漂移或类别模式是否提供替代解释", "fact_ids": ["f4", "f5"], "weight": 2}
+  ],
+  "utility": {
+    "best_option": "fix_label_pipeline",
+    "option_scores": {
+      "fix_label_pipeline": 10,
+      "retrain_latest": 2,
+      "revert_model": 1,
+      "raise_threshold": 0
+    },
+    "rationale": "下降来自明确的标签映射错误，修复后指标恢复；改变模型会针对不存在的性能问题。"
+  },
+  "leakage_terms": ["neutral 标签", "映射成 negative", "新标注供应商", "0.80"]
+}

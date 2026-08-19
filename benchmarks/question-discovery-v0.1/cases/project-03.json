@@ -1,0 +1,76 @@
+{
+  "case_id": "project-03",
+  "domain": "project",
+  "title": "云服务成本异常增长",
+  "brief": "某在线服务本月云成本增长 70%，而流量只增长 10%。项目负责人需要在预算评审前决定优先优化数据库、限制用户、协商价格，还是修复应用层效率。",
+  "question_budget": 5,
+  "decision": {
+    "deadline": "三天后的预算评审前",
+    "options": [
+      {"id": "fix_cache", "label": "修复缓存命名空间并恢复命中率"},
+      {"id": "renegotiate_vendor", "label": "优先与云厂商重谈折扣"},
+      {"id": "cap_users", "label": "限制高频用户请求量"},
+      {"id": "resize_db", "label": "缩减数据库实例规格"}
+    ]
+  },
+  "hypotheses": [
+    {"id": "price_change", "label": "云资源单价变化"},
+    {"id": "user_growth", "label": "用户行为导致资源增长"},
+    {"id": "application_regression", "label": "应用变更降低资源效率"}
+  ],
+  "oracle_facts": [
+    {
+      "id": "f1",
+      "criticality": "critical",
+      "answer": "成本分解显示增长的 81% 来自应用计算实例，数据库、存储和网络费用变化很小。",
+      "triggers": ["成本分解", "资源类型", "计算", "数据库", "存储", "网络", "费用构成"]
+    },
+    {
+      "id": "f2",
+      "criticality": "critical",
+      "answer": "应用缓存命中率在一次命名空间迁移后从 92% 降至 31%。",
+      "triggers": ["缓存", "命中率", "最近变更", "迁移", "命名空间", "应用效率"]
+    },
+    {
+      "id": "f3",
+      "criticality": "critical",
+      "answer": "回放测试表明恢复旧命名规则后，单位请求计算时间下降 46%，功能输出保持一致。",
+      "triggers": ["回放", "验证", "旧命名", "单位请求", "计算时间", "修复后", "实验"]
+    },
+    {
+      "id": "f4",
+      "criticality": "distractor",
+      "answer": "数据库 CPU 使用率和查询延迟与上月相同，实例仍保留约 35% 的峰值余量。",
+      "triggers": ["数据库", "CPU", "查询", "实例规格", "余量", "延迟"]
+    },
+    {
+      "id": "f5",
+      "criticality": "distractor",
+      "answer": "云厂商资源单价和合同折扣本月没有变化。",
+      "triggers": ["单价", "折扣", "合同", "云厂商", "价格", "计费"]
+    },
+    {
+      "id": "f6",
+      "criticality": "supporting",
+      "answer": "每位活跃用户的请求次数与上月相差不到 2%，新增流量的地区和功能组合也基本一致。",
+      "triggers": ["用户行为", "每用户", "请求次数", "流量结构", "地区", "功能组合"]
+    }
+  ],
+  "key_unknowns": [
+    {"id": "u1", "description": "成本增长来自哪类资源", "fact_ids": ["f1"], "weight": 3},
+    {"id": "u2", "description": "是否存在与成本同步的应用效率变化", "fact_ids": ["f2"], "weight": 3},
+    {"id": "u3", "description": "候选修复是否经过因果验证", "fact_ids": ["f3"], "weight": 3},
+    {"id": "u4", "description": "数据库、价格或用户行为能否解释增长", "fact_ids": ["f4", "f5", "f6"], "weight": 1}
+  ],
+  "utility": {
+    "best_option": "fix_cache",
+    "option_scores": {
+      "fix_cache": 10,
+      "renegotiate_vendor": 2,
+      "cap_users": 1,
+      "resize_db": 0
+    },
+    "rationale": "成本增长集中在计算层，缓存迁移提供了时间一致的机制，且回放验证了修复收益。"
+  },
+  "leakage_terms": ["81%", "缓存命中率", "92%", "31%", "命名空间迁移"]
+}
