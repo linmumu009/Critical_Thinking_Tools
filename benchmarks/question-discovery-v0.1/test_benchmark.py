@@ -99,6 +99,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f6", fact_id)
         self.assertIn("足够余量", answer)
 
+    def test_content_publish_rate_does_not_match_software_release_fact(self):
+        case = self.cases["product-02"]
+        question = (
+            "过去两周内，创作者从提交内容到成功发布的发布成功率或发布失败率"
+            "是否出现明显变化？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, set())
+        self.assertEqual("f2", fact_id)
+        self.assertIn("上传按钮被禁用", answer)
+
     def test_score_session(self):
         case = next(iter(self.cases.values()))
         best = case["utility"]["best_option"]
