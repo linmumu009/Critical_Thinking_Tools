@@ -119,6 +119,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual("f2", fact_id)
         self.assertIn("上传按钮被禁用", answer)
 
+    def test_application_change_resource_question_reaches_cache_fact(self):
+        case = self.cases["project-03"]
+        question = (
+            "应用计算实例成本激增是否与某次应用层发布或配置变更时间重合，"
+            "并且每请求资源消耗是否增加？"
+        )
+        fact_id, answer = benchmark.answer_question(case, question, {"f1"})
+        self.assertEqual("f2", fact_id)
+        self.assertIn("命中率", answer)
+
     def test_score_session(self):
         case = next(iter(self.cases.values()))
         best = case["utility"]["best_option"]
