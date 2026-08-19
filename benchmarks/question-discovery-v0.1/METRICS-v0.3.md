@@ -60,7 +60,7 @@ counterfactual_separation_gain = post_separation - pre_separation
 - `mean_no_fact_answer_rate`：事实覆盖和无效往返的混合指标，不能单独判定问题质量。
 - `protocol_deviation_count`：输出协议稳定性。
 - Oracle 匹配不一致与人工审计错误：正式实验必须单独报告。
-- API 调用量与模型成本：N/A/B/C 使用相同问题上限，不允许某条件获得更多事实预算。
+- API 调用量与模型成本：N/A/B/C/D 使用相同问题上限，不允许某条件获得更多事实预算。
 
 ## 运行门槛
 

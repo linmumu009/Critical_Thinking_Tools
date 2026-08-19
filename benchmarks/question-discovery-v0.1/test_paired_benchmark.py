@@ -39,6 +39,20 @@ class PairedBenchmarkTests(unittest.TestCase):
         for term in ["QFT", "STORM", "钢人", "问题发现漏斗", "Who"]:
             self.assertNotIn(term, prompt)
 
+    def test_minimal_discriminative_condition_is_registered_and_generic(self):
+        self.assertEqual(
+            "minimal-discriminative.md",
+            paired_benchmark.PAIRED_CONDITION_FILES["D"],
+        )
+        messages = paired_benchmark.preflight_messages(
+            self.pairs["product-pair-01"][0], "D"
+        )
+        prompt = messages[0]["content"]
+        for required in ["行动敏感", "解释判别", "证据可答", "不要继续细化"]:
+            self.assertIn(required, prompt)
+        for case_specific in ["Safari", "单点登录", "路由策略", "低基线"]:
+            self.assertNotIn(case_specific, prompt)
+
     def test_paired_score_rewards_correct_counterfactual_separation(self):
         variants = self.pairs["product-pair-01"]
         base_metrics = {
@@ -92,9 +106,9 @@ class PairedBenchmarkTests(unittest.TestCase):
 
     def test_schedule_includes_native_and_all_other_conditions(self):
         runs = paired_benchmark.build_paired_schedule(self.pairs, seed=1, repeats=1)
-        self.assertEqual(16, len(runs))
+        self.assertEqual(20, len(runs))
         self.assertEqual(
-            {"N", "A", "B", "C"}, {run["condition"] for run in runs}
+            {"N", "A", "B", "C", "D"}, {run["condition"] for run in runs}
         )
 
     def test_calibration_progress_resumes_completed_units(self):

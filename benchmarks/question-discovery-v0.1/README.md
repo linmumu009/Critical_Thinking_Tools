@@ -8,13 +8,15 @@ v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选
 
 v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组反事实成对案例和独立预检入口，设计与命令见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)，首次 API 结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。
 
-完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗四个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
+完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗和 D 最小判别问题五个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
 首个产品案例四条件成对烟雾结果见 [SMOKE-REPORT-v0.3-product.md](SMOKE-REPORT-v0.3-product.md)。
 
 跨案例长批次使用 `paired_benchmark.py calibrate`；它会在每个成对单元后保存进度并支持安全续跑，详细参数见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)。
 
 首轮包含 N 原生模型的四条件完整校准已经结束，汇总、验证与结论边界见 [CALIBRATION-REPORT-v0.3-seed1.md](CALIBRATION-REPORT-v0.3-seed1.md)。
+
+N/A 三种子确认显示普通提问的总体优势很小且存在稳定案例异质性，完整报告见 [CONFIRMATION-REPORT-v0.3-seeds1-3.md](CONFIRMATION-REPORT-v0.3-seeds1-3.md)。据此新增 D“最小判别问题”，冻结提示、开发门槛和排除规则见 [D-PRE-REGISTRATION-v0.3.md](D-PRE-REGISTRATION-v0.3.md)。
 
 ## 当前范围
 
@@ -27,7 +29,7 @@ v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组�
 
 这些案例由项目维护者构造，不应被称为“专家金标准”。它们适合验证流程和发现明显差异；正式结论仍需要领域专家案例和真实使用者实验。
 
-## 三种条件
+## v0.2 三种条件
 
 | 条件 | 文件 | 含义 |
 | --- | --- | --- |

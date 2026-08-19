@@ -13,7 +13,11 @@ import benchmark
 ROOT = Path(__file__).resolve().parent
 PAIRS_DIR = ROOT / "cases-v0.3"
 RESULTS_DIR = ROOT / "results"
-PAIRED_CONDITION_FILES = {"N": "native.md", **benchmark.CONDITION_FILES}
+PAIRED_CONDITION_FILES = {
+    "N": "native.md",
+    **benchmark.CONDITION_FILES,
+    "D": "minimal-discriminative.md",
+}
 
 
 def load_pairs() -> dict[str, list[dict[str, Any]]]:
