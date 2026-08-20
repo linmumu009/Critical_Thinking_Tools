@@ -1,0 +1,70 @@
+{
+  "pair_id": "research-pair-02",
+  "domain": "research",
+  "title": "跨地区复制研究在两项同期改动后失去效应",
+  "brief": "一项行为干预在原研究中有稳定正效应，但跨地区复制的总体效应接近零。复制阶段同时上线了新版问卷翻译，也更换了样本招募平台。干预执行记录完整，研究团队本周需要决定优先修正测量、样本还是接受零效应。",
+  "question_budget": 4,
+  "option_rotation": 1,
+  "decision": {
+    "deadline": "本周五前",
+    "options": [
+      {"id": "repair_measurement", "label": "修正翻译并重新计分", "public_label": "修正问卷翻译并重新分析"},
+      {"id": "repair_sample", "label": "重加权并补充目标样本", "public_label": "重加权并补充目标人群样本"},
+      {"id": "rerun", "label": "按当前设计重新开展研究", "public_label": "按当前设计扩大样本重做"},
+      {"id": "report_null", "label": "按当前结果报告零效应", "public_label": "按当前结果报告零效应"}
+    ]
+  },
+  "evidence_capabilities": [
+    {"source": "问卷逐题数据", "available_fields": ["语言版本", "题目", "正反向计分", "缺失率", "反应时"]},
+    {"source": "翻译与认知访谈", "available_fields": ["原文", "回译", "理解测试", "旧版译文", "新版译文"]},
+    {"source": "样本与招募记录", "available_fields": ["地区", "经验层级", "年龄", "平台", "目标总体"]},
+    {"source": "统计复算环境", "available_fields": ["重加权", "分层效应", "干预执行", "标准误", "功效"]}
+  ],
+  "evidence_catalog": [
+    {"id": "E1", "question": "效应和异常回答是否集中在特定语言版本、题目或计分方向？"},
+    {"id": "E2", "question": "原文、新旧译文的回译和认知访谈是否显示含义变化？"},
+    {"id": "E3", "question": "复制样本与预定目标总体在地区和经验层级上有何差异？"},
+    {"id": "E4", "question": "按目标总体重加权或分层后，主要效应如何变化？"},
+    {"id": "E5", "question": "各地区的干预执行、暴露和依从性是否一致？"},
+    {"id": "E6", "question": "当前样本量、标准误和预设最小效应对应的检验功效如何？"}
+  ],
+  "leakage_terms": ["反向题", "否定词", "新手参与者", "8%", "+11%"],
+  "hypotheses": [
+    {"id": "translation_change", "label": "问卷翻译改变了测量含义"},
+    {"id": "sample_change", "label": "招募平台改变了样本构成"}
+  ],
+  "variants": [
+    {
+      "variant_id": "translation",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "零效应几乎全部来自新版翻译中的两道反向题；该语言组的回答方向与其余题目相反。", "triggers": ["语言", "题目", "反向", "计分"]},
+        {"id": "f2", "evidence_id": "E2", "criticality": "critical", "answer": "认知访谈显示新版译文漏掉否定词；恢复旧译文并重新计分后总体效应为 +9.4%。", "triggers": ["翻译", "回译", "认知访谈", "旧译文"]},
+        {"id": "f3", "evidence_id": "E3", "criticality": "supporting", "answer": "复制样本在地区和经验层级上与预定目标总体的差异均小于 3 个百分点。", "triggers": ["样本", "地区", "经验", "目标总体"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "人口与经验层级重加权后的未校正效应仍接近零。", "triggers": ["重加权", "分层", "效应"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "supporting", "answer": "各地区干预暴露和依从性均超过 92%，没有执行异常。", "triggers": ["执行", "暴露", "依从性"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "distractor", "answer": "当前样本对预设最小效应的功效为 88%。", "triggers": ["样本量", "功效", "标准误"]}
+      ],
+      "key_unknowns": [
+        {"id": "item_anomaly", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "translation_reanalysis", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "repair_measurement", "option_scores": {"repair_measurement": 10, "repair_sample": 3, "rerun": 4, "report_null": 1}}
+    },
+    {
+      "variant_id": "sample",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E3", "criticality": "critical", "answer": "新平台样本中目标新手参与者只占 8%，预定总体中应为 46%；其余人口变量接近目标。", "triggers": ["样本", "新手", "平台", "目标总体"]},
+        {"id": "f2", "evidence_id": "E4", "criticality": "critical", "answer": "新手层效应为 +11%，熟练层接近零；按目标总体重加权后总体效应为 +6.8%。", "triggers": ["分层", "重加权", "新手", "效应"]},
+        {"id": "f3", "evidence_id": "E1", "criticality": "supporting", "answer": "各语言版本的逐题方向、缺失率和反应时一致，没有题目级异常。", "triggers": ["语言", "题目", "缺失", "反应时"]},
+        {"id": "f4", "evidence_id": "E2", "criticality": "distractor", "answer": "新旧译文在回译和认知访谈中的含义一致。", "triggers": ["翻译", "回译", "认知访谈"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "supporting", "answer": "各地区干预暴露和依从性均超过 92%，没有执行异常。", "triggers": ["执行", "暴露", "依从性"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "distractor", "answer": "总体样本量足够，但当前构成对新手层效应估计不精确。", "triggers": ["样本量", "功效", "标准误"]}
+      ],
+      "key_unknowns": [
+        {"id": "sample_gap", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "weighted_effect", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "repair_sample", "option_scores": {"repair_measurement": 3, "repair_sample": 10, "rerun": 4, "report_null": 1}}
+    }
+  ]
+}

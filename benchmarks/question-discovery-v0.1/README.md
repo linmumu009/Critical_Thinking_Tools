@@ -28,6 +28,8 @@ Q/F 据此把开放式问题生成改成对已知可回答证据的选择，并�
 
 Q/F 三种子开发结果见 [QF-DEVELOPMENT-REPORT-v0.3.md](QF-DEVELOPMENT-REPORT-v0.3.md)：Q 与 F 的主指标分别为 `+0.760` 和 `+0.693`，48 个隐藏分支最终全部选择正确；但 F 相对 Q 为 `-0.067`，没有证明竞争解释状态的额外价值。Q 因 1 次停止格式偏离只通过 5 项门槛中的 4 项，F 通过 6 项中的 5 项，两者均不按原协议直接进入新案例。可用 `python audit_qf_results.py` 从三个本地进度账本重新计算指标并检查状态、唯一性和凭证泄漏。
 
+v0.4 将实验推进到候选问题生成：新增 4 组未参与旧提示设计的反事实案例，同期比较 N 原生模型、A 普通提问，以及原生、QFT 风格、STORM 风格和双向钢人四种候选生成器。四个生成条件共用盲匹配/去重和 Q 式选择器；冻结设计、72 个三种子成对单元及推进门槛见 [CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md](CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md)，运行入口为 `candidate_benchmark.py`。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。

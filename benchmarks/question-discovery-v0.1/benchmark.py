@@ -102,6 +102,8 @@ def public_case(
     }
     if include_evidence_catalog:
         payload["evidence_catalog"] = case["evidence_catalog"]
+    if case.get("evidence_capabilities"):
+        payload["evidence_capabilities"] = case["evidence_capabilities"]
     return payload
 
 
@@ -226,8 +228,13 @@ def validate_case(case: dict[str, Any]) -> list[str]:
         if normalize(term) in public_text:
             errors.append(f"hidden leakage term appears in public text: {term}")
 
-    if case.get("question_budget", 5) != 5:
-        errors.append("benchmark cases must use a five-question budget")
+    question_budget = case.get("question_budget", 5)
+    if (
+        not isinstance(question_budget, int)
+        or isinstance(question_budget, bool)
+        or not 1 <= question_budget <= 5
+    ):
+        errors.append("benchmark question budget must be an integer from 1 to 5")
     return errors
 
 

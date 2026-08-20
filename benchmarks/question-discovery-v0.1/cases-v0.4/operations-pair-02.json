@@ -1,0 +1,70 @@
+{
+  "pair_id": "operations-pair-02",
+  "domain": "operations",
+  "title": "冷链订单损耗在两项同期变更后上升",
+  "brief": "某生鲜网络的冷链订单损耗率两周内从 1.8% 升至 6.4%。上升前同一天启用了新的跨仓路由策略，也切换了保温箱材料供应商。订单量基本稳定，运营负责人今天需要决定先处理哪一项。",
+  "question_budget": 4,
+  "option_rotation": 2,
+  "decision": {
+    "deadline": "今天 18:00 前",
+    "options": [
+      {"id": "rollback_routing", "label": "回滚跨仓路由策略", "public_label": "暂时回滚新的跨仓路由策略"},
+      {"id": "quarantine_packaging", "label": "隔离新保温材料批次", "public_label": "隔离新保温材料并恢复旧供应"},
+      {"id": "targeted_inspection", "label": "增加定向温控检查", "public_label": "先增加定向温控检查"},
+      {"id": "observe", "label": "维持现状继续观察", "public_label": "维持现状再观察一周"}
+    ]
+  },
+  "evidence_capabilities": [
+    {"source": "运输轨迹与温度日志", "available_fields": ["线路", "中转仓", "停留时长", "箱内温度", "到货时间"]},
+    {"source": "路由离线回放", "available_fields": ["新旧路由策略", "固定订单集", "中转节点", "预计时效"]},
+    {"source": "包装实验室", "available_fields": ["材料批次", "环境温度", "保温时长", "破损记录"]},
+    {"source": "订单与资源记录", "available_fields": ["品类", "地区", "天气", "替代材料库存", "切换耗时"]}
+  ],
+  "evidence_catalog": [
+    {"id": "E1", "question": "损耗订单的线路、中转仓、停留时长和箱内温度分布有何异常？"},
+    {"id": "E2", "question": "对固定订单集回放新旧路由策略时，中转节点和预计时效如何变化？"},
+    {"id": "E3", "question": "新旧保温材料在相同环境和时长下的温控表现如何？"},
+    {"id": "E4", "question": "材料来料检查中的厚度、封边和批次缺陷如何分布？"},
+    {"id": "E5", "question": "上升前后订单品类、地区和天气条件是否明显变化？"},
+    {"id": "E6", "question": "旧材料库存和旧路由恢复分别需要多久，是否影响当前履约能力？"}
+  ],
+  "leakage_terms": ["北区中转仓", "5.2 小时", "B-17", "封边开裂"],
+  "hypotheses": [
+    {"id": "routing_change", "label": "路由改变造成中转延误"},
+    {"id": "packaging_change", "label": "保温材料改变造成温控失效"}
+  ],
+  "variants": [
+    {
+      "variant_id": "routing",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "损耗订单的 82% 经过同一北区中转仓，平均额外停留 5.2 小时，升温发生在等待转运期间。", "triggers": ["线路", "中转", "停留", "温度"]},
+        {"id": "f2", "evidence_id": "E2", "criticality": "critical", "answer": "固定订单回放旧路由后不再经过该中转仓，预计准时率从 71% 恢复到 94%。", "triggers": ["路由", "回放", "中转", "时效"]},
+        {"id": "f3", "evidence_id": "E3", "criticality": "supporting", "answer": "新旧材料在 8 小时实验中的保温曲线差异不到 0.4 摄氏度。", "triggers": ["材料", "保温", "实验", "温度"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "来料抽检未发现厚度或封边缺陷集中。", "triggers": ["来料", "厚度", "封边", "批次"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "distractor", "answer": "品类、地区和天气分布与前两周接近。", "triggers": ["品类", "地区", "天气"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "supporting", "answer": "旧路由可在 3 小时内恢复，现有仓容能够承接回切流量。", "triggers": ["恢复", "耗时", "仓容", "履约"]}
+      ],
+      "key_unknowns": [
+        {"id": "delay_cluster", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "routing_counterfactual", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "rollback_routing", "option_scores": {"rollback_routing": 10, "quarantine_packaging": 3, "targeted_inspection": 5, "observe": 1}}
+    },
+    {
+      "variant_id": "packaging",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E3", "criticality": "critical", "answer": "新材料 B-17 批次在 3 小时后保温性能快速下降，而旧材料 8 小时内保持稳定。", "triggers": ["材料", "批次", "保温", "时长"]},
+        {"id": "f2", "evidence_id": "E4", "criticality": "critical", "answer": "损耗订单使用的 B-17 箱体中 37% 存在封边开裂，其他批次为 2%。", "triggers": ["批次", "封边", "缺陷", "来料"]},
+        {"id": "f3", "evidence_id": "E1", "criticality": "supporting", "answer": "损耗没有集中在特定线路或中转仓，正常时效订单也出现相同升温。", "triggers": ["线路", "中转", "时效", "温度"]},
+        {"id": "f4", "evidence_id": "E2", "criticality": "distractor", "answer": "新旧路由回放的预计时效相差不到 20 分钟。", "triggers": ["路由", "回放", "时效"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "distractor", "answer": "品类、地区和天气分布与前两周接近。", "triggers": ["品类", "地区", "天气"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "supporting", "answer": "旧材料库存可覆盖 10 天订单，供应切换可在 6 小时内完成。", "triggers": ["库存", "切换", "耗时", "材料"]}
+      ],
+      "key_unknowns": [
+        {"id": "thermal_test", "weight": 3, "fact_ids": ["f1"]},
+        {"id": "batch_defect", "weight": 2, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "quarantine_packaging", "option_scores": {"rollback_routing": 3, "quarantine_packaging": 10, "targeted_inspection": 5, "observe": 1}}
+    }
+  ]
+}

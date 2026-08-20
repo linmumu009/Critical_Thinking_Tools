@@ -1,0 +1,70 @@
+{
+  "pair_id": "product-pair-02",
+  "domain": "product",
+  "title": "站内搜索点击率在两项同期改动后下降",
+  "brief": "某电商站内搜索到商品详情的点击率一周内从 34% 降至 21%。下降前同一天更换了向量排序模型，也上线了新的商品分类归一规则。搜索量和库存总量基本稳定，负责人明天需要决定优先处理哪一项。",
+  "question_budget": 4,
+  "option_rotation": 0,
+  "decision": {
+    "deadline": "明天 14:00 前",
+    "options": [
+      {"id": "rollback_ranker", "label": "回滚向量排序模型", "public_label": "暂时回滚新的排序模型"},
+      {"id": "revert_taxonomy", "label": "恢复旧分类归一规则", "public_label": "暂时恢复旧分类归一规则"},
+      {"id": "targeted_tuning", "label": "定向修复高损失查询", "public_label": "先定向修复高损失查询"},
+      {"id": "observe", "label": "维持现状继续观察", "public_label": "维持现状再观察一周"}
+    ]
+  },
+  "evidence_capabilities": [
+    {"source": "搜索漏斗日志", "available_fields": ["查询类型", "结果位置", "设备", "零结果率", "详情点击率"]},
+    {"source": "离线回放环境", "available_fields": ["新旧排序模型", "新旧分类规则", "固定查询集", "固定商品快照"]},
+    {"source": "商品目录审计", "available_fields": ["叶级分类", "映射覆盖", "上下架状态", "变更时间"]},
+    {"source": "流量与发布记录", "available_fields": ["渠道", "新老用户", "地区", "回滚耗时", "依赖项"]}
+  ],
+  "evidence_catalog": [
+    {"id": "E1", "question": "点击率或零结果率的变化集中在哪类查询、结果位置或设备？"},
+    {"id": "E2", "question": "在固定查询和商品快照上回放新旧排序模型时，点击结果如何变化？"},
+    {"id": "E3", "question": "在固定查询和商品快照上回放新旧分类归一规则时，候选商品与点击结果如何变化？"},
+    {"id": "E4", "question": "商品目录的分类映射覆盖和上下架状态在下降前后如何变化？"},
+    {"id": "E5", "question": "下降前后搜索渠道、新老用户、地区和查询构成是否变化？"},
+    {"id": "E6", "question": "回滚排序模型或分类规则分别需要多久，是否存在依赖或合规阻碍？"}
+  ],
+  "leakage_terms": ["分数尺度", "长尾型号词", "叶级映射丢失", "18%"],
+  "hypotheses": [
+    {"id": "ranker_change", "label": "排序模型改变了结果优先级"},
+    {"id": "taxonomy_change", "label": "分类规则改变了候选商品覆盖"}
+  ],
+  "variants": [
+    {
+      "variant_id": "ranker",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "下降集中在长尾型号词；相关商品仍在候选集中，但新模型把它们从前 3 位推到第 8 位以后。", "triggers": ["查询类型", "位置", "长尾", "型号"]},
+        {"id": "f2", "evidence_id": "E2", "criticality": "critical", "answer": "固定快照回放旧排序模型后点击率估算恢复到 33%，分类规则保持不变。", "triggers": ["排序", "回放", "旧模型", "固定快照"]},
+        {"id": "f3", "evidence_id": "E3", "criticality": "supporting", "answer": "新旧分类规则只改变了 1.5% 查询的候选集合，长尾型号词结果不受影响。", "triggers": ["分类", "规则", "候选集合"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "分类映射覆盖率为 99.1%，上下架商品数量与前一周接近。", "triggers": ["目录", "映射", "上下架"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "distractor", "answer": "渠道、新老用户、地区和查询长度分布均无明显变化。", "triggers": ["渠道", "用户", "地区", "构成"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "supporting", "answer": "旧排序模型可在 2 小时内恢复，没有数据迁移或合规阻碍。", "triggers": ["回滚", "耗时", "依赖", "合规"]}
+      ],
+      "key_unknowns": [
+        {"id": "loss_location", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "ranker_counterfactual", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "rollback_ranker", "option_scores": {"rollback_ranker": 10, "revert_taxonomy": 3, "targeted_tuning": 5, "observe": 1}}
+    },
+    {
+      "variant_id": "taxonomy",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "零结果增长集中在刚被重命名的叶级分类；这些查询在候选生成阶段就找不到商品。", "triggers": ["零结果", "分类", "候选", "查询类型"]},
+        {"id": "f2", "evidence_id": "E3", "criticality": "critical", "answer": "固定快照回放旧分类规则后，受影响查询重新获得候选商品，点击率估算恢复到 31%。", "triggers": ["分类", "回放", "旧规则", "候选商品"]},
+        {"id": "f3", "evidence_id": "E2", "criticality": "supporting", "answer": "在相同候选集合上，新旧排序模型的前 5 位重合率为 96%，点击估算相差不到 1%。", "triggers": ["排序", "前5", "重合", "点击估算"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "supporting", "answer": "新规则使 18% 的热门商品失去叶级分类映射，但商品仍处于上架状态。", "triggers": ["目录", "映射", "叶级", "上架"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "distractor", "answer": "渠道、新老用户、地区和查询长度分布均无明显变化。", "triggers": ["渠道", "用户", "地区", "构成"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "distractor", "answer": "排序模型可以快速回滚，但这不会恢复缺失的分类映射。", "triggers": ["回滚", "排序", "依赖"]}
+      ],
+      "key_unknowns": [
+        {"id": "zero_result_location", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "taxonomy_counterfactual", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "revert_taxonomy", "option_scores": {"rollback_ranker": 3, "revert_taxonomy": 10, "targeted_tuning": 5, "observe": 1}}
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "pair_id": "project-pair-02",
+  "domain": "project",
+  "title": "发票处理周期在两项同期改动后延长",
+  "brief": "某共享服务团队的发票端到端处理周期三周内从 2.1 天升至 5.8 天。上升前同一天调整了审批矩阵，也更换了 OCR 服务商。发票总量基本稳定，项目负责人本周需要决定先回退哪项改动。",
+  "question_budget": 4,
+  "option_rotation": 3,
+  "decision": {
+    "deadline": "本周三 17:00 前",
+    "options": [
+      {"id": "rollback_approval", "label": "回退审批矩阵", "public_label": "暂时回退新的审批矩阵"},
+      {"id": "restore_ocr", "label": "恢复旧 OCR 服务", "public_label": "暂时恢复旧 OCR 服务"},
+      {"id": "manual_triage", "label": "增加人工分流", "public_label": "先增加人工分流和加急处理"},
+      {"id": "observe", "label": "维持现状继续观察", "public_label": "维持现状再观察两周"}
+    ]
+  },
+  "evidence_capabilities": [
+    {"source": "流程事件日志", "available_fields": ["处理阶段", "进入时间", "离开时间", "退回原因", "审批人"]},
+    {"source": "审批规则回放", "available_fields": ["新旧矩阵", "固定发票集", "审批层级", "合规检查"]},
+    {"source": "OCR 基准集", "available_fields": ["新旧服务", "字段准确率", "文档类型", "人工修正"]},
+    {"source": "队列与发布记录", "available_fields": ["发票来源", "语言", "页数", "人员容量", "回退耗时"]}
+  ],
+  "evidence_catalog": [
+    {"id": "E1", "question": "新增处理时间集中在哪个流程阶段、退回原因或审批层级？"},
+    {"id": "E2", "question": "对固定发票集回放新旧审批矩阵时，层级、等待和合规结果如何变化？"},
+    {"id": "E3", "question": "新旧 OCR 服务在固定文档集上的字段准确率和人工修正量如何变化？"},
+    {"id": "E4", "question": "上升前后发票来源、语言、页数和文档类型构成是否变化？"},
+    {"id": "E5", "question": "各处理队列的到达量、人员容量和积压变化如何？"},
+    {"id": "E6", "question": "回退审批矩阵或 OCR 服务分别需要多久，是否满足合规要求？"}
+  ],
+  "leakage_terms": ["二级审批", "1.9 天", "税额字段", "14%"],
+  "hypotheses": [
+    {"id": "approval_change", "label": "审批矩阵增加了流程等待"},
+    {"id": "ocr_change", "label": "OCR 服务增加了人工修正"}
+  ],
+  "variants": [
+    {
+      "variant_id": "approval",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "新增时间的 76% 是等待二级审批；其中多数发票按旧矩阵只需一级审批。", "triggers": ["阶段", "审批", "等待", "层级"]},
+        {"id": "f2", "evidence_id": "E2", "criticality": "critical", "answer": "固定发票回放旧矩阵后平均周期降至 2.3 天，合规检查结果不变。", "triggers": ["审批矩阵", "回放", "周期", "合规"]},
+        {"id": "f3", "evidence_id": "E3", "criticality": "distractor", "answer": "新旧 OCR 的核心字段准确率均约为 97%，人工修正量相差不到 1%。", "triggers": ["OCR", "准确率", "修正"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "来源、语言、页数和文档类型构成与改动前接近。", "triggers": ["来源", "语言", "页数", "文档类型"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "supporting", "answer": "录入和付款队列容量充足，只有审批等待队列持续积压。", "triggers": ["队列", "容量", "积压"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "supporting", "answer": "旧矩阵已通过合规复核，可在 4 小时内恢复。", "triggers": ["回退", "审批", "合规", "耗时"]}
+      ],
+      "key_unknowns": [
+        {"id": "stage_delay", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "approval_counterfactual", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "rollback_approval", "option_scores": {"rollback_approval": 10, "restore_ocr": 3, "manual_triage": 5, "observe": 1}}
+    },
+    {
+      "variant_id": "ocr",
+      "oracle_facts": [
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "新增时间集中在录入后的人工修正循环，主要退回原因为税额字段不一致。", "triggers": ["阶段", "退回", "修正", "税额"]},
+        {"id": "f2", "evidence_id": "E3", "criticality": "critical", "answer": "新 OCR 对含折扣的税额字段准确率只有 81%，旧服务为 96%；恢复旧结果后人工修正量下降 72%。", "triggers": ["OCR", "税额", "准确率", "人工修正"]},
+        {"id": "f3", "evidence_id": "E2", "criticality": "supporting", "answer": "新旧审批矩阵对当前发票集的平均等待差为 0.2 天。", "triggers": ["审批矩阵", "回放", "等待"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "supporting", "answer": "含折扣发票占比从 6% 升至 14%，放大了字段识别问题。", "triggers": ["文档类型", "折扣", "构成"]},
+        {"id": "f5", "evidence_id": "E5", "criticality": "distractor", "answer": "总到达量和人员容量稳定，积压随人工修正量同步变化。", "triggers": ["队列", "容量", "积压"]},
+        {"id": "f6", "evidence_id": "E6", "criticality": "distractor", "answer": "旧审批矩阵可快速恢复，但不会改变 OCR 字段结果。", "triggers": ["回退", "审批", "耗时"]}
+      ],
+      "key_unknowns": [
+        {"id": "correction_loop", "weight": 2, "fact_ids": ["f1"]},
+        {"id": "ocr_benchmark", "weight": 3, "fact_ids": ["f2"]}
+      ],
+      "utility": {"best_option": "restore_ocr", "option_scores": {"rollback_approval": 3, "restore_ocr": 10, "manual_triage": 5, "observe": 1}}
+    }
+  ]
+}
