@@ -22,6 +22,8 @@ D 三种子开发结果见 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v
 
 E（D2）据此把竞争解释、证据目标和已尝试状态变成控制器可检查协议；开发运行前冻结的效果、成本、加权无事实率和状态完整性门槛见 [E-PRE-REGISTRATION-v0.3.md](E-PRE-REGISTRATION-v0.3.md)。
 
+E 三种子开发结果见 [E-DEVELOPMENT-REPORT-v0.3.md](E-DEVELOPMENT-REPORT-v0.3.md)：主指标只有 `+0.196`，低于 N、A、D，只通过 7 项推进门槛中的 2 项。状态机成功阻止 TARGET 复用并把平均问题数限制到 `2.63`，但 63 个问题中 55 个无事实、17/24 个会话零命中；下一版应测试不泄漏答案的证据目录与原子查询接口。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。
