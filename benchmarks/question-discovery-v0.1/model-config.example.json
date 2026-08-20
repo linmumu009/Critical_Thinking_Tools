@@ -9,5 +9,16 @@
   "oracle_mode": "semantic_api",
   "oracle_url": "",
   "oracle_api_key": "",
-  "oracle_model_name": ""
+  "oracle_model_name": "",
+  "audit_judge_a_url": "",
+  "audit_judge_a_api_key": "",
+  "audit_judge_a_model_name": "",
+  "audit_judge_b_url": "",
+  "audit_judge_b_api_key": "",
+  "audit_judge_b_model_name": "",
+  "audit_arbitrator_url": "",
+  "audit_arbitrator_api_key": "",
+  "audit_arbitrator_model_name": "",
+  "audit_max_tokens": 1536,
+  "audit_thinking_budget": 512
 }

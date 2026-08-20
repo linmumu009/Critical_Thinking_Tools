@@ -30,7 +30,7 @@ Q/F 三种子开发结果见 [QF-DEVELOPMENT-REPORT-v0.3.md](QF-DEVELOPMENT-REPO
 
 v0.4 将实验推进到候选问题生成：新增 4 组未参与旧提示设计的反事实案例，同期比较 N 原生模型、A 普通提问，以及原生、QFT 风格、STORM 风格和双向钢人四种候选生成器。四个生成条件共用盲匹配/去重和 Q 式选择器；冻结设计、72 个三种子成对单元及推进门槛见 [CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md](CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md)，运行入口为 `candidate_benchmark.py`。
 
-v0.4 三种子正式结果见 [CANDIDATE-GENERATION-REPORT-v0.4.md](CANDIDATE-GENERATION-REPORT-v0.4.md)：两阶段 G0 的下游主指标高于同期原生 N，但候选覆盖未过门槛；GQ/GS 相对 G0 的增量不足，GB 不适合作为默认候选生成器。自动匹配结论正在按 [BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md](BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md) 做条件盲人工敏感性复核。
+v0.4 三种子正式结果见 [CANDIDATE-GENERATION-REPORT-v0.4.md](CANDIDATE-GENERATION-REPORT-v0.4.md)：两阶段 G0 的下游主指标高于同期原生 N，但候选覆盖未过门槛；GQ/GS 相对 G0 的增量不足，GB 不适合作为默认候选生成器。随后按 [AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md](AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md) 完成双评审加分歧仲裁的条件盲自动审计，不要求人工参与；[敏感性报告](automated-review-v0.4/AUTOMATED-SENSITIVITY-REPORT.md)显示原匹配与仲裁共识有 `17.45%` 不一致，下一步先修匹配接口。
 
 ## 当前范围
 
@@ -66,18 +66,13 @@ python benchmark.py calibration-schedule --output results/calibration-v0.2.json
 python benchmark.py run product-01 --condition A
 ```
 
-候选映射盲审材料已经生成在 [blind-review-v0.4/](blind-review-v0.4/)。协调者应分别发送 `reviewer-bundles/reviewer-1.zip` 与 `reviewer-bundles/reviewer-2.zip`，不要发送整个仓库。评审者解压后直接打开完全离线的 `review-form.html`，逐组填写、自动保存本机进度并导出标准 CSV；也可使用 Markdown 包和空白表。协调者在两份 384 行评分锁定后运行：
+候选映射默认使用全自动条件盲审计。它让两个隔离提示独立评分，只有分歧字段才交给第三个自动角色仲裁；进度逐角色保存，中断后重复命令即可续跑：
 
 ```powershell
-python blind_mapping_review.py validate-review blind-review-v0.4/forms/reviewer-1.csv
-python blind_mapping_review.py validate-review blind-review-v0.4/forms/reviewer-2.csv
-python blind_mapping_review.py prepare-adjudication `
-  --reviewer-one blind-review-v0.4/forms/reviewer-1.csv `
-  --reviewer-two blind-review-v0.4/forms/reviewer-2.csv `
-  --output blind-review-v0.4/coordinator/adjudication.csv
+python automated_mapping_audit.py run
 ```
 
-当前评分表故意留空，填写前校验失败属于预期行为。本阶段不调用模型 API；仲裁完成后才运行 `analyze` 重算人工映射候选指标与推进门槛。
+结果写入 [automated-review-v0.4/](automated-review-v0.4/)。本轮双评审映射一致率为 `0.901`、kappa 为 `0.868`，原自动匹配与仲裁共识有 `67/384`（`17.45%`）不一致；所有原推进门槛均未翻转，自动路线建议为 `fix_mapping_interface_before_gq2`。三个角色均使用 `qwen3.8-max`，所以结论只表示对另一组盲提示的稳定性，不是人工确认或外部金标准。旧 [blind-review-v0.4/](blind-review-v0.4/) 双人离线包继续保留，但只在以后需要外部复核时使用，不是当前流程的必经步骤。
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
 

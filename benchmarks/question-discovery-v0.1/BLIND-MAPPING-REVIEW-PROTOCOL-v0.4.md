@@ -1,8 +1,10 @@
-# Candidate Generation v0.4：条件盲人工映射复核协议
+# Candidate Generation v0.4：可选条件盲人工映射复核协议
 
 日期：2026-08-20
 
-状态：评审前冻结；尚未录入人工评分
+状态：已由全自动盲审路线替代为非必经步骤；尚未录入人工评分
+
+当前默认路线见 [AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md](AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md)。本协议和离线评审包保留为将来可选的外部复核材料，不阻塞自动审计或后续生成器开发。
 
 ## 为什么先做这一步
 

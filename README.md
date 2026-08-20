@@ -41,7 +41,7 @@
 
 - [Question Discovery Benchmark v0.4](benchmarks/question-discovery-v0.1/)：以公开描述相同、隐藏事实与最佳行动相反的成对案例，分开测量候选问题生成、证据匹配和下游决策，覆盖产品、运营、研究和项目四类任务。
 - 比较 N 原生模型、A 普通提问、B/C/D/E/Q/F 历史协议，以及 G0 原生、GQ QFT 风格、GS STORM 风格、GB 双向钢人四种候选生成系统；以提问前后反事实分支概率分离增量为下游主指标，以双分支关键证据覆盖为候选主指标。
-- 提供 API 自动运行与 Codex 直接处理两种入口，以及隔离语义 Oracle、可恢复随机运行计划、自动决策指标和人工盲评字段。
+- 提供 API 自动运行与 Codex 直接处理两种入口，以及隔离语义 Oracle、可恢复随机运行计划、自动决策指标和条件盲自动审计。
 - [首轮四条件校准](benchmarks/question-discovery-v0.1/CALIBRATION-REPORT-v0.3-seed1.md)：在 4 个案例、1 个种子中，A 普通提问最稳定，复杂工具没有表现出一致增益。
 - [N/A 三种子确认](benchmarks/question-discovery-v0.1/CONFIRMATION-REPORT-v0.3-seeds1-3.md)：A 的总体主指标只比 N 高 `+0.048`，且种子 3 被 N 反超；效果呈明显案例依赖，普通提问不能作为通用默认干预。
 - [D 开发预注册](benchmarks/question-discovery-v0.1/D-PRE-REGISTRATION-v0.3.md)：冻结“行动敏感、解释判别、证据可答、足够即停”的最小判别问题提示，以及进入未见案例前的效果与成本门槛。
@@ -52,7 +52,8 @@
 - [Q/F 三种子开发报告](benchmarks/question-discovery-v0.1/QF-DEVELOPMENT-REPORT-v0.3.md)：Q 与 F 主指标分别为 `+0.760` 和 `+0.693`，均高于历史 N；简单菜单 Q 反而比竞争解释契约 F 高 `0.067`，说明当前突破来自可回答候选问题，而不是额外状态机。
 - [候选问题生成器 v0.4 预注册](benchmarks/question-discovery-v0.1/CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md)：用 4 组全新反事实案例比较原生、QFT 风格、STORM 风格和双向钢人生成器；候选问题经不看答案的匹配/去重后交给同一选择器，并与同期 N/A 自由提问比较。
 - [候选问题生成器 v0.4 正式运行报告](benchmarks/question-discovery-v0.1/CANDIDATE-GENERATION-REPORT-v0.4.md)：72 个同期成对单元显示两阶段 G0 主指标比原生 N 高 `+0.091`，但候选覆盖和匹配率未过门槛；GQ/GS 改善候选覆盖却未达到相对 G0 的下游增量，GB 候选覆盖最弱。
-- [候选映射条件盲复核协议](benchmarks/question-discovery-v0.1/BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md)：从三个正式进度账本锁定 48 份候选工件，生成不含条件、种子、自动映射、隐藏事实和下游结果的 384 行双评审材料；人工共识将重算候选指标及预注册门槛敏感性。
+- [候选映射全自动盲审协议](benchmarks/question-discovery-v0.1/AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md)：两个条件盲自动评审独立判断 384 道候选，第三个自动角色只仲裁分歧，再重算候选指标和预注册门槛；[人工盲审包](benchmarks/question-discovery-v0.1/BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md)仅作为可选外部复核材料，不阻塞工程路线。
+- [候选映射全自动盲审结果](benchmarks/question-discovery-v0.1/automated-review-v0.4/AUTOMATED-SENSITIVITY-REPORT.md)：双评审映射一致率 `0.901`、kappa `0.868`，但仲裁共识与原自动匹配有 `67/384`（`17.45%`）不一致；所有原推进门槛仍失败，下一步先修匹配接口，再开发 GQ2。
 
 ## 版本约定
 
@@ -69,6 +70,15 @@
 3. 将提交推送至 GitHub 远程仓库。
 
 ## 版本更新记录
+
+### v0.24.0 - 2026-08-20
+
+- 将人工映射复核从必经步骤改为可选外部复核，新增全自动条件盲审计协议：Judge A 做严格证据契约检查，Judge B 做独立反例审计，第三个自动角色只仲裁字段级分歧；评审看不到生成条件、原映射、隐藏事实、正确行动或下游结果。
+- 新增可恢复 API 审计程序、三角色独立配置槽位、固定随机调度、逐角色原子进度、一次纯格式修复、条件盲标签交换和双评审并行调用；旧 384 行人工离线包继续保留，但不再阻塞后续路线。
+- 使用现有 `qwen3.8-max` API 完成 48 个候选集、384 道候选的双评审；映射完全一致率为 `0.901`、Cohen's kappa 为 `0.868`，通过自动评审稳定性门槛，130 个字段分歧由自动仲裁器处理。
+- 仲裁共识与原自动匹配有 `67/384`（`17.45%`）不一致，超过预设 `10%` 门槛；G0/GQ/GS 的双分支关键覆盖各减少 1/12，GB 不变，但所有原推进门槛仍失败且没有门槛翻转。路线结论为 `fix_mapping_interface_before_gq2`。
+- 三个角色本轮使用同一模型，因此结果只证明对不同盲提示的稳定性，不是外部金标准；130 次首次判断调用中 76 次需要纯格式修复，总调用 206 次、硬失败 0 次，后续也应改进结构化输出稳定性。
+- 新增独立评分、自动仲裁、共识映射、机器可读结果和敏感性报告，并加入解析、盲性、配置安全、仲裁完备性和无 API 端到端重算测试；完整项目 63 项测试通过。
 
 ### v0.23.0 - 2026-08-20
 
