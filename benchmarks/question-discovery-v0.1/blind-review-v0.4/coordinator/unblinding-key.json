@@ -1,0 +1,1543 @@
+{
+  "schema_version": "1.0",
+  "packet_hash": "4e0cc330097015365c83c168a0cd8f763ca01b7f36af1254495e54c29eed84b7",
+  "warning": "Coordinator only. Do not provide this file to reviewers before both reviews are locked.",
+  "review_units": [
+    {
+      "review_id": "R001",
+      "pair_id": "research-pair-02",
+      "generator": "GQ",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GQ-candidates-seed3-20260820T072709Z.json",
+      "source_sha256": "c05e5e31d79a152034e7a982e83c47f9e41d808096c38ad193147dbfd0968a51",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "NONE",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "E4",
+        "C6": "E4",
+        "C7": "E1",
+        "C8": "E5"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R002",
+      "pair_id": "project-pair-02",
+      "generator": "GQ",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GQ-candidates-seed2-20260820T073151Z.json",
+      "source_sha256": "5033bc7274e44e33c7a68d806b94c9b7238128d2928226af533f4c3f7721a7dd",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E3",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R003",
+      "pair_id": "product-pair-02",
+      "generator": "GB",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GB-candidates-seed2-20260820T081113Z.json",
+      "source_sha256": "b61d8f24f603b087baf9e03644c327b77e072116101b982db767ba418810d4e5",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "E3",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "E6",
+        "C7": "E5",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 6,
+        "unique_evidence_coverage": 1.0,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 6,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R004",
+      "pair_id": "project-pair-02",
+      "generator": "G0",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-G0-candidates-seed2-20260820T074701Z.json",
+      "source_sha256": "43194136bd522e12e2e74701d1caef298b592d2f08ac38b7b1e5d387a1a0e0b9",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R005",
+      "pair_id": "research-pair-02",
+      "generator": "GS",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GS-candidates-seed1-20260820T073533Z.json",
+      "source_sha256": "8198497e58f5c3b8ed2f2cb065e048f582d610b29e89eae943fa2489605a3a44",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E1",
+        "C3": "NONE",
+        "C4": "NONE",
+        "C5": "E4",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R006",
+      "pair_id": "product-pair-02",
+      "generator": "GS",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GS-candidates-seed1-20260820T080235Z.json",
+      "source_sha256": "49ce977faa31c6534168925d66ce9b72304c69f2ceb9709ff1d6a05570d6dd16",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E1",
+        "C3": "E2",
+        "C4": "E3",
+        "C5": "E4",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R007",
+      "pair_id": "operations-pair-02",
+      "generator": "GS",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GS-candidates-seed3-20260820T081038Z.json",
+      "source_sha256": "d60862965e992c73713b79722fd279d3425daf1ad00784007b0372a8befecf3b",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "E5",
+        "C6": "E5",
+        "C7": "E1",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R008",
+      "pair_id": "project-pair-02",
+      "generator": "G0",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-G0-candidates-seed3-20260820T081432Z.json",
+      "source_sha256": "da683ac93779f16f7d239605e116e0c7544268ff1cbf2652c32a3e045e7bc2f4",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E5",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R009",
+      "pair_id": "operations-pair-02",
+      "generator": "GQ",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GQ-candidates-seed3-20260820T074336Z.json",
+      "source_sha256": "c469779e5941971f4fd006f116daf042a1c81526af21d911a81c35c08faabfd2",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E1",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R010",
+      "pair_id": "operations-pair-02",
+      "generator": "GB",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GB-candidates-seed1-20260820T080030Z.json",
+      "source_sha256": "edb92d0e8df9f2a669999a045432254945b65d3a23bc4492e20483c0948e65f0",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E3",
+        "C3": "E2",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R011",
+      "pair_id": "project-pair-02",
+      "generator": "GB",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GB-candidates-seed3-20260820T074914Z.json",
+      "source_sha256": "d836007180c5a698139cda0bb9c463acf9d5f83239e48a4edfc454c9bd143dd8",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "NONE",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "E2",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 2,
+        "unique_evidence_coverage": 0.3333333333333333,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 2,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R012",
+      "pair_id": "product-pair-02",
+      "generator": "GQ",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GQ-candidates-seed2-20260820T075814Z.json",
+      "source_sha256": "8ee8e8597bd29e54f86351e9e38bec63c7e0004e5e76ccd7a3ca4f35532e6483",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "E4",
+        "C6": "E1",
+        "C7": "E6",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.875,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R013",
+      "pair_id": "operations-pair-02",
+      "generator": "GS",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GS-candidates-seed2-20260820T074449Z.json",
+      "source_sha256": "58196d4b99136f68b87594f4255fc0039984c29dd921ff9f77a313b4d778df71",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "NONE",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R014",
+      "pair_id": "operations-pair-02",
+      "generator": "G0",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-G0-candidates-seed2-20260820T080607Z.json",
+      "source_sha256": "47eb3e1e003df68b1e029af7498d856017f6397322e16e67db9652bf0ed71c7b",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E3",
+        "C3": "E2",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "E4",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          0.5,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R015",
+      "pair_id": "product-pair-02",
+      "generator": "G0",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-G0-candidates-seed3-20260820T081238Z.json",
+      "source_sha256": "98d33c29f06a8b288ed2e8afad0759a50e8a814db81ad251912966847c85ee48",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E4",
+        "C5": "NONE",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R016",
+      "pair_id": "product-pair-02",
+      "generator": "GS",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GS-candidates-seed2-20260820T075208Z.json",
+      "source_sha256": "06a05926d9b7f7ce40bef6f6de542d89a9bae69334cbbebccdc2dc6cff183d57",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E1",
+        "C3": "E2",
+        "C4": "E3",
+        "C5": "E6",
+        "C6": "E6",
+        "C7": "E4",
+        "C8": "E4"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 1.0,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 3,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R017",
+      "pair_id": "research-pair-02",
+      "generator": "GB",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GB-candidates-seed1-20260820T075113Z.json",
+      "source_sha256": "b7a597dd14e368b1f63a155f6b04589ae5d0bf5745ed93ced4e6384163300810",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E2"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R018",
+      "pair_id": "project-pair-02",
+      "generator": "GQ",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GQ-candidates-seed3-20260820T080423Z.json",
+      "source_sha256": "1c2f042f8fb895a25de13faeb71f13b4fee9453017e95c4028ff0b8420c88794",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R019",
+      "pair_id": "project-pair-02",
+      "generator": "GS",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GS-candidates-seed3-20260820T073720Z.json",
+      "source_sha256": "95579e3cb220036f9638437f42f91619a92ccf99764f9f56107b7c5ba75bccb3",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "E2",
+        "C4": "NONE",
+        "C5": "E3",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R020",
+      "pair_id": "project-pair-02",
+      "generator": "GB",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GB-candidates-seed1-20260820T080722Z.json",
+      "source_sha256": "9c244a9d93c3bb49bfe77651fc42aed26e22124a7793e4ca68771a514c7ab3e0",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "NONE",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "E2",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R021",
+      "pair_id": "project-pair-02",
+      "generator": "GS",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GS-candidates-seed1-20260820T080916Z.json",
+      "source_sha256": "d2207411c5858ce334ff0e609cd3a525ae5dba3c0b0f1676e4aeb57e904b0612",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E1",
+        "C3": "E2",
+        "C4": "E3",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "E2"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R022",
+      "pair_id": "product-pair-02",
+      "generator": "GS",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GS-candidates-seed3-20260820T074125Z.json",
+      "source_sha256": "cfc5af0313adc9f314fd904f4802af8f144ac2159aefb4c0aad786d9c886c9af",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "E2",
+        "C4": "E3",
+        "C5": "NONE",
+        "C6": "E4",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R023",
+      "pair_id": "product-pair-02",
+      "generator": "GB",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GB-candidates-seed1-20260820T074914Z.json",
+      "source_sha256": "7282ea42678f2984d0a023374822aef460efb555e3f31ddf310e693f81ae4c7a",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.875,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R024",
+      "pair_id": "research-pair-02",
+      "generator": "GS",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GS-candidates-seed3-20260820T075105Z.json",
+      "source_sha256": "b1a8a798a9d538d9a25319dda14609e68fe47e30ce9146509d6413350fb59612",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "E1",
+        "C3": "E3",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "E4",
+        "C7": "E6",
+        "C8": "E5"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 1.0,
+        "unique_evidence_count": 6,
+        "unique_evidence_coverage": 1.0,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 6,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R025",
+      "pair_id": "research-pair-02",
+      "generator": "G0",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-G0-candidates-seed2-20260820T080012Z.json",
+      "source_sha256": "7b115e11a77382a4fd3798e89fbb8c84c515970af3128332540b2c250b9bcd09",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "E2",
+        "C4": "E3",
+        "C5": "E4",
+        "C6": "E1",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R026",
+      "pair_id": "operations-pair-02",
+      "generator": "GQ",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GQ-candidates-seed1-20260820T074118Z.json",
+      "source_sha256": "af6abf10e4dc5e3ed49ca64abaeab12a4d731b737db2d88da17e5b375e37a3b5",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E5",
+        "C5": "NONE",
+        "C6": "E3",
+        "C7": "E6",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.875,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R027",
+      "pair_id": "project-pair-02",
+      "generator": "G0",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-G0-candidates-seed1-20260820T081254Z.json",
+      "source_sha256": "484c9106738a66892dba595bdf80dffb402bcb6780fc1d77fe78923374d789e7",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R028",
+      "pair_id": "product-pair-02",
+      "generator": "GQ",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GQ-candidates-seed1-20260820T080536Z.json",
+      "source_sha256": "78b7406b0f5a92b716821fa6cb0b3136aa112d80565ce26312bf3c0abd4cc10e",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.875,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R029",
+      "pair_id": "research-pair-02",
+      "generator": "G0",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-G0-candidates-seed1-20260820T074316Z.json",
+      "source_sha256": "3f219acd86bbf8f48f105ffcd6c7da5e07e14382042ddd9bf9d690bfb0734b8b",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "E4",
+        "C7": "E2",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R030",
+      "pair_id": "research-pair-02",
+      "generator": "G0",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-G0-candidates-seed3-20260820T080822Z.json",
+      "source_sha256": "176abbb7e76cf90711a36d4aa91e1c34e8582901423890ded9fa8a94e4718e9d",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "NONE",
+        "C4": "NONE",
+        "C5": "E4",
+        "C6": "E1",
+        "C7": "E6",
+        "C8": "E2"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R031",
+      "pair_id": "research-pair-02",
+      "generator": "GQ",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GQ-candidates-seed2-20260820T080229Z.json",
+      "source_sha256": "ab6abe1bcc96d6621d31e43ffa2cafd1005a79bb1547fe9ad31deb6f57581229",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "E2",
+        "C4": "E4",
+        "C5": "E3",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R032",
+      "pair_id": "product-pair-02",
+      "generator": "G0",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-G0-candidates-seed1-20260820T072924Z.json",
+      "source_sha256": "9fd0a9da5e69670a14a186b16537865e04b13b325f391aa60280fe6dd7512c52",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "E3",
+        "C3": "NONE",
+        "C4": "NONE",
+        "C5": "E1",
+        "C6": "E4",
+        "C7": "E6",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R033",
+      "pair_id": "research-pair-02",
+      "generator": "GB",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GB-candidates-seed2-20260820T074240Z.json",
+      "source_sha256": "7fe09f62ed79deb07357c7b9202e792d7c9961ba5ddf0a28a11a402c5d140f14",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 2,
+        "unique_evidence_coverage": 0.3333333333333333,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 2,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R034",
+      "pair_id": "project-pair-02",
+      "generator": "GB",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GB-candidates-seed2-20260820T080441Z.json",
+      "source_sha256": "38a8d5019c33dc72c290ff22647d7dd0c593481be9c3bab176147552c0f9292b",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E2",
+        "C3": "NONE",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.125,
+        "unique_evidence_count": 1,
+        "unique_evidence_coverage": 0.16666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 1,
+        "branch_critical_coverage": [
+          0.5,
+          0.0
+        ],
+        "minimum_branch_critical_coverage": 0.0,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R035",
+      "pair_id": "operations-pair-02",
+      "generator": "G0",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-G0-candidates-seed1-20260820T073311Z.json",
+      "source_sha256": "8248f1276887018350f2244fa8e411a5b912a780055f13c0b8f4faaa16f8029e",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E3",
+        "C3": "NONE",
+        "C4": "E2",
+        "C5": "NONE",
+        "C6": "E6",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R036",
+      "pair_id": "project-pair-02",
+      "generator": "GS",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GS-candidates-seed2-20260820T075632Z.json",
+      "source_sha256": "cafdaafb73b8f647e35e6fd30d69244a29d2fb3be2f31f17951cc0c39637e7ef",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E1",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "E2",
+        "C6": "E2",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R037",
+      "pair_id": "research-pair-02",
+      "generator": "GQ",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GQ-candidates-seed1-20260820T075723Z.json",
+      "source_sha256": "9fd50e1652e83f69aefadb63889ee4a5caad5ec9b9279854e6f7665bde0684f6",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E1",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "E2",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E4"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R038",
+      "pair_id": "product-pair-02",
+      "generator": "GB",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GB-candidates-seed3-20260820T080225Z.json",
+      "source_sha256": "207861e3911e9f57a249b0fd128e870943a6542390fd0d84605fbfa3147f4b53",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E1",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "NONE",
+        "C6": "E6",
+        "C7": "NONE",
+        "C8": "E1"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R039",
+      "pair_id": "research-pair-02",
+      "generator": "GS",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GS-candidates-seed2-20260820T073355Z.json",
+      "source_sha256": "8447c9c2d2a5d1a3e0fc82c0f59ea0574101304cbba6f36afb8a6499b8cb06f9",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "NONE",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "E4"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R040",
+      "pair_id": "product-pair-02",
+      "generator": "GQ",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-GQ-candidates-seed3-20260820T073219Z.json",
+      "source_sha256": "c391fe44d660c4cb074e0b4b2dbfc67ce7b10e9d0a114b02c4cb0749dd5a37a7",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "E1",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.75,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 2,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R041",
+      "pair_id": "research-pair-02",
+      "generator": "GB",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/research-pair-02-GB-candidates-seed3-20260820T075747Z.json",
+      "source_sha256": "0413492b432c06715c143b43d5d08a8cab1b1823ab7e2ac8142ef1ea3a5c18b8",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E2",
+        "C3": "NONE",
+        "C4": "E4",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "E2"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R042",
+      "pair_id": "operations-pair-02",
+      "generator": "G0",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-G0-candidates-seed3-20260820T075321Z.json",
+      "source_sha256": "bea00f0833c85d2f49d057e5ddde7a14790c2ce600a2d8ece049efd6c291a153",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "NONE",
+        "C4": "E2",
+        "C5": "E3",
+        "C6": "E1",
+        "C7": "NONE",
+        "C8": "NONE"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.375,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R043",
+      "pair_id": "operations-pair-02",
+      "generator": "GQ",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GQ-candidates-seed2-20260820T073823Z.json",
+      "source_sha256": "a6dccb5b3411bb4c0778f67bc882aee24925268c242fb0f77cfe611a651ac12f",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E1",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R044",
+      "pair_id": "project-pair-02",
+      "generator": "GQ",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/project-pair-02-GQ-candidates-seed1-20260820T073716Z.json",
+      "source_sha256": "8a123a6b77c6f24aec069d266999e7ae5fab57692fc6442fbf1bde21415a76b7",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "E2",
+        "C3": "E3",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "NONE",
+        "C8": "E6"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          1.0,
+          1.0
+        ],
+        "minimum_branch_critical_coverage": 1.0,
+        "both_branches_full_critical_coverage": 1.0
+      }
+    },
+    {
+      "review_id": "R045",
+      "pair_id": "operations-pair-02",
+      "generator": "GB",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GB-candidates-seed2-20260820T073609Z.json",
+      "source_sha256": "c13e402683b8f099648144456c9f3404ef35190e553957ad9c4982521ff88c50",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "E2",
+        "C6": "E6",
+        "C7": "E5",
+        "C8": "E5"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R046",
+      "pair_id": "operations-pair-02",
+      "generator": "GS",
+      "model_seed": 1,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GS-candidates-seed1-20260820T075525Z.json",
+      "source_sha256": "85597575de8bc91d79a0a3bc3f2532e34cfdead77586bee75fd63261597135ad",
+      "auto_matches": {
+        "C1": "E1",
+        "C2": "NONE",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E2",
+        "C8": "E2"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.5,
+        "unique_evidence_count": 3,
+        "unique_evidence_coverage": 0.5,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 3,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R047",
+      "pair_id": "product-pair-02",
+      "generator": "G0",
+      "model_seed": 2,
+      "source_file": "benchmarks/question-discovery-v0.1/results/product-pair-02-G0-candidates-seed2-20260820T081446Z.json",
+      "source_sha256": "af692f4348cc10ff75e8d148c14fe5d13392da258ac070ec6894bfb26fbf0904",
+      "auto_matches": {
+        "C1": "NONE",
+        "C2": "NONE",
+        "C3": "E4",
+        "C4": "E1",
+        "C5": "NONE",
+        "C6": "E6",
+        "C7": "E1",
+        "C8": "E5"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 4,
+        "unique_evidence_coverage": 0.6666666666666666,
+        "duplicate_match_count": 1,
+        "normalized_menu_count": 4,
+        "branch_critical_coverage": [
+          0.5,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    },
+    {
+      "review_id": "R048",
+      "pair_id": "operations-pair-02",
+      "generator": "GB",
+      "model_seed": 3,
+      "source_file": "benchmarks/question-discovery-v0.1/results/operations-pair-02-GB-candidates-seed3-20260820T075526Z.json",
+      "source_sha256": "026d338a63b1abdc426f3f922fca2707fbbc5e522858135e40199b97a23a3147",
+      "auto_matches": {
+        "C1": "E2",
+        "C2": "E1",
+        "C3": "E3",
+        "C4": "NONE",
+        "C5": "NONE",
+        "C6": "NONE",
+        "C7": "E6",
+        "C8": "E5"
+      },
+      "auto_candidate_metrics": {
+        "candidate_count": 8,
+        "catalog_match_rate": 0.625,
+        "unique_evidence_count": 5,
+        "unique_evidence_coverage": 0.8333333333333334,
+        "duplicate_match_count": 0,
+        "normalized_menu_count": 5,
+        "branch_critical_coverage": [
+          1.0,
+          0.5
+        ],
+        "minimum_branch_critical_coverage": 0.5,
+        "both_branches_full_critical_coverage": 0.0
+      }
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Question Discovery Benchmark v0.2
+# Question Discovery Benchmark
 
 这是“问题发现漏斗”的首个最小可行基准，用于比较三种提问条件是否能在固定问题预算内改善决策。
 
@@ -29,6 +29,8 @@ Q/F 据此把开放式问题生成改成对已知可回答证据的选择，并�
 Q/F 三种子开发结果见 [QF-DEVELOPMENT-REPORT-v0.3.md](QF-DEVELOPMENT-REPORT-v0.3.md)：Q 与 F 的主指标分别为 `+0.760` 和 `+0.693`，48 个隐藏分支最终全部选择正确；但 F 相对 Q 为 `-0.067`，没有证明竞争解释状态的额外价值。Q 因 1 次停止格式偏离只通过 5 项门槛中的 4 项，F 通过 6 项中的 5 项，两者均不按原协议直接进入新案例。可用 `python audit_qf_results.py` 从三个本地进度账本重新计算指标并检查状态、唯一性和凭证泄漏。
 
 v0.4 将实验推进到候选问题生成：新增 4 组未参与旧提示设计的反事实案例，同期比较 N 原生模型、A 普通提问，以及原生、QFT 风格、STORM 风格和双向钢人四种候选生成器。四个生成条件共用盲匹配/去重和 Q 式选择器；冻结设计、72 个三种子成对单元及推进门槛见 [CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md](CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md)，运行入口为 `candidate_benchmark.py`。
+
+v0.4 三种子正式结果见 [CANDIDATE-GENERATION-REPORT-v0.4.md](CANDIDATE-GENERATION-REPORT-v0.4.md)：两阶段 G0 的下游主指标高于同期原生 N，但候选覆盖未过门槛；GQ/GS 相对 G0 的增量不足，GB 不适合作为默认候选生成器。自动匹配结论正在按 [BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md](BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md) 做条件盲人工敏感性复核。
 
 ## 当前范围
 
@@ -63,6 +65,19 @@ python benchmark.py schedule --output results/run-plan.json
 python benchmark.py calibration-schedule --output results/calibration-v0.2.json
 python benchmark.py run product-01 --condition A
 ```
+
+候选映射盲审材料已经生成在 [blind-review-v0.4/](blind-review-v0.4/)。协调者应分别发送 `reviewer-bundles/reviewer-1.zip` 与 `reviewer-bundles/reviewer-2.zip`，不要发送整个仓库。评审者解压后直接打开完全离线的 `review-form.html`，逐组填写、自动保存本机进度并导出标准 CSV；也可使用 Markdown 包和空白表。协调者在两份 384 行评分锁定后运行：
+
+```powershell
+python blind_mapping_review.py validate-review blind-review-v0.4/forms/reviewer-1.csv
+python blind_mapping_review.py validate-review blind-review-v0.4/forms/reviewer-2.csv
+python blind_mapping_review.py prepare-adjudication `
+  --reviewer-one blind-review-v0.4/forms/reviewer-1.csv `
+  --reviewer-two blind-review-v0.4/forms/reviewer-2.csv `
+  --output blind-review-v0.4/coordinator/adjudication.csv
+```
+
+当前评分表故意留空，填写前校验失败属于预期行为。本阶段不调用模型 API；仲裁完成后才运行 `analyze` 重算人工映射候选指标与推进门槛。
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
 
