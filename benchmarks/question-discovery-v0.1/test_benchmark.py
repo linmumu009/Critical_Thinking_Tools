@@ -237,6 +237,25 @@ class BenchmarkTests(unittest.TestCase):
         )
         self.assertIsNone(benchmark.parse_protocol_field(text, "DECISION"))
 
+    def test_explanation_plan_requires_three_distinct_actions(self):
+        case = self.cases["product-01"]
+        valid = (
+            'EXPLANATIONS: [{"id":"H1","explanation":"机制一",'
+            '"evidence_target":"证据一","action":"option_a"},'
+            '{"id":"H2","explanation":"机制二","evidence_target":"证据二",'
+            '"action":"option_b"},{"id":"H3","explanation":"机制三",'
+            '"evidence_target":"证据三","action":"option_c"}]'
+        )
+        plan = benchmark.parse_explanation_plan(case, valid)
+        self.assertEqual(["H1", "H2", "H3"], [item["id"] for item in plan])
+
+        duplicate_action = valid.replace(
+            '"evidence_target":"证据三","action":"option_c"',
+            '"evidence_target":"证据三","action":"option_b"',
+        )
+        with self.assertRaisesRegex(ValueError, "三个不同"):
+            benchmark.parse_explanation_plan(case, duplicate_action)
+
     def test_mode_is_selected_explicitly(self):
         with patch("builtins.input", return_value="1"):
             self.assertEqual("api", benchmark.choose_run_mode())
@@ -411,6 +430,96 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(
             "invalid_pre_protocol_repaired",
             session["protocol_deviations"][0]["type"],
+        )
+
+    def test_stateful_api_session_blocks_reused_explanation_target(self):
+        case = self.cases["product-01"]
+        config = {
+            "url": "https://example.test/v1",
+            "api_key": "secret",
+            "model_name": "test-model",
+            "oracle_mode": "keyword",
+        }
+        outputs = [
+            'PRE_DECISION: option_a\nPRE_PROBABILITIES: {"option_a":0.4,"option_b":0.3,"option_c":0.2,"option_d":0.1}',
+            'EXPLANATIONS: [{"id":"H1","explanation":"机制一","evidence_target":"证据一","action":"option_a"},{"id":"H2","explanation":"机制二","evidence_target":"证据二","action":"option_b"},{"id":"H3","explanation":"机制三","evidence_target":"证据三","action":"option_c"}]',
+            "TARGET: H1\nQUESTION: 一个当前事实无法回答的问题？",
+            "TARGET: H1\nQUESTION: 换一种措辞继续追问？",
+            "TARGET: H2\nQUESTION: 切换到另一种机制证据？",
+            "DECIDE",
+            'DECISION: option_a\nPROBABILITIES: {"option_a":0.5,"option_b":0.25,"option_c":0.15,"option_d":0.1}\nRATIONALE: 已覆盖两个不同解释。',
+        ]
+        with patch.object(
+            benchmark, "api_chat_completion", side_effect=outputs
+        ) as completion, patch.object(
+            benchmark, "save_session", return_value=Path("session.json")
+        ) as save:
+            benchmark.run_api_session(
+                case,
+                "E",
+                config,
+                model_seed=1,
+                prompt_file=benchmark.EXPLANATION_STATE_PROMPT,
+            )
+
+        self.assertEqual(7, completion.call_count)
+        session = save.call_args.args[1]
+        self.assertEqual(["H1", "H2"], [
+            item["explanation_target"] for item in session["questions"]
+        ])
+        self.assertEqual(
+            {"H1": "NONE", "H2": "NONE"},
+            session["explanation_state"]["attempted_targets"],
+        )
+        self.assertIn(
+            "mechanism_distinctness_0_to_2",
+            session["explanation_state"]["manual_review"],
+        )
+        self.assertIn(
+            "target_alignment_0_to_2",
+            session["questions"][0]["manual_annotations"],
+        )
+        self.assertEqual(7, session["model_call_count"])
+        self.assertEqual(1, len(session["protocol_deviations"]))
+        self.assertEqual(
+            "invalid_explanation_target_repaired",
+            session["protocol_deviations"][0]["type"],
+        )
+
+    def test_stateful_direct_session_records_explanation_targets(self):
+        case = self.cases["product-01"]
+        plan = (
+            '[{"id":"H1","explanation":"机制一","evidence_target":"证据一",'
+            '"action":"option_a"},{"id":"H2","explanation":"机制二",'
+            '"evidence_target":"证据二","action":"option_b"},{"id":"H3",'
+            '"explanation":"机制三","evidence_target":"证据三",'
+            '"action":"option_c"}]'
+        )
+        inputs = [
+            "option_a",
+            '{"option_a":0.4,"option_b":0.3,"option_c":0.2,"option_d":0.1}',
+            plan,
+            "H1",
+            "一个当前事实无法回答的问题？",
+            "DECIDE",
+            "option_a",
+            '{"option_a":0.5,"option_b":0.25,"option_c":0.15,"option_d":0.1}',
+            "已检查一个解释目标。",
+        ]
+        with patch("builtins.input", side_effect=inputs), patch.object(
+            benchmark, "save_session", return_value=Path("session.json")
+        ) as save:
+            benchmark.run_direct_session(
+                case,
+                "E",
+                prompt_file=benchmark.EXPLANATION_STATE_PROMPT,
+            )
+
+        session = save.call_args.args[1]
+        self.assertEqual("direct", session["mode"])
+        self.assertEqual("H1", session["questions"][0]["explanation_target"])
+        self.assertEqual(
+            {"H1": "NONE"}, session["explanation_state"]["attempted_targets"]
         )
 
 

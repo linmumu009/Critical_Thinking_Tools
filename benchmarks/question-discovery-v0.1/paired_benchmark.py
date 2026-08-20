@@ -17,6 +17,7 @@ PAIRED_CONDITION_FILES = {
     "N": "native.md",
     **benchmark.CONDITION_FILES,
     "D": "minimal-discriminative.md",
+    "E": benchmark.EXPLANATION_STATE_PROMPT,
 }
 
 

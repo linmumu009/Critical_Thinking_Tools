@@ -8,7 +8,7 @@ v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选
 
 v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组反事实成对案例和独立预检入口，设计与命令见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)，首次 API 结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。
 
-完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗和 D 最小判别问题五个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
+完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗、D 最小判别问题和 E（D2）显式解释状态机六个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
 首个产品案例四条件成对烟雾结果见 [SMOKE-REPORT-v0.3-product.md](SMOKE-REPORT-v0.3-product.md)。
 
@@ -19,6 +19,8 @@ v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组�
 N/A 三种子确认显示普通提问的总体优势很小且存在稳定案例异质性，完整报告见 [CONFIRMATION-REPORT-v0.3-seeds1-3.md](CONFIRMATION-REPORT-v0.3-seeds1-3.md)。据此新增 D“最小判别问题”，冻结提示、开发门槛和排除规则见 [D-PRE-REGISTRATION-v0.3.md](D-PRE-REGISTRATION-v0.3.md)。
 
 D 三种子开发结果见 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v0.3.md)：主指标 `+0.488`，介于 N 与 A 之间，只通过 5 项推进门槛中的 3 项，不原样进入新案例。主要失败是收到无事实反馈后仍沿同一问题簇继续细化；下一版应改用显式竞争解释状态和硬性换轨控制。
+
+E（D2）据此把竞争解释、证据目标和已尝试状态变成控制器可检查协议；开发运行前冻结的效果、成本、加权无事实率和状态完整性门槛见 [E-PRE-REGISTRATION-v0.3.md](E-PRE-REGISTRATION-v0.3.md)。
 
 ## 当前范围
 

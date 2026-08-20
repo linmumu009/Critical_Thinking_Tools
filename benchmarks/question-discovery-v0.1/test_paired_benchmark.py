@@ -53,6 +53,20 @@ class PairedBenchmarkTests(unittest.TestCase):
         for case_specific in ["Safari", "单点登录", "路由策略", "低基线"]:
             self.assertNotIn(case_specific, prompt)
 
+    def test_explicit_explanation_state_condition_is_registered_and_generic(self):
+        self.assertEqual(
+            "explicit-explanation-state.md",
+            paired_benchmark.PAIRED_CONDITION_FILES["E"],
+        )
+        messages = paired_benchmark.preflight_messages(
+            self.pairs["product-pair-01"][0], "E"
+        )
+        prompt = messages[0]["content"]
+        for required in ["H1", "evidence_target", "TARGET", "不得复用"]:
+            self.assertIn(required, prompt)
+        for case_specific in ["Safari", "单点登录", "路由策略", "低基线"]:
+            self.assertNotIn(case_specific, prompt)
+
     def test_paired_score_rewards_correct_counterfactual_separation(self):
         variants = self.pairs["product-pair-01"]
         base_metrics = {
@@ -106,9 +120,10 @@ class PairedBenchmarkTests(unittest.TestCase):
 
     def test_schedule_includes_native_and_all_other_conditions(self):
         runs = paired_benchmark.build_paired_schedule(self.pairs, seed=1, repeats=1)
-        self.assertEqual(20, len(runs))
+        self.assertEqual(24, len(runs))
         self.assertEqual(
-            {"N", "A", "B", "C", "D"}, {run["condition"] for run in runs}
+            {"N", "A", "B", "C", "D", "E"},
+            {run["condition"] for run in runs},
         )
 
     def test_calibration_progress_resumes_completed_units(self):

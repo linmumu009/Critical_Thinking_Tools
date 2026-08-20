@@ -25,6 +25,7 @@ CONDITION_FILES = {
 CRITICALITY_RANK = {"distractor": 0, "supporting": 1, "critical": 2}
 RUN_MODES = {"api", "direct"}
 BENCHMARK_VERSION = "0.2"
+EXPLANATION_STATE_PROMPT = "explicit-explanation-state.md"
 
 
 def load_cases() -> dict[str, dict[str, Any]]:
@@ -551,6 +552,70 @@ def parse_protocol_field(text: str, field: str) -> str | None:
     return match.group(1).strip() if match else None
 
 
+def uses_explanation_state(condition: str, prompt_file: str | None) -> bool:
+    return condition == "E" or prompt_file == EXPLANATION_STATE_PROMPT
+
+
+def parse_explanation_plan(
+    case: dict[str, Any], text: str
+) -> list[dict[str, str]]:
+    raw = parse_protocol_field(text, "EXPLANATIONS")
+    if raw is None:
+        raise ValueError("缺少 EXPLANATIONS")
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise ValueError("EXPLANATIONS 不是有效 JSON 数组") from error
+    if not isinstance(payload, list) or len(payload) != 3:
+        raise ValueError("EXPLANATIONS 必须恰好包含 3 个解释")
+    expected_ids = {"H1", "H2", "H3"}
+    normalized: list[dict[str, str]] = []
+    for item in payload:
+        if not isinstance(item, dict):
+            raise ValueError("每个解释必须是 JSON 对象")
+        explanation_id = item.get("id")
+        explanation = item.get("explanation")
+        evidence_target = item.get("evidence_target")
+        action = item.get("action")
+        if explanation_id not in expected_ids:
+            raise ValueError("解释 id 必须是 H1、H2 或 H3")
+        if not isinstance(explanation, str) or not explanation.strip():
+            raise ValueError(f"{explanation_id} 缺少 explanation")
+        if not isinstance(evidence_target, str) or not evidence_target.strip():
+            raise ValueError(f"{explanation_id} 缺少 evidence_target")
+        if not isinstance(action, str):
+            raise ValueError(f"{explanation_id} 缺少 action")
+        normalized.append(
+            {
+                "id": explanation_id,
+                "explanation": explanation.strip(),
+                "evidence_target": evidence_target.strip(),
+                "action": validate_option(case, action, f"{explanation_id}.action"),
+            }
+        )
+    ids = [item["id"] for item in normalized]
+    if set(ids) != expected_ids or len(ids) != len(set(ids)):
+        raise ValueError("解释 id 必须恰好各出现一次：H1、H2、H3")
+    actions = [item["action"] for item in normalized]
+    if len(actions) != len(set(actions)):
+        raise ValueError("三个解释必须指向三个不同的最佳行动")
+    return sorted(normalized, key=lambda item: item["id"])
+
+
+def parse_targeted_question(
+    text: str, valid_targets: set[str], attempted_targets: set[str]
+) -> tuple[str, str]:
+    target = parse_protocol_field(text, "TARGET")
+    question = parse_protocol_field(text, "QUESTION")
+    if target is None or question is None:
+        raise ValueError("必须同时输出 TARGET 和 QUESTION")
+    if target not in valid_targets:
+        raise ValueError(f"TARGET 必须是：{', '.join(sorted(valid_targets))}")
+    if target in attempted_targets:
+        raise ValueError(f"TARGET {target} 已尝试，不得复用")
+    return target, question
+
+
 def validate_option(case: dict[str, Any], option_id: str, field: str) -> str:
     options = set(public_option_map(case))
     if option_id not in options:
@@ -595,6 +660,17 @@ def choose_probabilities(case: dict[str, Any], label: str) -> dict[str, float]:
             print(f"概率格式无效：{error}")
 
 
+def choose_explanation_plan(case: dict[str, Any]) -> list[dict[str, str]]:
+    while True:
+        raw = input("EXPLANATIONS JSON 数组> ").strip()
+        if not raw.upper().startswith("EXPLANATIONS:"):
+            raw = f"EXPLANATIONS: {raw}"
+        try:
+            return parse_explanation_plan(case, raw)
+        except ValueError as error:
+            print(f"解释计划格式无效：{error}")
+
+
 def save_session(case: dict[str, Any], session: dict[str, Any]) -> Path:
     session["automatic_metrics"] = score_session(case, session)
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
@@ -629,33 +705,67 @@ def run_direct_session(
     pre_probabilities = choose_probabilities(
         case, 'PRE_PROBABILITIES JSON（例如 {"option_a":0.25,...}）> '
     )
+    stateful = uses_explanation_state(condition, prompt_file)
+    explanation_plan = choose_explanation_plan(case) if stateful else []
+    valid_targets = {item["id"] for item in explanation_plan}
+    attempted_targets: dict[str, str] = {}
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
     budget = payload["question_budget"]
     for index in range(1, budget + 1):
-        question = input(f"QUESTION {index}/{budget}（输入 DECIDE 提前结束）> ").strip()
-        if question.upper() == "DECIDE":
-            break
+        target: str | None = None
+        if stateful:
+            remaining = valid_targets - set(attempted_targets)
+            if not remaining:
+                break
+            while True:
+                target = input(
+                    f"TARGET {index}/{budget}（{','.join(sorted(remaining))}；"
+                    "输入 DECIDE 提前结束）> "
+                ).strip()
+                if target.upper() == "DECIDE":
+                    break
+                if target in remaining:
+                    break
+                print(f"无效或已尝试目标，请输入：{', '.join(sorted(remaining))}")
+            if target.upper() == "DECIDE":
+                break
+            question = input("QUESTION> ").strip()
+        else:
+            question = input(
+                f"QUESTION {index}/{budget}（输入 DECIDE 提前结束）> "
+            ).strip()
+            if question.upper() == "DECIDE":
+                break
         fact_id, answer = answer_question(case, question, revealed)
         if fact_id:
             revealed.add(fact_id)
-        questions.append(
-            {
-                "question": question,
-                "fact_id": fact_id,
-                "oracle_answer": answer,
-                "manual_annotations": {
-                    "decision_changing": None,
-                    "discriminative": None,
-                    "unsupported_premise": None,
-                    "answerable": None,
-                    "decision_relevance_0_to_2": None,
-                    "branch_discrimination_0_to_2": None,
-                    "specificity_0_to_2": None,
-                    "data_gap_value": None,
-                },
-            }
-        )
+        if target is not None:
+            attempted_targets[target] = fact_id or "NONE"
+        question_record = {
+            "question": question,
+            "fact_id": fact_id,
+            "oracle_answer": answer,
+            "manual_annotations": {
+                "decision_changing": None,
+                "discriminative": None,
+                "unsupported_premise": None,
+                "answerable": None,
+                "decision_relevance_0_to_2": None,
+                "branch_discrimination_0_to_2": None,
+                "specificity_0_to_2": None,
+                "data_gap_value": None,
+            },
+        }
+        if target is not None:
+            question_record["explanation_target"] = target
+            question_record["manual_annotations"].update(
+                {
+                    "target_alignment_0_to_2": None,
+                    "semantic_target_reuse": None,
+                }
+            )
+        questions.append(question_record)
         print(f"ORACLE: {answer}")
 
     post_decision = choose_option(case, "DECISION option_id> ")
@@ -688,6 +798,18 @@ def run_direct_session(
             "notes": None,
         },
     }
+    if stateful:
+        session["explanation_state"] = {
+            "plan": explanation_plan,
+            "attempted_targets": attempted_targets,
+            "manual_review": {
+                "reviewer_id": None,
+                "mechanism_distinctness_0_to_2": None,
+                "action_coherence_0_to_2": None,
+                "evidence_observability_0_to_2": None,
+                "notes": None,
+            },
+        }
     return save_session(case, session)
 
 
@@ -699,6 +821,7 @@ def run_api_session(
     prompt_file: str | None = None,
     benchmark_version: str | None = None,
 ) -> Path:
+    stateful = uses_explanation_state(condition, prompt_file)
     condition_prompt = (
         PROMPTS_DIR / (prompt_file or CONDITION_FILES[condition])
     ).read_text(encoding="utf-8")
@@ -721,7 +844,14 @@ def run_api_session(
         },
     ]
     protocol_deviations: list[dict[str, str]] = []
-    raw_pre = api_chat_completion(config, messages, model_seed)
+    model_call_count = 0
+
+    def call_model() -> str:
+        nonlocal model_call_count
+        model_call_count += 1
+        return api_chat_completion(config, messages, model_seed)
+
+    raw_pre = call_model()
     messages.append({"role": "assistant", "content": raw_pre})
     try:
         pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
@@ -750,7 +880,7 @@ def run_api_session(
                 ),
             }
         )
-        raw_pre = api_chat_completion(config, messages, model_seed)
+        raw_pre = call_model()
         messages.append({"role": "assistant", "content": raw_pre})
         pre_value = parse_protocol_field(raw_pre, "PRE_DECISION")
         pre_probabilities = parse_probability_field(
@@ -769,25 +899,84 @@ def run_api_session(
         + json.dumps(pre_probabilities, ensure_ascii=False, separators=(",", ":"))
     )
 
-    revealed: set[str] = set()
-    questions: list[dict[str, Any]] = []
-    budget = case.get("question_budget", 5)
-    for index in range(1, budget + 1):
+    explanation_plan: list[dict[str, str]] = []
+    attempted_targets: dict[str, str] = {}
+    if stateful:
         messages.append(
             {
                 "role": "user",
                 "content": (
-                    f"现在是第 {index}/{budget} 次提问机会。只输出 QUESTION: <一个问题>；"
-                    "如果已经足够决策，只输出 DECIDE。"
+                    "现在建立可检查的解释状态。只输出一行 EXPLANATIONS: <JSON 数组>。"
+                    "数组必须恰好包含 H1、H2、H3；每项包含 id、explanation、"
+                    "evidence_target、action，且三个 action 必须不同。"
                 ),
             }
         )
-        raw_question = api_chat_completion(config, messages, model_seed)
+        raw_plan = call_model()
+        messages.append({"role": "assistant", "content": raw_plan})
+        try:
+            explanation_plan = parse_explanation_plan(case, raw_plan)
+        except ValueError as error:
+            protocol_deviations.append(
+                {
+                    "stage": "explanation_plan",
+                    "type": "invalid_explanation_plan_repaired",
+                    "error": str(error),
+                    "raw_output": raw_plan,
+                }
+            )
+            messages.append(
+                {
+                    "role": "user",
+                    "content": (
+                        f"格式无效：{error}。不要改变解释内容，只修正格式。"
+                        "重新只输出一行 EXPLANATIONS JSON 数组；必须恰好包含 H1、"
+                        "H2、H3，并指向三个不同的有效 option_id。"
+                    ),
+                }
+            )
+            raw_plan = call_model()
+            messages.append({"role": "assistant", "content": raw_plan})
+            explanation_plan = parse_explanation_plan(case, raw_plan)
+            print("PROTOCOL_DEVIATION: 解释计划格式无效，已在一次重试后修复。")
+        print(
+            "EXPLANATIONS: "
+            + json.dumps(explanation_plan, ensure_ascii=False, separators=(",", ":"))
+        )
+
+    revealed: set[str] = set()
+    questions: list[dict[str, Any]] = []
+    budget = case.get("question_budget", 5)
+    for index in range(1, budget + 1):
+        if stateful and len(attempted_targets) >= len(explanation_plan):
+            break
+        remaining_targets = {
+            item["id"] for item in explanation_plan
+        } - set(attempted_targets)
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    (
+                        f"现在是第 {index}/{budget} 次提问机会。尚未尝试的解释目标："
+                        f"{', '.join(sorted(remaining_targets))}。只输出两行："
+                        "TARGET: <一个尚未尝试的 id> 和 QUESTION: <一个问题>；"
+                        "如果已经足够决策，只输出 DECIDE。"
+                    )
+                    if stateful
+                    else (
+                        f"现在是第 {index}/{budget} 次提问机会。"
+                        "只输出 QUESTION: <一个问题>；如果已经足够决策，只输出 DECIDE。"
+                    )
+                ),
+            }
+        )
+        raw_question = call_model()
         messages.append({"role": "assistant", "content": raw_question})
         if re.search(r"(?im)^\s*DECIDE\s*$", raw_question):
             break
-        question = parse_protocol_field(raw_question, "QUESTION")
         early_decision = parse_protocol_field(raw_question, "DECISION")
+        question = parse_protocol_field(raw_question, "QUESTION")
         if question is None and early_decision is not None:
             validate_option(case, early_decision, "DECISION")
             protocol_deviations.append(
@@ -802,8 +991,44 @@ def run_api_session(
                 "控制器将继续请求最终决定与理由。"
             )
             break
-        if question is None:
+        target: str | None = None
+        if stateful:
+            valid_targets = {item["id"] for item in explanation_plan}
+            try:
+                target, question = parse_targeted_question(
+                    raw_question, valid_targets, set(attempted_targets)
+                )
+            except ValueError as error:
+                protocol_deviations.append(
+                    {
+                        "stage": f"question_{index}",
+                        "type": "invalid_explanation_target_repaired",
+                        "error": str(error),
+                        "raw_output": raw_question,
+                    }
+                )
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": (
+                            f"格式或状态无效：{error}。只修正本轮输出；从尚未尝试的"
+                            f" {', '.join(sorted(remaining_targets))} 中选择一个。"
+                            "只输出 TARGET 和 QUESTION 两行。"
+                        ),
+                    }
+                )
+                raw_question = call_model()
+                messages.append({"role": "assistant", "content": raw_question})
+                target, question = parse_targeted_question(
+                    raw_question, valid_targets, set(attempted_targets)
+                )
+                print(
+                    "PROTOCOL_DEVIATION: 解释目标无效或已复用，"
+                    "已在一次重试后修复。"
+                )
+        elif question is None:
             raise ValueError(f"模型未按协议返回 QUESTION 或 DECIDE：{raw_question[:300]}")
+        assert question is not None
         keyword_fact_id, keyword_answer = answer_question(case, question, revealed)
         oracle_mode = config.get("oracle_mode", "semantic_api")
         semantic_raw: str | None = None
@@ -817,30 +1042,51 @@ def run_api_session(
             raise ValueError(f"不支持的 oracle_mode：{oracle_mode!r}")
         if fact_id:
             revealed.add(fact_id)
-        questions.append(
-            {
-                "question": question,
-                "fact_id": fact_id,
-                "oracle_answer": answer,
-                "oracle_mode": oracle_mode,
-                "keyword_fact_id": keyword_fact_id,
-                "oracle_match_disagreement": keyword_fact_id != fact_id,
-                "semantic_oracle_raw": semantic_raw,
-                "manual_annotations": {
-                    "decision_changing": None,
-                    "discriminative": None,
-                    "unsupported_premise": None,
-                    "answerable": None,
-                    "decision_relevance_0_to_2": None,
-                    "branch_discrimination_0_to_2": None,
-                    "specificity_0_to_2": None,
-                    "data_gap_value": None,
-                },
-            }
-        )
+        if target is not None:
+            attempted_targets[target] = fact_id or "NONE"
+        question_record = {
+            "question": question,
+            "fact_id": fact_id,
+            "oracle_answer": answer,
+            "oracle_mode": oracle_mode,
+            "keyword_fact_id": keyword_fact_id,
+            "oracle_match_disagreement": keyword_fact_id != fact_id,
+            "semantic_oracle_raw": semantic_raw,
+            "manual_annotations": {
+                "decision_changing": None,
+                "discriminative": None,
+                "unsupported_premise": None,
+                "answerable": None,
+                "decision_relevance_0_to_2": None,
+                "branch_discrimination_0_to_2": None,
+                "specificity_0_to_2": None,
+                "data_gap_value": None,
+            },
+        }
+        if target is not None:
+            question_record["explanation_target"] = target
+            question_record["manual_annotations"].update(
+                {
+                    "target_alignment_0_to_2": None,
+                    "semantic_target_reuse": None,
+                }
+            )
+        questions.append(question_record)
         print(f"QUESTION: {question}")
         print(f"ORACLE: {answer}")
-        messages.append({"role": "user", "content": f"ORACLE: {answer}"})
+        if stateful:
+            rendered_state = ", ".join(
+                f"{item['id']}={attempted_targets.get(item['id'], 'UNTRIED')}"
+                for item in explanation_plan
+            )
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"ORACLE: {answer}\nSTATE: {rendered_state}",
+                }
+            )
+        else:
+            messages.append({"role": "user", "content": f"ORACLE: {answer}"})
 
     messages.append(
         {
@@ -853,7 +1099,7 @@ def run_api_session(
             ),
         }
     )
-    raw_final = api_chat_completion(config, messages, model_seed)
+    raw_final = call_model()
     messages.append({"role": "assistant", "content": raw_final})
     try:
         decision_value = parse_protocol_field(raw_final, "DECISION")
@@ -880,7 +1126,7 @@ def run_api_session(
                 ),
             }
         )
-        raw_final = api_chat_completion(config, messages, model_seed)
+        raw_final = call_model()
         decision_value = parse_protocol_field(raw_final, "DECISION")
         post_probabilities = parse_probability_field(case, raw_final, "PROBABILITIES")
         rationale = parse_protocol_field(raw_final, "RATIONALE")
@@ -915,6 +1161,7 @@ def run_api_session(
             else None
         ),
         "model_seed": model_seed,
+        "model_call_count": model_call_count,
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
         "pre_probabilities": pre_probabilities,
@@ -932,6 +1179,18 @@ def run_api_session(
             "notes": None,
         },
     }
+    if stateful:
+        session["explanation_state"] = {
+            "plan": explanation_plan,
+            "attempted_targets": attempted_targets,
+            "manual_review": {
+                "reviewer_id": None,
+                "mechanism_distinctness_0_to_2": None,
+                "action_coherence_0_to_2": None,
+                "evidence_observability_0_to_2": None,
+                "notes": None,
+            },
+        }
     return save_session(case, session)
 
 
