@@ -26,6 +26,8 @@ E 三种子开发结果见 [E-DEVELOPMENT-REPORT-v0.3.md](E-DEVELOPMENT-REPORT-v
 
 Q/F 据此把开放式问题生成改成对已知可回答证据的选择，并用 Q 隔离菜单本身、用 F 测量竞争解释状态的额外价值；开发运行前冻结的目录规则、比较结构和分条件门槛见 [QF-PRE-REGISTRATION-v0.3.md](QF-PRE-REGISTRATION-v0.3.md)。
 
+Q/F 三种子开发结果见 [QF-DEVELOPMENT-REPORT-v0.3.md](QF-DEVELOPMENT-REPORT-v0.3.md)：Q 与 F 的主指标分别为 `+0.760` 和 `+0.693`，48 个隐藏分支最终全部选择正确；但 F 相对 Q 为 `-0.067`，没有证明竞争解释状态的额外价值。Q 因 1 次停止格式偏离只通过 5 项门槛中的 4 项，F 通过 6 项中的 5 项，两者均不按原协议直接进入新案例。可用 `python audit_qf_results.py` 从三个本地进度账本重新计算指标并检查状态、唯一性和凭证泄漏。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。
