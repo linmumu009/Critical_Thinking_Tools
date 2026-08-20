@@ -18,6 +18,8 @@ v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组�
 
 N/A 三种子确认显示普通提问的总体优势很小且存在稳定案例异质性，完整报告见 [CONFIRMATION-REPORT-v0.3-seeds1-3.md](CONFIRMATION-REPORT-v0.3-seeds1-3.md)。据此新增 D“最小判别问题”，冻结提示、开发门槛和排除规则见 [D-PRE-REGISTRATION-v0.3.md](D-PRE-REGISTRATION-v0.3.md)。
 
+D 三种子开发结果见 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v0.3.md)：主指标 `+0.488`，介于 N 与 A 之间，只通过 5 项推进门槛中的 3 项，不原样进入新案例。主要失败是收到无事实反馈后仍沿同一问题簇继续细化；下一版应改用显式竞争解释状态和硬性换轨控制。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。
