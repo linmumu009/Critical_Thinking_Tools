@@ -267,6 +267,8 @@ class BenchmarkTests(unittest.TestCase):
             "url": "https://example.test/v1",
             "api_key": "top-secret",
             "model_name": "test-model",
+            "max_tokens": 1536,
+            "thinking_budget": 512,
         }
         response = FakeResponse(
             {"choices": [{"message": {"content": "PRE_DECISION: observe"}}]}
@@ -287,7 +289,12 @@ class BenchmarkTests(unittest.TestCase):
         body = json.loads(request.data.decode("utf-8"))
         self.assertEqual("test-model", body["model"])
         self.assertEqual(3, body["seed"])
+        self.assertEqual(1536, body["max_tokens"])
+        self.assertEqual(512, body["thinking_budget"])
         self.assertNotIn("top-secret", request.data.decode("utf-8"))
+        self.assertNotIn(
+            "top-secret", json.dumps(benchmark.api_runtime_parameters(config))
+        )
 
     def test_api_request_retries_one_transient_timeout(self):
         config = {

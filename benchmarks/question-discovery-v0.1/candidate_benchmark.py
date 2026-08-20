@@ -269,6 +269,9 @@ def generate_and_match(
         "protocol_deviations": deviations,
         "generator_model_call_count": model_calls,
         "matcher_model_call_count": matcher_calls,
+        "api_parameters": (
+            benchmark.api_runtime_parameters(config) if config is not None else None
+        ),
     }
     return candidates, matches, metadata
 
@@ -527,6 +530,9 @@ def run_calibration(
     progress_path: Path,
     max_pair_runs: int | None,
 ) -> Path:
+    api_parameters = (
+        benchmark.api_runtime_parameters(config) if config is not None else None
+    )
     if progress_path.exists():
         progress = json.loads(progress_path.read_text(encoding="utf-8"))
         if (
@@ -539,6 +545,13 @@ def run_calibration(
                 "progress mode/model_seed/conditions/randomization_seed differs; "
                 "use a new progress file"
             )
+        recorded_parameters = progress.get("api_parameters")
+        if progress.get("completed") and recorded_parameters != api_parameters:
+            raise ValueError(
+                "progress API runtime parameters differ after completed runs; "
+                "use a new progress file"
+            )
+        progress["api_parameters"] = api_parameters
     else:
         progress = {
             "benchmark_version": "0.4",
@@ -548,6 +561,7 @@ def run_calibration(
             "model_seed": model_seed,
             "randomization_seed": randomization_seed,
             "conditions": conditions,
+            "api_parameters": api_parameters,
             "completed": [],
             "failures": [],
         }
@@ -624,10 +638,14 @@ def main() -> int:
     run.add_argument("--mode", choices=benchmark.RUN_MODES)
     run.add_argument("--config", type=Path, default=benchmark.DEFAULT_CONFIG_PATH)
     run.add_argument("--model-seed", type=int, default=1)
+    run.add_argument("--api-max-tokens", type=int)
+    run.add_argument("--api-thinking-budget", type=int)
     calibrate = subparsers.add_parser("calibrate")
     calibrate.add_argument("--mode", choices=benchmark.RUN_MODES)
     calibrate.add_argument("--config", type=Path, default=benchmark.DEFAULT_CONFIG_PATH)
     calibrate.add_argument("--model-seed", type=int, default=1)
+    calibrate.add_argument("--api-max-tokens", type=int)
+    calibrate.add_argument("--api-thinking-budget", type=int)
     calibrate.add_argument("--randomization-seed", type=int, default=20260901)
     calibrate.add_argument(
         "--conditions", choices=RUN_CONDITIONS, nargs="+", default=list(RUN_CONDITIONS)
@@ -680,6 +698,15 @@ def main() -> int:
             parser.error(f"unknown pair_id: {args.pair_id}")
         mode = args.mode or benchmark.choose_run_mode()
         config = benchmark.load_model_config(args.config) if mode == "api" else None
+        if config is not None:
+            if args.api_max_tokens is not None:
+                if args.api_max_tokens < 1:
+                    parser.error("--api-max-tokens must be positive")
+                config["max_tokens"] = args.api_max_tokens
+            if args.api_thinking_budget is not None:
+                if args.api_thinking_budget < 1:
+                    parser.error("--api-thinking-budget must be positive")
+                config["thinking_budget"] = args.api_thinking_budget
         run_pair(pairs[args.pair_id], args.condition, mode, config, args.model_seed)
         return 0
     if args.command == "calibrate":
@@ -687,6 +714,15 @@ def main() -> int:
             parser.error("--max-pair-runs must be positive")
         mode = args.mode or benchmark.choose_run_mode()
         config = benchmark.load_model_config(args.config) if mode == "api" else None
+        if config is not None:
+            if args.api_max_tokens is not None:
+                if args.api_max_tokens < 1:
+                    parser.error("--api-max-tokens must be positive")
+                config["max_tokens"] = args.api_max_tokens
+            if args.api_thinking_budget is not None:
+                if args.api_thinking_budget < 1:
+                    parser.error("--api-thinking-budget must be positive")
+                config["thinking_budget"] = args.api_thinking_budget
         progress_path = args.progress if args.progress.is_absolute() else ROOT / args.progress
         run_calibration(
             pairs,

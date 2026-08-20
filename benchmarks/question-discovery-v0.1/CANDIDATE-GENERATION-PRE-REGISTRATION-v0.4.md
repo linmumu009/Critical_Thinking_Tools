@@ -2,7 +2,16 @@
 
 日期：2026-08-20
 
-状态：运行前冻结
+状态：正式运行中；首个完整成对单元前做过一次有记录的运行参数修订
+
+## 运行参数修订（2026-08-20，首个完整成对单元前）
+
+初次连通尝试发现当前 `qwen3.8-max` 为仅思考模型：生成器或盲匹配器会在默认最大思考长度下超过两次 120 秒读取窗口。三个进度文件当时的 `completed` 均为空；另发现规范化菜单不含 critical 事实时，通用计分器会除零。按既定失败规则，这些未完成成对单元废弃并完整重跑，失败记录继续保留。
+
+- 修复空 critical 集合的计分：`critical_fact_hit_rate = 0.0`，不改变候选、事实或推进门槛；
+- 对所有受测模型调用、生成器、盲匹配器及语义 Oracle 统一设置 `max_tokens=1536`、`thinking_budget=512`；
+- 不关闭模型思考，不修改温度、案例、提示、随机顺序、问题预算、指标或推进门槛；
+- 运行命令显式记录这两个参数，确保恢复运行与审计可复现。
 
 ## 研究问题
 
@@ -152,7 +161,7 @@ N 必须始终报告，是不加思考工具的原生端到端参照；A 是已�
 ```powershell
 python candidate_benchmark.py validate
 python candidate_benchmark.py schedule --repeats 3
-python candidate_benchmark.py calibrate --mode api --model-seed 1 --randomization-seed 20260901 --progress results/candidate-v0.4-seed1.json
+python candidate_benchmark.py calibrate --mode api --model-seed 1 --randomization-seed 20260901 --api-max-tokens 1536 --api-thinking-budget 512 --progress results/candidate-v0.4-seed1.json
 ```
 
 也支持 `--mode direct`。正式运行前仍由用户在 API 与当前 Codex 直接处理之间选择。

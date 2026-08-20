@@ -332,7 +332,9 @@ def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, fl
         "decision_improvement": improvement,
         "normalized_post_utility": post_utility / max(scores.values()),
         "key_unknown_recall": hit_key_weight / total_key_weight,
-        "critical_fact_hit_rate": len(revealed & critical_ids) / len(critical_ids),
+        "critical_fact_hit_rate": (
+            len(revealed & critical_ids) / len(critical_ids) if critical_ids else 0.0
+        ),
         "information_efficiency": improvement / question_count if question_count else 0.0,
         "questions_used": float(question_count),
         "no_fact_answer_rate": (
@@ -490,6 +492,24 @@ def completion_endpoint(url: str) -> str:
     return f"{stripped}/chat/completions"
 
 
+def api_runtime_parameters(config: dict[str, Any]) -> dict[str, Any]:
+    """Return reproducibility parameters that are safe to persist."""
+    return {
+        name: config[name]
+        for name in (
+            "model_name",
+            "temperature",
+            "send_seed",
+            "timeout_seconds",
+            "api_max_retries",
+            "max_tokens",
+            "thinking_budget",
+            "enable_thinking",
+        )
+        if config.get(name) is not None
+    }
+
+
 def api_chat_completion(
     config: dict[str, Any], messages: list[dict[str, str]], model_seed: int | None
 ) -> str:
@@ -498,6 +518,9 @@ def api_chat_completion(
         "messages": messages,
         "temperature": float(config.get("temperature", 0.2)),
     }
+    for optional_parameter in ("max_tokens", "thinking_budget", "enable_thinking"):
+        if config.get(optional_parameter) is not None:
+            body[optional_parameter] = config[optional_parameter]
     if model_seed is not None and config.get("send_seed", True):
         body["seed"] = model_seed
     headers = {"Content-Type": "application/json"}
@@ -1500,6 +1523,7 @@ def run_api_session(
         "condition": condition,
         "mode": "api",
         "model_name": config["model_name"],
+        "api_parameters": api_runtime_parameters(config),
         "oracle_mode": (
             "evidence_catalog"
             if catalog_mode

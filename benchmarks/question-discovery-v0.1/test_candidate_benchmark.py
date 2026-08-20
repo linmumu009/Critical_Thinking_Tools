@@ -101,6 +101,30 @@ class CandidateBenchmarkTests(unittest.TestCase):
             derived[0]["oracle_facts"][0]["source_evidence_id"], "E2"
         )
 
+    def test_derived_case_without_critical_facts_scores_zero_hit_rate(self) -> None:
+        variants = self.pairs["product-pair-02"]
+        supporting = next(
+            fact
+            for fact in variants[0]["oracle_facts"]
+            if fact["criticality"] != "critical"
+        )
+        menu = [
+            {
+                "id": "C1",
+                "question": "这项辅助证据显示什么？",
+                "base_evidence_id": supporting["evidence_id"],
+            }
+        ]
+        case = cb.derive_cases(variants, menu)[0]
+        best = benchmark.best_public_option(case)
+        session = {
+            "pre_decision": best,
+            "post_decision": best,
+            "questions": [],
+        }
+        metrics = benchmark.score_session(case, session)
+        self.assertEqual(metrics["critical_fact_hit_rate"], 0.0)
+
     def test_candidate_metrics_report_branch_critical_coverage(self) -> None:
         variants = self.pairs["product-pair-02"]
         candidates = valid_candidates()
