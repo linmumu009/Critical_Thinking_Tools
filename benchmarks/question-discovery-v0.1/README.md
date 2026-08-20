@@ -66,13 +66,25 @@ python benchmark.py calibration-schedule --output results/calibration-v0.2.json
 python benchmark.py run product-01 --condition A
 ```
 
-候选映射默认使用全自动条件盲审计。它让两个隔离提示独立评分，只有分歧字段才交给第三个自动角色仲裁；进度逐角色保存，中断后重复命令即可续跑：
+候选映射审计现在提供两套隔离的纯 API 模式：
+
+1. **模式 1（已冻结、已有结果）**：两个条件盲提示独立评分，只有分歧字段才交给第三个自动角色仲裁；定义见 [API-MODE-1-FROZEN-v0.4.md](API-MODE-1-FROZEN-v0.4.md)。
+2. **模式 2（已实现、尚未运行）**：依次执行问题契约提取、单项证据覆盖证明和反例验证；定义见 [API-MODE-2-PROTOCOL-v0.4.md](API-MODE-2-PROTOCOL-v0.4.md)。
+
+不指定模式时，程序会在开始前要求选择：
 
 ```powershell
-python automated_mapping_audit.py run
+python api_audit.py run
 ```
 
-结果写入 [automated-review-v0.4/](automated-review-v0.4/)。本轮双评审映射一致率为 `0.901`、kappa 为 `0.868`，原自动匹配与仲裁共识有 `67/384`（`17.45%`）不一致；所有原推进门槛均未翻转，自动路线建议为 `fix_mapping_interface_before_gq2`。三个角色均使用 `qwen3.8-max`，所以结论只表示对另一组盲提示的稳定性，不是人工确认或外部金标准。旧 [blind-review-v0.4/](blind-review-v0.4/) 双人离线包继续保留，但只在以后需要外部复核时使用，不是当前流程的必经步骤。
+自动化场景可显式指定，两种模式会在不同 Python 进程、进度目录和配置命名空间中运行：
+
+```powershell
+python api_audit.py run --mode 1
+python api_audit.py run --mode 2
+```
+
+模式 1 结果固定在 [automated-review-v0.4/](automated-review-v0.4/)：双评审映射一致率为 `0.901`、kappa 为 `0.868`，原自动匹配与仲裁共识有 `67/384`（`17.45%`）不一致，路线建议为 `fix_mapping_interface_before_gq2`。模式 2 将写入 `automated-review-mode-2-v0.4/`，运行前必须填写专用配置。两边完成后才能运行 `python compare_api_audit_modes.py`；比较器不参与评分。旧 [blind-review-v0.4/](blind-review-v0.4/) 双人离线包仅作可选材料，不是必经步骤。
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
 
@@ -105,6 +117,7 @@ python automated_mapping_audit.py run
 - `model-config.local.json` 已被 Git 忽略，不会随正常提交上传；仓库只保存不含真实凭证的 `model-config.example.json`。
 - 可先运行 `python benchmark.py check-config` 检查必填项；这个命令不会发起网络请求，也不会显示密钥。
 - 可选参数 `timeout_seconds`、`api_max_retries`、`temperature` 和 `send_seed` 已提供默认值。网络超时、HTTP 429 或 5xx 默认重试一次；若服务不接受 `seed` 参数，将 `send_seed` 改为 `false`。
+- API 审计模式 2 不读取 `model-config.local.json`。运行前复制 `model-config.mode-2.example.json` 为被 Git 忽略的 `model-config.mode-2.local.json`，保留 `api_audit_mode: 2` 并填写前三项；如需三阶段使用不同模型，再填写 `extractor_*`、`prover_*`、`falsifier_*`。误传模式 1 配置会在任何 API 调用前失败。
 - `semantic_api` 会在与受测对话隔离的请求中，从尚未揭示的固定事实里只选择一个 `fact_id`；答案仍由本地事实表返回，受测对话看不到事实表。
 - Oracle 三项留空时会复用同一 API 和模型，适合校准但不满足正式独立性要求。正式实验应填写独立的 Oracle 端点/密钥/模型，或逐题人工复核。
 - 若只想复现旧的关键词行为，可将 `oracle_mode` 设为 `keyword`。语义模式每个问题会增加一次 API 调用。
@@ -127,7 +140,7 @@ python automated_mapping_audit.py run
 - 创建案例的人不应担任唯一盲评者。
 - 同一模型运行不同条件时使用全新对话，清除缓存与先前案例内容。
 - 条件标签和输出顺序在人工评分前应随机化。
-- 不要把 `model-config.local.json`、终端输出或任何包含密钥的内容提交到仓库。
+- 不要把 `model-config.local.json`、`model-config.mode-2.local.json`、终端输出或任何包含密钥的内容提交到仓库。
 
 ## 自动指标
 

@@ -52,7 +52,8 @@
 - [Q/F 三种子开发报告](benchmarks/question-discovery-v0.1/QF-DEVELOPMENT-REPORT-v0.3.md)：Q 与 F 主指标分别为 `+0.760` 和 `+0.693`，均高于历史 N；简单菜单 Q 反而比竞争解释契约 F 高 `0.067`，说明当前突破来自可回答候选问题，而不是额外状态机。
 - [候选问题生成器 v0.4 预注册](benchmarks/question-discovery-v0.1/CANDIDATE-GENERATION-PRE-REGISTRATION-v0.4.md)：用 4 组全新反事实案例比较原生、QFT 风格、STORM 风格和双向钢人生成器；候选问题经不看答案的匹配/去重后交给同一选择器，并与同期 N/A 自由提问比较。
 - [候选问题生成器 v0.4 正式运行报告](benchmarks/question-discovery-v0.1/CANDIDATE-GENERATION-REPORT-v0.4.md)：72 个同期成对单元显示两阶段 G0 主指标比原生 N 高 `+0.091`，但候选覆盖和匹配率未过门槛；GQ/GS 改善候选覆盖却未达到相对 G0 的下游增量，GB 候选覆盖最弱。
-- [候选映射全自动盲审协议](benchmarks/question-discovery-v0.1/AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md)：两个条件盲自动评审独立判断 384 道候选，第三个自动角色只仲裁分歧，再重算候选指标和预注册门槛；[人工盲审包](benchmarks/question-discovery-v0.1/BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md)仅作为可选外部复核材料，不阻塞工程路线。
+- [API 模式 1](benchmarks/question-discovery-v0.1/API-MODE-1-FROZEN-v0.4.md)：固定现有双条件盲自动评审加分歧仲裁流程，不因模式 2 改写提示、种子、配置槽位或正式结果；[人工盲审包](benchmarks/question-discovery-v0.1/BLIND-MAPPING-REVIEW-PROTOCOL-v0.4.md)仅作为可选材料。
+- [API 模式 2](benchmarks/question-discovery-v0.1/API-MODE-2-PROTOCOL-v0.4.md)：独立执行“问题契约提取→单项证据覆盖证明→反例验证”，使用专用 API 配置、进度和结果目录；只有两种模式都锁定后，才允许只读比较。
 - [候选映射全自动盲审结果](benchmarks/question-discovery-v0.1/automated-review-v0.4/AUTOMATED-SENSITIVITY-REPORT.md)：双评审映射一致率 `0.901`、kappa `0.868`，但仲裁共识与原自动匹配有 `67/384`（`17.45%`）不一致；所有原推进门槛仍失败，下一步先修匹配接口，再开发 GQ2。
 
 ## 版本约定
@@ -70,6 +71,14 @@
 3. 将提交推送至 GitHub 远程仓库。
 
 ## 版本更新记录
+
+### v0.25.0 - 2026-08-20
+
+- 将 v0.24.0 的“双条件盲评审＋字段级自动仲裁”语义冻结为 API 模式 1；固定原协议、随机种子、配置槽位、结果目录和正式提交，不为适配新模式静默改写已有结果。
+- 新增完全独立的 API 模式 2 协议和实现：Extractor 在看不到证据目录与数据字段时提取问题契约，Prover 在看不到候选原文时证明单个目录项覆盖全部要求，Falsifier 最后尝试推翻契约或证明；否决只能落到 `NONE`，不能未经证明改配另一证据项。
+- 模式 2 使用带身份标记的独立本地配置文件，以及单独的 URL、API Key、模型名、角色覆盖槽位、调度种子、角色种子、可恢复进度和输出目录；程序不会回退到主模型或模式 1 配置，也不读取模式 1 的评分、仲裁或报告。
+- 新增统一 API 审计入口：未指定模式时运行前询问 `1/2`，显式模式在独立 Python 进程中调度；另增事后只读比较器，只在两边锁定后比较逐题映射、质量字段、分条件一致率、门槛差异和路线建议，不能反向修改任一模式。
+- 新增 6 项模式隔离测试，覆盖独立进程、阶段可见性、专用凭证要求、契约/证明/否决约束、无 API 全量重算和只读比较；完整项目 69 项测试通过。模式 2 尚未调用 API，需先填写专用配置。
 
 ### v0.24.0 - 2026-08-20
 

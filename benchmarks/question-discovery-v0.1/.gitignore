@@ -2,3 +2,4 @@ sessions/*.json
 results/*.json
 __pycache__/
 model-config.local.json
+model-config.mode-2.local.json
