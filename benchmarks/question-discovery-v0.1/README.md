@@ -8,7 +8,7 @@ v0.2 已针对试点发现完成修订：公开选项改为中性 ID、最佳选
 
 v0.2 校准确认仍有严重的提问前选择天花板。v0.3 已新增 4 组反事实成对案例和独立预检入口，设计与命令见 [PAIRED-BENCHMARK-v0.3.md](PAIRED-BENCHMARK-v0.3.md)，首次 API 结果见 [PREFLIGHT-REPORT-v0.3.md](PREFLIGHT-REPORT-v0.3.md)。
 
-完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗、D 最小判别问题和 E（D2）显式解释状态机六个条件。主指标是提问后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
+完整成对比较现包含 N 原生模型、A 普通提问、B 工具串联、C 问题发现漏斗、D 最小判别问题、E 显式解释状态机、Q 原子证据菜单和 F 竞争解释证据契约八个条件。主指标是提问前后反事实分支概率分离增量，定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
 首个产品案例四条件成对烟雾结果见 [SMOKE-REPORT-v0.3-product.md](SMOKE-REPORT-v0.3-product.md)。
 
@@ -23,6 +23,8 @@ D 三种子开发结果见 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v
 E（D2）据此把竞争解释、证据目标和已尝试状态变成控制器可检查协议；开发运行前冻结的效果、成本、加权无事实率和状态完整性门槛见 [E-PRE-REGISTRATION-v0.3.md](E-PRE-REGISTRATION-v0.3.md)。
 
 E 三种子开发结果见 [E-DEVELOPMENT-REPORT-v0.3.md](E-DEVELOPMENT-REPORT-v0.3.md)：主指标只有 `+0.196`，低于 N、A、D，只通过 7 项推进门槛中的 2 项。状态机成功阻止 TARGET 复用并把平均问题数限制到 `2.63`，但 63 个问题中 55 个无事实、17/24 个会话零命中；下一版应测试不泄漏答案的证据目录与原子查询接口。
+
+Q/F 据此把开放式问题生成改成对已知可回答证据的选择，并用 Q 隔离菜单本身、用 F 测量竞争解释状态的额外价值；开发运行前冻结的目录规则、比较结构和分条件门槛见 [QF-PRE-REGISTRATION-v0.3.md](QF-PRE-REGISTRATION-v0.3.md)。
 
 ## 当前范围
 

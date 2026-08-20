@@ -18,6 +18,8 @@ PAIRED_CONDITION_FILES = {
     **benchmark.CONDITION_FILES,
     "D": "minimal-discriminative.md",
     "E": benchmark.EXPLANATION_STATE_PROMPT,
+    "Q": benchmark.EVIDENCE_MENU_PROMPT,
+    "F": benchmark.EVIDENCE_CONTRACT_PROMPT,
 }
 
 
@@ -58,6 +60,37 @@ def validate_pairs(pairs: dict[str, list[dict[str, Any]]]) -> list[str]:
                 f"{case['case_id']}: {error}"
                 for error in benchmark.validate_case(case)
             )
+            catalog = case.get("evidence_catalog")
+            if not isinstance(catalog, list) or len(catalog) != 4:
+                errors.append(f"{case['case_id']}: evidence_catalog must contain 4 items")
+                continue
+            catalog_ids = [item.get("id") for item in catalog if isinstance(item, dict)]
+            if catalog_ids != ["E1", "E2", "E3", "E4"]:
+                errors.append(f"{case['case_id']}: evidence catalog ids must be E1-E4")
+            if any(
+                not isinstance(item.get("question"), str) or not item["question"].strip()
+                for item in catalog
+                if isinstance(item, dict)
+            ):
+                errors.append(f"{case['case_id']}: evidence catalog question is missing")
+            fact_evidence_ids = [fact.get("evidence_id") for fact in case["oracle_facts"]]
+            if sorted(fact_evidence_ids) != sorted(catalog_ids):
+                errors.append(
+                    f"{case['case_id']}: each evidence id must map to exactly one fact"
+                )
+            rendered_catalog = benchmark.normalize(
+                json.dumps(catalog, ensure_ascii=False)
+            )
+            for leakage_term in case.get("leakage_terms", []):
+                if benchmark.normalize(leakage_term) in rendered_catalog:
+                    errors.append(
+                        f"{case['case_id']}: evidence catalog leaks {leakage_term!r}"
+                    )
+            for fact in case["oracle_facts"]:
+                if benchmark.normalize(fact["answer"]) in rendered_catalog:
+                    errors.append(
+                        f"{case['case_id']}: evidence catalog contains a hidden answer"
+                    )
         public_payloads = [benchmark.public_case(case) for case in variants]
         if public_payloads[0] != public_payloads[1]:
             errors.append(f"{pair_id}: public payload differs between variants")
@@ -90,7 +123,16 @@ def preflight_messages(case: dict[str, Any], condition: str) -> list[dict[str, s
             "role": "user",
             "content": (
                 "## 公开案例\n"
-                + json.dumps(benchmark.public_case(case), ensure_ascii=False, indent=2)
+                + json.dumps(
+                    benchmark.public_case(
+                        case,
+                        include_evidence_catalog=benchmark.uses_evidence_catalog(
+                            condition, PAIRED_CONDITION_FILES[condition]
+                        ),
+                    ),
+                    ensure_ascii=False,
+                    indent=2,
+                )
                 + "\n\n现在只输出两行：\n"
                 + f"PRE_DECISION: <option_id>（有效选项：{options}）\n"
                 + "PRE_PROBABILITIES: <JSON 对象；包含全部选项，概率之和为 1>"
@@ -232,7 +274,7 @@ def score_pair_sessions(
     pre_separation = separation("pre_probabilities")
     post_separation = separation("post_probabilities")
     metrics = [session["automatic_metrics"] for session in ordered]
-    return {
+    result = {
         "pair_id": variants[0]["pair_id"],
         "condition": first["condition"],
         "variant_best_options": [best_first, best_second],
@@ -264,6 +306,26 @@ def score_pair_sessions(
             metric["protocol_deviation_count"] for metric in metrics
         ),
     }
+    if any("catalog_evidence_selection_count" in metric for metric in metrics):
+        result.update(
+            {
+                "mean_first_selection_critical": sum(
+                    metric.get("first_selection_critical", 0.0) for metric in metrics
+                )
+                / 2,
+                "mean_supporting_evidence_selection_rate": sum(
+                    metric.get("supporting_evidence_selection_rate", 0.0)
+                    for metric in metrics
+                )
+                / 2,
+                "mean_distractor_evidence_selection_rate": sum(
+                    metric.get("distractor_evidence_selection_rate", 0.0)
+                    for metric in metrics
+                )
+                / 2,
+            }
+        )
+    return result
 
 
 def save_pair_result(

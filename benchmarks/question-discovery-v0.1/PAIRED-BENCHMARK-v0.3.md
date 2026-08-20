@@ -48,7 +48,7 @@ python paired_benchmark.py preflight --mode api --model-seed 11
 python paired_benchmark.py preflight --mode direct
 ```
 
-API 预检对每个“公开案例 × 条件”只调用一次。加入 N、D、E 后，一轮为 4 个案例 × 6 个条件，共 24 次；不会把两个隐藏分支发送给受测模型。首次预检完成于加入 N/D/E 之前，因此历史报告仍是 A/B/C 共 12 次。结果保存在被 Git 忽略的 `results/paired-preflight-v0.3.json`。
+API 预检对每个“公开案例 × 条件”只调用一次。加入 Q/F 后，一轮为 4 个案例 × 8 个条件，共 32 次；不会把两个隐藏分支发送给受测模型。首次预检完成于加入 N/D/E/Q/F 之前，因此历史报告仍是 A/B/C 共 12 次。结果保存在被 Git 忽略的 `results/paired-preflight-v0.3.json`。
 
 完整运行一对隐藏分支：
 
@@ -64,6 +64,8 @@ python paired_benchmark.py run-pair product-pair-01 --condition N --mode api --m
 - `C`：问题发现漏斗。
 - `D`：最小判别问题，同时要求行动敏感、解释判别和证据可答，足够即停。
 - `E`（D2）：显式解释状态机，先登记三个竞争解释，再用不可复用的 TARGET 控制问题换轨。
+- `Q`：原子证据菜单，不使用思考工具，只选择可回答目录中的 EVIDENCE_ID。
+- `F`：竞争解释证据契约，把三个解释绑定到不同目录证据和行动，再选择 TARGET。
 
 生成一轮均衡计划：
 
@@ -71,7 +73,7 @@ python paired_benchmark.py run-pair product-pair-01 --condition N --mode api --m
 python paired_benchmark.py schedule --repeats 1 --output results/paired-schedule-v0.3.json
 ```
 
-一轮包含 24 个成对单元、48 个模型会话。成对主指标与护栏定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
+一轮包含 32 个成对单元、64 个模型会话。成对主指标与护栏定义见 [METRICS-v0.3.md](METRICS-v0.3.md)。
 
 可恢复地运行校准：
 
@@ -97,7 +99,7 @@ python paired_benchmark.py calibrate --mode api --progress results/paired-calibr
 
 首轮 4 案例、4 条件、1 种子的完整开发校准见 [CALIBRATION-REPORT-v0.3-seed1.md](CALIBRATION-REPORT-v0.3-seed1.md)。
 
-N/A 三种子确认见 [CONFIRMATION-REPORT-v0.3-seeds1-3.md](CONFIRMATION-REPORT-v0.3-seeds1-3.md)。D 的冻结规则与开发结果分别见 [D-PRE-REGISTRATION-v0.3.md](D-PRE-REGISTRATION-v0.3.md) 和 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v0.3.md)。E 是根据 D 的失败路径提出的显式状态条件，冻结规则见 [E-PRE-REGISTRATION-v0.3.md](E-PRE-REGISTRATION-v0.3.md)；当前四例上的 D/E 结果均不得表述为独立确认。
+N/A 三种子确认见 [CONFIRMATION-REPORT-v0.3-seeds1-3.md](CONFIRMATION-REPORT-v0.3-seeds1-3.md)。D 的冻结规则与开发结果分别见 [D-PRE-REGISTRATION-v0.3.md](D-PRE-REGISTRATION-v0.3.md) 和 [D-DEVELOPMENT-REPORT-v0.3.md](D-DEVELOPMENT-REPORT-v0.3.md)。E 是根据 D 的失败路径提出的显式状态条件，冻结规则与结果见 [E-PRE-REGISTRATION-v0.3.md](E-PRE-REGISTRATION-v0.3.md) 和 [E-DEVELOPMENT-REPORT-v0.3.md](E-DEVELOPMENT-REPORT-v0.3.md)。Q/F 根据 E 的证据接口错配提出，冻结规则见 [QF-PRE-REGISTRATION-v0.3.md](QF-PRE-REGISTRATION-v0.3.md)；当前四例上的 D/E/Q/F 结果均不得表述为独立确认。
 
 ## 下一阶段门槛
 

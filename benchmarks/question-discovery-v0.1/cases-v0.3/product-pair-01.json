@@ -14,6 +14,12 @@
       {"id": "observe", "label": "维持现状继续观察", "public_label": "维持现状再观察一周"}
     ]
   },
+  "evidence_catalog": [
+    {"id": "E1", "question": "在仍进入注册流程的用户中，完成、退出或报错主要集中在哪个步骤、浏览器或设备？"},
+    {"id": "E2", "question": "对同一批流量重放新旧引导流程时，注册完成结果是否改变？"},
+    {"id": "E3", "question": "对同一批流量重放新旧套餐资格规则时，进入注册及完成结果是否改变？"},
+    {"id": "E4", "question": "下降前后获客渠道、地区和新老访客构成是否发生明显变化？"}
+  ],
   "leakage_terms": ["Safari 脚本错误", "月付套餐", "资格过滤"],
   "variants": [
     {
@@ -23,10 +29,10 @@
         {"id": "eligibility_rule", "label": "资格规则影响"}
       ],
       "oracle_facts": [
-        {"id": "f1", "criticality": "critical", "answer": "完成率下降几乎全部来自 iPhone Safari；该浏览器在新版引导第二步出现脚本错误。", "triggers": ["浏览器", "设备", "Safari", "第二步", "错误分布"]},
-        {"id": "f2", "criticality": "critical", "answer": "在同一流量回放中恢复旧引导后，完成率回到 47%，套餐资格规则保持不变。", "triggers": ["回放", "回滚", "旧引导", "恢复", "因果验证"]},
-        {"id": "f3", "criticality": "supporting", "answer": "新旧资格规则下进入注册页的用户数量与构成相差不到 2%。", "triggers": ["资格", "规则", "用户构成", "进入注册页"]},
-        {"id": "f4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "完成率下降几乎全部来自 iPhone Safari；该浏览器在新版引导第二步出现脚本错误。", "triggers": ["浏览器", "设备", "Safari", "第二步", "错误分布"]},
+        {"id": "f2", "evidence_id": "E2", "criticality": "critical", "answer": "在同一流量回放中恢复旧引导后，完成率回到 47%，套餐资格规则保持不变。", "triggers": ["回放", "回滚", "旧引导", "恢复", "因果验证"]},
+        {"id": "f3", "evidence_id": "E3", "criticality": "supporting", "answer": "新旧资格规则下进入注册页的用户数量与构成相差不到 2%。", "triggers": ["资格", "规则", "用户构成", "进入注册页"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
       ],
       "key_unknowns": [
         {"id": "where_drop", "weight": 2, "fact_ids": ["f1"]},
@@ -41,10 +47,10 @@
         {"id": "eligibility_rule", "label": "资格规则影响"}
       ],
       "oracle_facts": [
-        {"id": "f1", "criticality": "critical", "answer": "在仍符合资格并进入注册页的用户中，新版引导完成率为 49%，没有浏览器或设备异常。", "triggers": ["符合资格", "进入注册页", "浏览器", "设备", "引导完成率"]},
-        {"id": "f2", "criticality": "critical", "answer": "新资格规则误将月付套餐用户排除；离线重放旧规则后，总体完成率估算恢复到 46%。", "triggers": ["资格规则", "月付", "排除", "旧规则", "重放"]},
-        {"id": "f3", "criticality": "supporting", "answer": "新版与旧版引导的逐步回放结果相同，错误日志没有新增异常。", "triggers": ["引导", "逐步", "回放", "错误日志", "异常"]},
-        {"id": "f4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
+        {"id": "f1", "evidence_id": "E1", "criticality": "critical", "answer": "在仍符合资格并进入注册页的用户中，新版引导完成率为 49%，没有浏览器或设备异常。", "triggers": ["符合资格", "进入注册页", "浏览器", "设备", "引导完成率"]},
+        {"id": "f2", "evidence_id": "E3", "criticality": "critical", "answer": "新资格规则误将月付套餐用户排除；离线重放旧规则后，总体完成率估算恢复到 46%。", "triggers": ["资格规则", "月付", "排除", "旧规则", "重放"]},
+        {"id": "f3", "evidence_id": "E2", "criticality": "supporting", "answer": "新版与旧版引导的逐步回放结果相同，错误日志没有新增异常。", "triggers": ["引导", "逐步", "回放", "错误日志", "异常"]},
+        {"id": "f4", "evidence_id": "E4", "criticality": "distractor", "answer": "获客渠道、地区和新老访客比例与前一周基本一致。", "triggers": ["渠道", "地区", "流量结构", "访客比例"]}
       ],
       "key_unknowns": [
         {"id": "eligible_conversion", "weight": 2, "fact_ids": ["f1"]},

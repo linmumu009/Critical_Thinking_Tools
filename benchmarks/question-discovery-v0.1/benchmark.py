@@ -26,6 +26,8 @@ CRITICALITY_RANK = {"distractor": 0, "supporting": 1, "critical": 2}
 RUN_MODES = {"api", "direct"}
 BENCHMARK_VERSION = "0.2"
 EXPLANATION_STATE_PROMPT = "explicit-explanation-state.md"
+EVIDENCE_MENU_PROMPT = "evidence-menu.md"
+EVIDENCE_CONTRACT_PROMPT = "evidence-contract.md"
 
 
 def load_cases() -> dict[str, dict[str, Any]]:
@@ -86,8 +88,10 @@ def best_public_option(case: dict[str, Any]) -> str:
     )
 
 
-def public_case(case: dict[str, Any]) -> dict[str, Any]:
-    return {
+def public_case(
+    case: dict[str, Any], include_evidence_catalog: bool = False
+) -> dict[str, Any]:
+    payload = {
         "case_id": case.get("public_case_id", case["case_id"]),
         "domain": case["domain"],
         "title": case["title"],
@@ -96,6 +100,32 @@ def public_case(case: dict[str, Any]) -> dict[str, Any]:
         "options": public_options(case),
         "question_budget": case.get("question_budget", 5),
     }
+    if include_evidence_catalog:
+        payload["evidence_catalog"] = case["evidence_catalog"]
+    return payload
+
+
+def evidence_catalog_map(case: dict[str, Any]) -> dict[str, str]:
+    return {item["id"]: item["question"] for item in case.get("evidence_catalog", [])}
+
+
+def answer_evidence_query(
+    case: dict[str, Any], evidence_id: str, revealed_ids: set[str]
+) -> tuple[str | None, str]:
+    catalog = evidence_catalog_map(case)
+    if evidence_id not in catalog:
+        raise ValueError(f"unknown evidence_id: {evidence_id}")
+    matches = [
+        fact
+        for fact in case["oracle_facts"]
+        if fact.get("evidence_id") == evidence_id and fact["id"] not in revealed_ids
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"{case['case_id']}: evidence_id {evidence_id} must map to one unrevealed fact"
+        )
+    fact = matches[0]
+    return fact["id"], fact["answer"]
 
 
 def normalize(text: str) -> str:
@@ -317,6 +347,37 @@ def score_session(case: dict[str, Any], session: dict[str, Any]) -> dict[str, fl
             else 0.0
         ),
     }
+    if any(item.get("evidence_id") for item in questions):
+        fact_criticality = {
+            fact["id"]: fact["criticality"] for fact in case["oracle_facts"]
+        }
+        metrics.update(
+            {
+                "catalog_evidence_selection_count": float(question_count),
+                "first_selection_critical": float(
+                    bool(questions)
+                    and fact_criticality.get(questions[0].get("fact_id")) == "critical"
+                ),
+                "supporting_evidence_selection_rate": (
+                    sum(
+                        fact_criticality.get(item.get("fact_id")) == "supporting"
+                        for item in questions
+                    )
+                    / question_count
+                    if question_count
+                    else 0.0
+                ),
+                "distractor_evidence_selection_rate": (
+                    sum(
+                        fact_criticality.get(item.get("fact_id")) == "distractor"
+                        for item in questions
+                    )
+                    / question_count
+                    if question_count
+                    else 0.0
+                ),
+            }
+        )
     if session.get("pre_probabilities") and session.get("post_probabilities"):
         pre_probabilities = validate_probabilities(
             case, session["pre_probabilities"], "pre_probabilities"
@@ -553,7 +614,21 @@ def parse_protocol_field(text: str, field: str) -> str | None:
 
 
 def uses_explanation_state(condition: str, prompt_file: str | None) -> bool:
-    return condition == "E" or prompt_file == EXPLANATION_STATE_PROMPT
+    return condition in {"E", "F"} or prompt_file in {
+        EXPLANATION_STATE_PROMPT,
+        EVIDENCE_CONTRACT_PROMPT,
+    }
+
+
+def uses_evidence_catalog(condition: str, prompt_file: str | None) -> bool:
+    return condition in {"Q", "F"} or prompt_file in {
+        EVIDENCE_MENU_PROMPT,
+        EVIDENCE_CONTRACT_PROMPT,
+    }
+
+
+def uses_catalog_plan(condition: str, prompt_file: str | None) -> bool:
+    return condition == "F" or prompt_file == EVIDENCE_CONTRACT_PROMPT
 
 
 def parse_explanation_plan(
@@ -600,6 +675,71 @@ def parse_explanation_plan(
     if len(actions) != len(set(actions)):
         raise ValueError("三个解释必须指向三个不同的最佳行动")
     return sorted(normalized, key=lambda item: item["id"])
+
+
+def parse_catalog_explanation_plan(
+    case: dict[str, Any], text: str
+) -> list[dict[str, str]]:
+    raw = parse_protocol_field(text, "EXPLANATIONS")
+    if raw is None:
+        raise ValueError("缺少 EXPLANATIONS")
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise ValueError("EXPLANATIONS 不是有效 JSON 数组") from error
+    if not isinstance(payload, list) or len(payload) != 3:
+        raise ValueError("EXPLANATIONS 必须恰好包含 3 个解释")
+    expected_ids = {"H1", "H2", "H3"}
+    valid_evidence = set(evidence_catalog_map(case))
+    normalized: list[dict[str, str]] = []
+    for item in payload:
+        if not isinstance(item, dict):
+            raise ValueError("每个解释必须是 JSON 对象")
+        explanation_id = item.get("id")
+        explanation = item.get("explanation")
+        evidence_id = item.get("evidence_id")
+        action = item.get("action")
+        if explanation_id not in expected_ids:
+            raise ValueError("解释 id 必须是 H1、H2 或 H3")
+        if not isinstance(explanation, str) or not explanation.strip():
+            raise ValueError(f"{explanation_id} 缺少 explanation")
+        if evidence_id not in valid_evidence:
+            raise ValueError(
+                f"{explanation_id}.evidence_id 必须是：{', '.join(sorted(valid_evidence))}"
+            )
+        if not isinstance(action, str):
+            raise ValueError(f"{explanation_id} 缺少 action")
+        normalized.append(
+            {
+                "id": explanation_id,
+                "explanation": explanation.strip(),
+                "evidence_id": evidence_id,
+                "action": validate_option(case, action, f"{explanation_id}.action"),
+            }
+        )
+    ids = [item["id"] for item in normalized]
+    actions = [item["action"] for item in normalized]
+    evidence_ids = [item["evidence_id"] for item in normalized]
+    if set(ids) != expected_ids or len(ids) != len(set(ids)):
+        raise ValueError("解释 id 必须恰好各出现一次：H1、H2、H3")
+    if len(actions) != len(set(actions)):
+        raise ValueError("三个解释必须指向三个不同的最佳行动")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        raise ValueError("三个解释必须绑定三个不同的 evidence_id")
+    return sorted(normalized, key=lambda item: item["id"])
+
+
+def parse_evidence_selection(
+    text: str, valid_evidence: set[str], attempted_evidence: set[str]
+) -> str:
+    evidence_id = parse_protocol_field(text, "EVIDENCE_ID")
+    if evidence_id is None:
+        raise ValueError("必须输出 EVIDENCE_ID")
+    if evidence_id not in valid_evidence:
+        raise ValueError(f"EVIDENCE_ID 必须是：{', '.join(sorted(valid_evidence))}")
+    if evidence_id in attempted_evidence:
+        raise ValueError(f"EVIDENCE_ID {evidence_id} 已尝试，不得复用")
+    return evidence_id
 
 
 def parse_targeted_question(
@@ -660,13 +800,19 @@ def choose_probabilities(case: dict[str, Any], label: str) -> dict[str, float]:
             print(f"概率格式无效：{error}")
 
 
-def choose_explanation_plan(case: dict[str, Any]) -> list[dict[str, str]]:
+def choose_explanation_plan(
+    case: dict[str, Any], catalog_plan: bool = False
+) -> list[dict[str, str]]:
     while True:
         raw = input("EXPLANATIONS JSON 数组> ").strip()
         if not raw.upper().startswith("EXPLANATIONS:"):
             raw = f"EXPLANATIONS: {raw}"
         try:
-            return parse_explanation_plan(case, raw)
+            return (
+                parse_catalog_explanation_plan(case, raw)
+                if catalog_plan
+                else parse_explanation_plan(case, raw)
+            )
         except ValueError as error:
             print(f"解释计划格式无效：{error}")
 
@@ -692,10 +838,13 @@ def run_direct_session(
     prompt_file: str | None = None,
     benchmark_version: str | None = None,
 ) -> Path:
+    stateful = uses_explanation_state(condition, prompt_file)
+    catalog_mode = uses_evidence_catalog(condition, prompt_file)
+    catalog_plan = uses_catalog_plan(condition, prompt_file)
     prompt = (PROMPTS_DIR / (prompt_file or CONDITION_FILES[condition])).read_text(
         encoding="utf-8"
     )
-    payload = public_case(case)
+    payload = public_case(case, include_evidence_catalog=catalog_mode)
     print(prompt)
     print("\n## 公开案例\n")
     print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -705,15 +854,19 @@ def run_direct_session(
     pre_probabilities = choose_probabilities(
         case, 'PRE_PROBABILITIES JSON（例如 {"option_a":0.25,...}）> '
     )
-    stateful = uses_explanation_state(condition, prompt_file)
-    explanation_plan = choose_explanation_plan(case) if stateful else []
+    explanation_plan = (
+        choose_explanation_plan(case, catalog_plan=catalog_plan) if stateful else []
+    )
     valid_targets = {item["id"] for item in explanation_plan}
     attempted_targets: dict[str, str] = {}
+    catalog = evidence_catalog_map(case) if catalog_mode else {}
+    attempted_evidence: set[str] = set()
     revealed: set[str] = set()
     questions: list[dict[str, Any]] = []
     budget = payload["question_budget"]
     for index in range(1, budget + 1):
         target: str | None = None
+        evidence_id: str | None = None
         if stateful:
             remaining = valid_targets - set(attempted_targets)
             if not remaining:
@@ -730,14 +883,47 @@ def run_direct_session(
                 print(f"无效或已尝试目标，请输入：{', '.join(sorted(remaining))}")
             if target.upper() == "DECIDE":
                 break
-            question = input("QUESTION> ").strip()
+            if catalog_mode:
+                evidence_id = next(
+                    item["evidence_id"] for item in explanation_plan if item["id"] == target
+                )
+                question = catalog[evidence_id]
+                print(f"EVIDENCE_ID: {evidence_id}\nQUESTION: {question}")
+            else:
+                question = input("QUESTION> ").strip()
+        elif catalog_mode:
+            remaining_evidence = set(catalog) - attempted_evidence
+            if not remaining_evidence:
+                break
+            while True:
+                evidence_id = input(
+                    f"EVIDENCE_ID {index}/{budget}（{','.join(sorted(remaining_evidence))}；"
+                    "输入 DECIDE 提前结束）> "
+                ).strip()
+                if evidence_id.upper() == "DECIDE":
+                    break
+                if evidence_id in remaining_evidence:
+                    break
+                print(
+                    "无效或已尝试证据，请输入："
+                    + ", ".join(sorted(remaining_evidence))
+                )
+            if evidence_id.upper() == "DECIDE":
+                break
+            question = catalog[evidence_id]
+            print(f"QUESTION: {question}")
         else:
             question = input(
                 f"QUESTION {index}/{budget}（输入 DECIDE 提前结束）> "
             ).strip()
             if question.upper() == "DECIDE":
                 break
-        fact_id, answer = answer_question(case, question, revealed)
+        if catalog_mode:
+            assert evidence_id is not None
+            fact_id, answer = answer_evidence_query(case, evidence_id, revealed)
+            attempted_evidence.add(evidence_id)
+        else:
+            fact_id, answer = answer_question(case, question, revealed)
         if fact_id:
             revealed.add(fact_id)
         if target is not None:
@@ -757,6 +943,12 @@ def run_direct_session(
                 "data_gap_value": None,
             },
         }
+        if catalog_mode:
+            question_record["evidence_id"] = evidence_id
+            question_record["oracle_mode"] = "evidence_catalog"
+            question_record["manual_annotations"][
+                "catalog_selection_relevance_0_to_2"
+            ] = None
         if target is not None:
             question_record["explanation_target"] = target
             question_record["manual_annotations"].update(
@@ -782,6 +974,7 @@ def run_direct_session(
         "variant_id": case.get("variant_id"),
         "condition": condition,
         "mode": "direct",
+        "oracle_mode": "evidence_catalog" if catalog_mode else "keyword",
         "started_at_utc": now.isoformat(),
         "pre_decision": pre_decision,
         "pre_probabilities": pre_probabilities,
@@ -810,6 +1003,11 @@ def run_direct_session(
                 "notes": None,
             },
         }
+    if catalog_mode:
+        session["evidence_state"] = {
+            "attempted_evidence_ids": sorted(attempted_evidence),
+            "catalog_size": len(catalog),
+        }
     return save_session(case, session)
 
 
@@ -822,6 +1020,8 @@ def run_api_session(
     benchmark_version: str | None = None,
 ) -> Path:
     stateful = uses_explanation_state(condition, prompt_file)
+    catalog_mode = uses_evidence_catalog(condition, prompt_file)
+    catalog_plan = uses_catalog_plan(condition, prompt_file)
     condition_prompt = (
         PROMPTS_DIR / (prompt_file or CONDITION_FILES[condition])
     ).read_text(encoding="utf-8")
@@ -836,7 +1036,11 @@ def run_api_session(
             "role": "user",
             "content": (
                 "## 公开案例\n"
-                + json.dumps(public_case(case), ensure_ascii=False, indent=2)
+                + json.dumps(
+                    public_case(case, include_evidence_catalog=catalog_mode),
+                    ensure_ascii=False,
+                    indent=2,
+                )
                 + "\n\n现在只输出两行：\n"
                 + f"PRE_DECISION: <option_id>（有效选项：{options}）\n"
                 + "PRE_PROBABILITIES: <JSON 对象；包含全部选项，概率之和为 1>"
@@ -901,21 +1105,33 @@ def run_api_session(
 
     explanation_plan: list[dict[str, str]] = []
     attempted_targets: dict[str, str] = {}
+    catalog = evidence_catalog_map(case) if catalog_mode else {}
+    attempted_evidence: set[str] = set()
     if stateful:
         messages.append(
             {
                 "role": "user",
                 "content": (
                     "现在建立可检查的解释状态。只输出一行 EXPLANATIONS: <JSON 数组>。"
-                    "数组必须恰好包含 H1、H2、H3；每项包含 id、explanation、"
-                    "evidence_target、action，且三个 action 必须不同。"
+                    + (
+                        "数组必须恰好包含 H1、H2、H3；每项包含 id、explanation、"
+                        "evidence_id、action，且三个 evidence_id 与三个 action 都必须不同。"
+                        if catalog_plan
+                        else
+                        "数组必须恰好包含 H1、H2、H3；每项包含 id、explanation、"
+                        "evidence_target、action，且三个 action 必须不同。"
+                    )
                 ),
             }
         )
         raw_plan = call_model()
         messages.append({"role": "assistant", "content": raw_plan})
         try:
-            explanation_plan = parse_explanation_plan(case, raw_plan)
+            explanation_plan = (
+                parse_catalog_explanation_plan(case, raw_plan)
+                if catalog_plan
+                else parse_explanation_plan(case, raw_plan)
+            )
         except ValueError as error:
             protocol_deviations.append(
                 {
@@ -931,13 +1147,22 @@ def run_api_session(
                     "content": (
                         f"格式无效：{error}。不要改变解释内容，只修正格式。"
                         "重新只输出一行 EXPLANATIONS JSON 数组；必须恰好包含 H1、"
-                        "H2、H3，并指向三个不同的有效 option_id。"
+                        "H2、H3，并指向三个不同的有效 option_id"
+                        + (
+                            "和三个不同的有效 evidence_id。"
+                            if catalog_plan
+                            else "。"
+                        )
                     ),
                 }
             )
             raw_plan = call_model()
             messages.append({"role": "assistant", "content": raw_plan})
-            explanation_plan = parse_explanation_plan(case, raw_plan)
+            explanation_plan = (
+                parse_catalog_explanation_plan(case, raw_plan)
+                if catalog_plan
+                else parse_explanation_plan(case, raw_plan)
+            )
             print("PROTOCOL_DEVIATION: 解释计划格式无效，已在一次重试后修复。")
         print(
             "EXPLANATIONS: "
@@ -950,25 +1175,41 @@ def run_api_session(
     for index in range(1, budget + 1):
         if stateful and len(attempted_targets) >= len(explanation_plan):
             break
+        if catalog_mode and not stateful and len(attempted_evidence) >= len(catalog):
+            break
         remaining_targets = {
             item["id"] for item in explanation_plan
         } - set(attempted_targets)
+        remaining_evidence = set(catalog) - attempted_evidence
+        if stateful and catalog_mode:
+            request = (
+                f"现在是第 {index}/{budget} 次证据选择。尚未尝试的解释目标："
+                f"{', '.join(sorted(remaining_targets))}。只输出 TARGET: <一个尚未尝试的 id>；"
+                "控制器将执行该解释预先绑定的证据问题。如果已经足够决策，只输出 DECIDE。"
+            )
+        elif stateful:
+            request = (
+                f"现在是第 {index}/{budget} 次提问机会。尚未尝试的解释目标："
+                f"{', '.join(sorted(remaining_targets))}。只输出两行："
+                "TARGET: <一个尚未尝试的 id> 和 QUESTION: <一个问题>；"
+                "如果已经足够决策，只输出 DECIDE。"
+            )
+        elif catalog_mode:
+            request = (
+                f"现在是第 {index}/{budget} 次证据选择。尚未尝试的证据："
+                f"{', '.join(sorted(remaining_evidence))}。"
+                "只输出 EVIDENCE_ID: <一个尚未尝试的 id>；"
+                "如果已经足够决策，只输出 DECIDE。"
+            )
+        else:
+            request = (
+                f"现在是第 {index}/{budget} 次提问机会。"
+                "只输出 QUESTION: <一个问题>；如果已经足够决策，只输出 DECIDE。"
+            )
         messages.append(
             {
                 "role": "user",
-                "content": (
-                    (
-                        f"现在是第 {index}/{budget} 次提问机会。尚未尝试的解释目标："
-                        f"{', '.join(sorted(remaining_targets))}。只输出两行："
-                        "TARGET: <一个尚未尝试的 id> 和 QUESTION: <一个问题>；"
-                        "如果已经足够决策，只输出 DECIDE。"
-                    )
-                    if stateful
-                    else (
-                        f"现在是第 {index}/{budget} 次提问机会。"
-                        "只输出 QUESTION: <一个问题>；如果已经足够决策，只输出 DECIDE。"
-                    )
-                ),
+                "content": request,
             }
         )
         raw_question = call_model()
@@ -976,8 +1217,16 @@ def run_api_session(
         if re.search(r"(?im)^\s*DECIDE\s*$", raw_question):
             break
         early_decision = parse_protocol_field(raw_question, "DECISION")
-        question = parse_protocol_field(raw_question, "QUESTION")
-        if question is None and early_decision is not None:
+        missing_required_selection = (
+            parse_protocol_field(raw_question, "TARGET") is None
+            if stateful
+            else (
+                parse_protocol_field(raw_question, "EVIDENCE_ID") is None
+                if catalog_mode
+                else parse_protocol_field(raw_question, "QUESTION") is None
+            )
+        )
+        if early_decision is not None and missing_required_selection:
             validate_option(case, early_decision, "DECISION")
             protocol_deviations.append(
                 {
@@ -992,12 +1241,31 @@ def run_api_session(
             )
             break
         target: str | None = None
+        evidence_id: str | None = None
+        question = parse_protocol_field(raw_question, "QUESTION")
         if stateful:
             valid_targets = {item["id"] for item in explanation_plan}
             try:
-                target, question = parse_targeted_question(
-                    raw_question, valid_targets, set(attempted_targets)
-                )
+                if catalog_mode:
+                    target = parse_protocol_field(raw_question, "TARGET")
+                    if target not in valid_targets:
+                        raise ValueError(
+                            f"TARGET 必须是：{', '.join(sorted(valid_targets))}"
+                        )
+                    if target in attempted_targets:
+                        raise ValueError(f"TARGET {target} 已尝试，不得复用")
+                    evidence_id = next(
+                        item["evidence_id"]
+                        for item in explanation_plan
+                        if item["id"] == target
+                    )
+                    if evidence_id in attempted_evidence:
+                        raise ValueError(f"EVIDENCE_ID {evidence_id} 已尝试，不得复用")
+                    question = catalog[evidence_id]
+                else:
+                    target, question = parse_targeted_question(
+                        raw_question, valid_targets, set(attempted_targets)
+                    )
             except ValueError as error:
                 protocol_deviations.append(
                     {
@@ -1013,33 +1281,89 @@ def run_api_session(
                         "content": (
                             f"格式或状态无效：{error}。只修正本轮输出；从尚未尝试的"
                             f" {', '.join(sorted(remaining_targets))} 中选择一个。"
-                            "只输出 TARGET 和 QUESTION 两行。"
+                            + (
+                                "只输出 TARGET 一行。"
+                                if catalog_mode
+                                else "只输出 TARGET 和 QUESTION 两行。"
+                            )
                         ),
                     }
                 )
                 raw_question = call_model()
                 messages.append({"role": "assistant", "content": raw_question})
-                target, question = parse_targeted_question(
-                    raw_question, valid_targets, set(attempted_targets)
-                )
+                if catalog_mode:
+                    target = parse_protocol_field(raw_question, "TARGET")
+                    if target not in valid_targets or target in attempted_targets:
+                        raise ValueError("一次修复后 TARGET 仍无效或已尝试")
+                    evidence_id = next(
+                        item["evidence_id"]
+                        for item in explanation_plan
+                        if item["id"] == target
+                    )
+                    if evidence_id in attempted_evidence:
+                        raise ValueError("一次修复后 EVIDENCE_ID 仍已尝试")
+                    question = catalog[evidence_id]
+                else:
+                    target, question = parse_targeted_question(
+                        raw_question, valid_targets, set(attempted_targets)
+                    )
                 print(
                     "PROTOCOL_DEVIATION: 解释目标无效或已复用，"
                     "已在一次重试后修复。"
                 )
+        elif catalog_mode:
+            try:
+                evidence_id = parse_evidence_selection(
+                    raw_question, set(catalog), attempted_evidence
+                )
+            except ValueError as error:
+                protocol_deviations.append(
+                    {
+                        "stage": f"question_{index}",
+                        "type": "invalid_evidence_selection_repaired",
+                        "error": str(error),
+                        "raw_output": raw_question,
+                    }
+                )
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": (
+                            f"格式或状态无效：{error}。只修正本轮输出；从尚未尝试的 "
+                            f"{', '.join(sorted(remaining_evidence))} 中选择一个。"
+                            "只输出 EVIDENCE_ID 一行。"
+                        ),
+                    }
+                )
+                raw_question = call_model()
+                messages.append({"role": "assistant", "content": raw_question})
+                evidence_id = parse_evidence_selection(
+                    raw_question, set(catalog), attempted_evidence
+                )
+                print("PROTOCOL_DEVIATION: 证据选择无效或已复用，已在一次重试后修复。")
+            question = catalog[evidence_id]
         elif question is None:
             raise ValueError(f"模型未按协议返回 QUESTION 或 DECIDE：{raw_question[:300]}")
         assert question is not None
-        keyword_fact_id, keyword_answer = answer_question(case, question, revealed)
-        oracle_mode = config.get("oracle_mode", "semantic_api")
-        semantic_raw: str | None = None
-        if oracle_mode == "semantic_api":
-            fact_id, answer, semantic_raw = semantic_answer_question(
-                case, question, revealed, config
-            )
-        elif oracle_mode == "keyword":
-            fact_id, answer = keyword_fact_id, keyword_answer
+        if catalog_mode:
+            assert evidence_id is not None
+            fact_id, answer = answer_evidence_query(case, evidence_id, revealed)
+            attempted_evidence.add(evidence_id)
+            keyword_fact_id = None
+            semantic_raw = None
+            oracle_mode = "evidence_catalog"
         else:
-            raise ValueError(f"不支持的 oracle_mode：{oracle_mode!r}")
+            keyword_fact_id, keyword_answer = answer_question(case, question, revealed)
+            oracle_mode = config.get("oracle_mode", "semantic_api")
+            semantic_raw = None
+            if oracle_mode == "semantic_api":
+                fact_id, answer, semantic_raw = semantic_answer_question(
+                    case, question, revealed, config
+                )
+            elif oracle_mode == "keyword":
+                fact_id, answer = keyword_fact_id, keyword_answer
+            else:
+                raise ValueError(f"不支持的 oracle_mode：{oracle_mode!r}")
         if fact_id:
             revealed.add(fact_id)
         if target is not None:
@@ -1050,7 +1374,9 @@ def run_api_session(
             "oracle_answer": answer,
             "oracle_mode": oracle_mode,
             "keyword_fact_id": keyword_fact_id,
-            "oracle_match_disagreement": keyword_fact_id != fact_id,
+            "oracle_match_disagreement": (
+                False if catalog_mode else keyword_fact_id != fact_id
+            ),
             "semantic_oracle_raw": semantic_raw,
             "manual_annotations": {
                 "decision_changing": None,
@@ -1063,6 +1389,11 @@ def run_api_session(
                 "data_gap_value": None,
             },
         }
+        if catalog_mode:
+            question_record["evidence_id"] = evidence_id
+            question_record["manual_annotations"][
+                "catalog_selection_relevance_0_to_2"
+            ] = None
         if target is not None:
             question_record["explanation_target"] = target
             question_record["manual_annotations"].update(
@@ -1082,7 +1413,15 @@ def run_api_session(
             messages.append(
                 {
                     "role": "user",
-                    "content": f"ORACLE: {answer}\nSTATE: {rendered_state}",
+                    "content": (
+                        f"ORACLE: {answer}\nSTATE: {rendered_state}"
+                        + (
+                            "\nUSED_EVIDENCE: "
+                            + ", ".join(sorted(attempted_evidence))
+                            if catalog_mode
+                            else ""
+                        )
+                    ),
                 }
             )
         else:
@@ -1154,10 +1493,15 @@ def run_api_session(
         "condition": condition,
         "mode": "api",
         "model_name": config["model_name"],
-        "oracle_mode": config.get("oracle_mode", "semantic_api"),
+        "oracle_mode": (
+            "evidence_catalog"
+            if catalog_mode
+            else config.get("oracle_mode", "semantic_api")
+        ),
         "oracle_model_name": (
             (config.get("oracle_model_name") or config["model_name"])
-            if config.get("oracle_mode", "semantic_api") == "semantic_api"
+            if not catalog_mode
+            and config.get("oracle_mode", "semantic_api") == "semantic_api"
             else None
         ),
         "model_seed": model_seed,
@@ -1190,6 +1534,11 @@ def run_api_session(
                 "evidence_observability_0_to_2": None,
                 "notes": None,
             },
+        }
+    if catalog_mode:
+        session["evidence_state"] = {
+            "attempted_evidence_ids": sorted(attempted_evidence),
+            "catalog_size": len(catalog),
         }
     return save_session(case, session)
 
