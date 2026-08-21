@@ -1,0 +1,537 @@
+{
+  "schema_version": "1.0",
+  "mode_id": "codex_research_question_discovery_v1",
+  "status": "complete",
+  "created_date": "2026-08-21",
+  "profile_snapshot": {
+    "schema_version": "1.0",
+    "mode_id": "codex_research_question_discovery_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 6,
+      "maximum_candidate_count": 12,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "execution_constraints": {
+      "processor": "current_codex",
+      "external_model_api_allowed": false,
+      "human_scoring_required": false,
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_url": "https://arxiv.org/abs/2608.00220",
+      "source_title": "Verifier-Induced Support Reshaping in On-Policy Optimization",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-31",
+      "checked_date": "2026-08-21",
+      "observation": "RLVR 可提高当前目标却降低后续目标在固定 rollout 预算内可采样到的成功轨迹；论文将其定义为 effective rewardable support，并用双向顺序训练验证未来可训练性受损。",
+      "relevance": "直接建立了未来可训练性问题，但没有给出低预算的 checkpoint 预测器，也没有比较跨干预的选择规则。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_url": "https://arxiv.org/abs/2606.15455",
+      "source_title": "Understanding Diversity Collapse in RLVR via the Lens of Overtraining",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-06-13",
+      "checked_date": "2026-08-21",
+      "observation": "标准 RLVR 会在 pass@1 上升的同时压低高 k 的 pass@k；Bayesian Boundary Gating 通过减少已饱和问题的更新来保护推理边界。",
+      "relevance": "提供问题级干预及高 k 支持指标，是未来可训练性和跨层干预比较的近邻工作。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_url": "https://arxiv.org/abs/2607.26862",
+      "source_title": "ReCo: Reweighting GRPO Against Distributional Concentration",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-29",
+      "checked_date": "2026-08-21",
+      "observation": "ReCo 将 GRPO 的分布集中归因于高概率响应重复出现和 token importance ratio，并在响应与 token 两层重加权以改善大 k 的 pass@k。",
+      "relevance": "是响应级和 token 级支持保护的强基线，也使单纯再提“多样性坍缩”不再新颖。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_url": "https://arxiv.org/abs/2606.08543",
+      "source_title": "PAEC: Position-Aware Entropy Calibration for LLM Reasoning in RLVR",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-06-07",
+      "checked_date": "2026-08-21",
+      "observation": "PAEC 只在决策敏感 token 位置施加熵下界，说明探索预算应按位置选择，而不是全局增加随机性。",
+      "relevance": "为跨层支持保护比较提供 token 级干预近邻。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_url": "https://arxiv.org/abs/2608.02867",
+      "source_title": "BODHI: Do LLMs Branch Out and Discover Heterogeneous Inferences?",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-03",
+      "checked_date": "2026-08-21",
+      "observation": "BODHI 测量语义分支而非表面措辞差异，并观察到 RLVR 后语义分支熵收缩。",
+      "relevance": "说明只看 token 熵或字符串多样性不足，语义分支可作为未来支持的候选中介变量。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_url": "https://arxiv.org/abs/2607.26253",
+      "source_title": "Early Verdicts, Better Budgets: Sequential Adaptive Rollout Allocation for Compute-Efficient RLVR",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-28",
+      "checked_date": "2026-08-21",
+      "observation": "SARA 根据前几个二元奖励结果顺序决定继续或放弃某个 prompt，将预算重新分给新 prompt；其目标是假定奖励可靠时提高 effective-group yield。",
+      "relevance": "是主问题的 rollout-only 最近工作；它不决定复评现有响应还是换用异质验证器，也不建模验证器误差。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_url": "https://arxiv.org/abs/2602.01601",
+      "source_title": "Adaptive Rollout Allocation for Online Reinforcement Learning with Verifiable Rewards",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-02-02",
+      "checked_date": "2026-08-21",
+      "observation": "VIP 用近期 rollout 预测 prompt 成功率，并在固定预算下优化每个 prompt 的 rollout 数以降低期望梯度方差。",
+      "relevance": "覆盖按 prompt 分配新 rollout 的静态/预测式近邻，但奖励仍被视为可验证真值。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_url": "https://arxiv.org/abs/2607.13389",
+      "source_title": "Where Should RL Post-Training Compute Go? Model Size, Search, Learning, and Feedback",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-15",
+      "checked_date": "2026-08-21",
+      "observation": "RACE 将总算力分为 rollout/search、policy update 和 reward/feedback inference，并用小型 IsoFLOP 网格诊断条件化分配前沿。",
+      "relevance": "否定了宽泛的“搜索与反馈预算如何分”新颖性；主问题必须收紧到组内在线动作选择和 advantage 符号可靠性。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_url": "https://arxiv.org/abs/2510.20369",
+      "source_title": "Ask a Strong LLM Judge when Your Reward Model is Uncertain",
+      "source_type": "NeurIPS 2025 paper / primary paper",
+      "published_date": "2025-10-23",
+      "checked_date": "2026-08-21",
+      "observation": "该工作用偏好模型的 epistemic uncertainty 将不确定响应对路由给强 LLM judge，并在固定调用比例下改善在线 RLHF。",
+      "relevance": "是 verifier-routing 最近工作；它只在 cheap RM 与单个强 judge 之间路由，没有和新增 rollout、同验证器复评及异质 panel 联合竞争预算。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_url": "https://arxiv.org/abs/2607.05391",
+      "source_title": "LLM-as-a-Verifier: A General-Purpose Verification Framework",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-07",
+      "checked_date": "2026-08-21",
+      "observation": "重复评估能按约 1/K 降低方差，但收益因相关偏差而递减；连续概率评分、重复评估和标准分解是三个可扩展轴。",
+      "relevance": "直接量化“复评旧响应”的价值及其偏差下限，但没有把该轴放入训练时的联合预算分配器。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_url": "https://arxiv.org/abs/2607.10139",
+      "source_title": "LLMs as a Jury: Cross-Model Consensus Can Outperform Process Reward Models for LLM Reasoning",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-17 (v3)",
+      "checked_date": "2026-08-21",
+      "observation": "跨模型 jury 的优势主要来自错误去相关；重复采样同一模型无法跨过相关错误上限，且仍存在 shared-error floor。",
+      "relevance": "为“换用异质验证器”提供机制依据，但研究对象是推理时选择而不是在线 GRPO advantage 估计。"
+    },
+    {
+      "evidence_id": "E12",
+      "source_url": "https://arxiv.org/abs/2607.08700",
+      "source_title": "Do You Need a Frontier Model as a Citation Verifier? Benchmarking Rubric LLMs for Deep-Research Source Attribution",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-09",
+      "checked_date": "2026-08-21",
+      "observation": "八个 judge 在相近 F1 下仍有显著不同的 pass-rate drift、FPR 与 FNR；这些方向性偏差会被 RL 循环放大。",
+      "relevance": "支持把 advantage 符号错误和方向性偏差作为主指标，而不是只优化离线 F1。"
+    },
+    {
+      "evidence_id": "E13",
+      "source_url": "https://arxiv.org/abs/2602.24040",
+      "source_title": "RewardUQ: A Unified Framework for Uncertainty-Aware Reward Models",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-02-27",
+      "checked_date": "2026-08-21",
+      "observation": "RewardUQ 统一比较 reward model 的不确定性方法，并将不确定性用于更保守的奖励决策。",
+      "relevance": "说明 reward uncertainty 可被显式建模，但尚未回答在 rollout、复评和异质验证器三种动作之间如何分配预算。"
+    },
+    {
+      "evidence_id": "E14",
+      "source_url": "https://arxiv.org/abs/2607.21273",
+      "source_title": "The Dark Room in the Reward Channel: Dense Prediction Rewards Collapse GRPO-Trained LLM Agents, and the Channel, Not the Content, Decides What Works",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-04 (v2)",
+      "checked_date": "2026-08-21",
+      "observation": "受控实验显示，dense shaping 在 all-fail 组中的 z-score 可能导致坍缩；组内方差轨迹和 reward hackability 可预测失败。",
+      "relevance": "支持研究组内奖励通道与早期预警，但已占据宽泛的 reward-channel collapse 问题。"
+    },
+    {
+      "evidence_id": "E15",
+      "source_url": "https://arxiv.org/abs/2607.23802",
+      "source_title": "From RLVR to RLSVR: Task Transformation Induces Self-Verifiable Rewards for Open-Ended LLM Self-Improvement",
+      "source_type": "COLM 2026 paper / primary paper",
+      "published_date": "2026-07-31 (v2)",
+      "checked_date": "2026-08-21",
+      "observation": "RLSVR 将开放任务变成带环境真值的自验证代理游戏；SpyRL 在摘要、创意写作和数学上报告增益，并用外部 judge 与人评验证。",
+      "relevance": "开启了代理任务有效性边界；尚未系统做跨代理、检测器和评审器交换以识别 proxy-specific gaming。"
+    },
+    {
+      "evidence_id": "E16",
+      "source_url": "https://arxiv.org/abs/2607.18110",
+      "source_title": "LLM-as-a-Coach: Experiential Learning for Non-Verifiable Tasks",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-20",
+      "checked_date": "2026-08-21",
+      "observation": "Experiential Learning 用可迁移文本经验替代单一标量奖励，在未见开放任务上优于 rubric RL 并缓解 reward hacking。",
+      "relevance": "为开放任务代理训练提供强对照：若 RLSVR 的提升只对特定游戏有效，富文本教练信号可能更能跨任务。"
+    },
+    {
+      "evidence_id": "E17",
+      "source_url": "https://arxiv.org/abs/2605.26132",
+      "source_title": "Self-Verified Distillation: Your Language Model Is Secretly Its Own Synthetic Data Pipeline",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-05-20",
+      "checked_date": "2026-08-21",
+      "observation": "同一模型可生成候选、用多阶段一致性/事实性/正确性验证过滤，再训练自身；更多生成和验证预算都提高数据质量。",
+      "relevance": "说明生成预算与验证预算确实竞争，也暴露同源生成—验证的循环确认风险；后者已与工作簿既有问题高度重叠。"
+    },
+    {
+      "evidence_id": "E18",
+      "source_url": "https://arxiv.org/abs/2608.03119",
+      "source_title": "Don't Peek at the Answer: Outcome-Masked Group Relative Policy Optimization for Label-Free RLVR",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-04",
+      "checked_date": "2026-08-21",
+      "observation": "当同一答案信号既估计 reward 又驱动 token 更新时，label-free RLVR 会坍缩；OM-GRPO 屏蔽答案 span 的梯度来解耦两者。",
+      "relevance": "说明错误或自举 reward 不只影响排序，还会通过 advantage/梯度通道造成结构性偏差。"
+    },
+    {
+      "evidence_id": "E19",
+      "source_url": "https://arxiv.org/abs/2608.08802",
+      "source_title": "Improving Generalization Robustness of Multimodal RLVR",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-14 (v2)",
+      "checked_date": "2026-08-21",
+      "observation": "RLVR 对模板和措辞扰动可能脆弱，二元 verifier 会混淆格式与内容；prompt-invariant 训练改善鲁棒性。",
+      "relevance": "支持把反事实扰动和跨模板表现放入未来可训练性与 proxy validity 的外部效度检查。"
+    },
+    {
+      "evidence_id": "E20",
+      "source_url": "https://arxiv.org/abs/2608.17804",
+      "source_title": "An Empirical Study of Reward Specification and Benchmark Reliability in GRPO-based LLM Unlearning",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-18",
+      "checked_date": "2026-08-21",
+      "observation": "奖励优化成功不等于目标行为真正改变；奖励投机、policy-support 限制与 benchmark mismatch 会让代理指标与真实目标分离。",
+      "relevance": "强化了主问题使用隐藏 oracle 和备选问题使用代理交换测试的必要性。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在固定总反馈算力的 GRPO/在线 RLHF 中，能否根据组内的 policy-sampling uncertainty、同一验证器复评方差与跨验证器错误相关性，在线选择“生成新 rollout、复评已有响应或调用异质验证器”，从而比任一静态分配策略更少产生 advantage 符号错误并提高隐藏真值任务收益？",
+      "observation_ids": ["E06", "E08", "E09", "E10", "E11", "E12", "E13", "E18"],
+      "closest_prior_ids": ["E06", "E08", "E09", "E10", "E11"],
+      "hypothesis": "三类计算动作解决不同误差源：新 rollout 降低 policy sampling error，同验证器复评降低可约随机方差，异质验证器降低模型特有的相关偏差；以预计 advantage 符号错误下降为 acquisition objective 的在线分配器，在等 FLOP 下会优于 rollout-only、router-only、repeat-only 和固定 jury。",
+      "counter_hypothesis": "验证器偏差主要是共享且不可约的，或者 rollout 生成成本远高于验证成本，使最优策略在所有组上退化为一个固定比例；联合在线分配不会胜过调好的静态混合。",
+      "falsification_rule": "在两个隐藏真值任务和至少两个 policy checkpoint 上，等 FLOP 条件下相对最强静态基线的 advantage 符号错误率下降不足 1 个百分点，且在线训练后的隐藏 oracle 得分提升不足 0.5 个百分点或置信区间覆盖零；或学习到的分配在任务间始终退化为同一固定比例。",
+      "minimum_experiment": "先在有精确答案/单元测试但训练时隐藏 oracle 的数学与代码任务上，用一个 1.5B–3B policy、三个不同家族的 7B–14B judge、每组 8 个候选建立受控环境。固定每组等价 FLOP，比较 uniform、SARA/VIP rollout-only、uncertainty-to-strong-judge、fixed-repeat、fixed-jury、RACE pilot-best static mix 与联合在线分配器；先测 advantage 符号错误和 oracle gradient-cosine，再跑 50–100 个 GRPO 更新验证 held-out oracle score。",
+      "primary_risk": "需要可靠的隐藏 oracle 和严格的等 FLOP 记账；若异质 judge 的错误仍高度相关，方法的理论空间会很小。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "直接决定 rollout 和 verifier 都昂贵时，有限后训练算力能否转化为可靠梯度。"},
+        "novelty": {"value": 2, "reason": "最近工作分别覆盖 rollout 分配、强 judge 路由、重复评估和异质 jury，但未发现训练时三动作联合在线分配。"},
+        "discriminating_power": {"value": 2, "reason": "可分解随机采样误差、复评方差和相关偏差，并观察分配器选了哪种动作。"},
+        "feasibility": {"value": 2, "reason": "隐藏精确 oracle 允许小模型和短在线训练先做因果验证，不需要先做人评开放任务。"},
+        "measurability": {"value": 2, "reason": "advantage 符号错误、梯度余弦、oracle score 与等 FLOP 成本均可直接测量。"},
+        "expected_information_value": {"value": 2, "reason": "无论成功或退化为静态比例，都能给出反馈算力设计的可复用规律。"}
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "能否用低预算的跨任务反事实 support probe，在正式第二阶段训练之前预测某个 RLVR checkpoint 的未来可训练性，并使 checkpoint 选择优于 pass@1、best@k、token entropy 与 KL divergence？",
+      "observation_ids": ["E01", "E02", "E03", "E04", "E05", "E19"],
+      "closest_prior_ids": ["E01", "E02", "E05"],
+      "hypothesis": "一个覆盖响应开头替换、语义分支和少量重复采样的低预算 probe，可比当前任务表现或全局熵更早识别后续目标的 rewardable support 是否仍可被采到，并预测第二阶段学习曲线面积。",
+      "counter_hypothesis": "未来可训练性高度依赖具体第二阶段数据和优化超参数，任何训练前 probe 都不会稳定优于简单的 best@k 或少量真实第二阶段试跑。",
+      "falsification_rule": "在两个任务顺序、两个模型家族和三种第一阶段干预上，probe 对第二阶段学习曲线面积的 held-out Spearman 相关不高于最强简单基线 0.05，或 checkpoint 选择 regret 没有显著下降。",
+      "minimum_experiment": "从 Math→IF 与 IF→Math 两条路径各保存 8–12 个 checkpoint，并加入 GRPO、BBG、ReCo/PAEC 三类第一阶段干预。每个 checkpoint 仅用 4–8 次重复采样、开头 route 干预和语义分支测量构造 probe；随后统一执行短第二阶段训练，比较 probe、pass@1、best@32、熵、KL 和 5-step pilot 对最终 AUC 的预测与 checkpoint regret。",
+      "primary_risk": "Verifier-Induced Support Reshaping 已直接提出 future trainability，低预算预测器可能被视为同一论文的自然工程延伸。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "多阶段后训练普遍存在，错误 checkpoint 选择会让后续能力不可学。"},
+        "novelty": {"value": 1, "reason": "预测与选择规则尚缺，但 future trainability 概念和 repeated-support 测量已由最近论文提出。"},
+        "discriminating_power": {"value": 2, "reason": "可直接比较多种现有指标是否预测真实第二阶段学习曲线。"},
+        "feasibility": {"value": 2, "reason": "可复用已有两阶段 RLVR 训练配方，主要增加 checkpoint probe。"},
+        "measurability": {"value": 2, "reason": "相关、AUC、选择 regret 和 probe 成本均明确。"},
+        "expected_information_value": {"value": 2, "reason": "即使 probe 失败，也能界定 future trainability 是否必须靠真实 pilot 测量。"}
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "对于把开放任务变成自验证代理游戏的 RLSVR，跨代理环境、检测器与外部评审器的交换测试，能否可靠区分真实任务质量提升与只对单一代理游戏规则的适配或投机？",
+      "observation_ids": ["E15", "E16", "E19", "E20"],
+      "closest_prior_ids": ["E15", "E16", "E20"],
+      "hypothesis": "真正可迁移的质量提升应在换掉代理构造、检测器角色和外部 judge 后仍保留；只利用某个隐藏变量或投票线索的策略会在交换矩阵中出现强对角线、弱跨代理迁移。",
+      "counter_hypothesis": "不同代理任务调用的能力本就不同，交换矩阵主要测 task mismatch 而非 proxy gaming，无法比独立人评更好地区分真实提升。",
+      "falsification_rule": "跨代理保持率、交换矩阵的对角线差值或代理间一致性，对盲人评/异质 judge 的真实质量偏好 AUROC 不超过 0.55，且不能识别预先植入的两类代理捷径。",
+      "minimum_experiment": "在摘要与创意写作各设计两个可验证代理环境，例如身份识别与隐藏片段归因；同一 4B policy 分别训练后，交换 performing/detection policy、degradation operator、代理环境和三家族外部 judge。加入表面风格线索与固定投票捷径两个阳性对照，检验交换指标能否识别已知 proxy gaming。",
+      "primary_risk": "第二个代理环境的设计质量决定结论，若两个代理调用的目标能力不等价，交换失败会难以解释。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "RLSVR 正在把 RLVR 扩到开放任务，代理有效性是其最核心的外部效度问题。"},
+        "novelty": {"value": 2, "reason": "现有工作做替代 judge 与人评，但未形成跨代理/检测器交换的识别设计。"},
+        "discriminating_power": {"value": 2, "reason": "阳性捷径对照加交换矩阵可将真实迁移与 proxy-specific 适配分开。"},
+        "feasibility": {"value": 1, "reason": "需要实现第二个公平的代理环境并做一定人评，工程和设计成本中等。"},
+        "measurability": {"value": 2, "reason": "交换保持率、对角线差值、AUROC 与独立偏好胜率都可量化。"},
+        "expected_information_value": {"value": 2, "reason": "结果会决定 RLSVR 是否需要标准的 proxy-validity 评测协议。"}
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "在等 pass@1 与等训练算力下，问题级 gating、响应级重加权和 token 级熵干预究竟分别保留了字符串多样性、语义分支还是未来可训练性，语义分支是否中介了跨任务迁移？",
+      "observation_ids": ["E01", "E02", "E03", "E04", "E05"],
+      "closest_prior_ids": ["E02", "E03", "E04", "E05"],
+      "hypothesis": "不同层级干预会得到相似 pass@1 却保留不同类型的 support；语义分支而非表面熵更能解释未来可训练性和跨任务迁移。",
+      "counter_hypothesis": "这些干预的效果主要由正则强度和最终 pass@1 决定；控制两者后，语义分支不再提供独立解释。",
+      "falsification_rule": "控制 pass@1、KL 与算力后，语义分支对第二阶段学习 AUC 的增量解释度小于 2%，且三类干预在 future-support 指标上没有稳定差异。",
+      "minimum_experiment": "在一个 1.5B 与一个 7B policy 上复现 BBG、ReCo 与 PAEC，各调到相同 pass@1 和近似 FLOP；测 distinct-n、token entropy、BODHI semantic branching、best@32 及统一第二阶段训练 AUC，并做预注册中介分析。",
+      "primary_risk": "方法复现和等效强度匹配较重，容易变成大规模 benchmark 论文而弱化机制结论。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "可统一当前分散的多样性保护方法，并告诉实践者应监测哪类 support。"},
+        "novelty": {"value": 1, "reason": "单项干预和语义分支指标都已存在，新意主要在等效比较和中介机制。"},
+        "discriminating_power": {"value": 2, "reason": "等 pass@1/算力和中介分析能排除单纯强度差异。"},
+        "feasibility": {"value": 1, "reason": "需复现三套方法并做多 checkpoint 顺序训练，工作量较大。"},
+        "measurability": {"value": 2, "reason": "各层多样性、future support 和训练 AUC 均可测。"},
+        "expected_information_value": {"value": 1, "reason": "若效应只由强度决定，仍有价值，但论文可能退化为负向比较。"}
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "GRPO 的组内中心化是否会抵消 prompt-common verifier bias，却放大 response-dependent 的相关误差，并且 cross-fitted group verification 能否减少 advantage 符号翻转？",
+      "observation_ids": ["E10", "E11", "E12", "E13", "E14"],
+      "closest_prior_ids": ["E12", "E13", "E14"],
+      "hypothesis": "prompt-common 偏差在组内相减后消失，而响应相关、方向性的 judge 偏差会直接改变排序与 advantage 符号；把组拆给独立验证器可减少该误差。",
+      "counter_hypothesis": "中心化后的主要误差来自 rollout 方差而非 verifier 相关性，cross-fitting 只增加成本和方差。",
+      "falsification_rule": "受控注入不同相关结构后，response-dependent 相关误差不显著提高符号错误，或 cross-fitting 在等成本下不能降低符号错误。",
+      "minimum_experiment": "在带精确 oracle 的数学任务上构造可控混淆矩阵和跨响应相关结构，比较单 judge、group-split、cross-fit 与 jury advantage；再用两个真实 LLM judge 做小规模复现。",
+      "primary_risk": "该问题已成为 C01 联合分配器中的机制子问题，单独立项会缩小贡献面并与主问题重复。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "advantage 符号错误直接决定错误梯度方向。"},
+        "novelty": {"value": 1, "reason": "方向性偏差已被测量，但 group-centering 相关结构仍少见。"},
+        "discriminating_power": {"value": 2, "reason": "可控误差注入能明确区分 common 与 response-dependent bias。"},
+        "feasibility": {"value": 2, "reason": "可先在合成噪声与精确 oracle 上完成。"},
+        "measurability": {"value": 2, "reason": "符号错误、排序错误和梯度余弦明确。"},
+        "expected_information_value": {"value": 1, "reason": "机制有价值，但最佳用途是作为 C01 的关键消融而非独立主线。"}
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "当同一模型家族同时承担合成任务、生成解答和验证过滤时，会出现多大程度的循环确认偏差，且只把其中一个角色换成异家族模型是否足以恢复外部泛化？",
+      "observation_ids": ["E11", "E17", "E20"],
+      "closest_prior_ids": ["E11", "E17"],
+      "hypothesis": "同源三角色会产生共享盲点和过高的一致性；只异质化 verifier 可显著降低错误保留并提高外部 benchmark。",
+      "counter_hypothesis": "生成器质量而非家族同源性决定结果，异质化任何单一角色都没有稳定收益。",
+      "falsification_rule": "在完整 2×2×2 角色家族设计中，同源性对 oracle 错误保留和外部得分无显著主效应或交互。",
+      "minimum_experiment": "以 Self-Verified Distillation 为基础，对 task generator、solver、verifier 做两家族 2×2×2 组合，固定总 token 和接受率，测隐藏 oracle 错误、跨家族 judge 分歧与 held-out pass@1。",
+      "primary_risk": "工作簿的 G23、G28 与 G40 已覆盖 teacher/student 家族、数据血缘和闭环同源偏差，问题不满足非冗余门槛。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "自合成和自验证管线广泛使用，共享盲点会被数据放大。"},
+        "novelty": {"value": 0, "reason": "与工作簿已有三条研究空白直接重合，只是换了实验表述。"},
+        "discriminating_power": {"value": 2, "reason": "完整因子设计能区分三个角色。"},
+        "feasibility": {"value": 1, "reason": "八种组合的生成和训练成本较高。"},
+        "measurability": {"value": 2, "reason": "错误保留、分歧和外部表现明确。"},
+        "expected_information_value": {"value": 1, "reason": "问题重要但新颖性不足，不宜作为本轮新选题。"}
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "基于组内奖励方差轨迹与 verifier hackability 的早期预警分数，能否跨文本 RLVR 任务预测奖励捷径进入难以逆转的关键干预窗口？",
+      "observation_ids": ["E14", "E18", "E20"],
+      "closest_prior_ids": ["E14", "E20"],
+      "hypothesis": "组内方差突然上升并伴随高 hackability 会早于任务分数坍缩，且能预测及时换 reward channel 是否仍可恢复。",
+      "counter_hypothesis": "不同任务的捷径表征不共享，统一预警分数只在原始环境有效。",
+      "falsification_rule": "预警对三个文本任务中后续坍缩的平均 AUROC 不超过 0.6，或按预警干预与随机时点干预恢复效果无差异。",
+      "minimum_experiment": "复用 Dark Room 的受控 reward channel 设计，扩展到代码、引用支持和 label-free 数学三个文本任务，扫描干预时点并测恢复曲线。",
+      "primary_risk": "Dark Room 已直接提出并验证方差轨迹与 hackability 的预测作用；仅跨任务复制不足以形成非冗余贡献。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "若可提前干预，能避免昂贵训练走入不可恢复区域。"},
+        "novelty": {"value": 0, "reason": "核心预测量与失败机制已在最近论文中出现。"},
+        "discriminating_power": {"value": 1, "reason": "跨任务正结果有用，但负结果可能混淆任务实现差异。"},
+        "feasibility": {"value": 1, "reason": "需构造三个可控 reward-hacking 环境。"},
+        "measurability": {"value": 2, "reason": "AUROC、干预时点与恢复曲线清楚。"},
+        "expected_information_value": {"value": 1, "reason": "主要是外部效度验证，独立论文空间有限。"}
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "在离线 F1 近似相同的 verifier 之间，pass-rate drift、FPR/FNR 方向性偏差是否比 F1 更能因果预测 GRPO 的在线行为，并且 bias-matched calibration 能否改善泛化？",
+      "observation_ids": ["E12", "E13", "E14", "E20"],
+      "closest_prior_ids": ["E12", "E13"],
+      "hypothesis": "相同 F1 下，更宽松或更严格的 judge 会分别强化过度冒险或过度保守行为；方向性校准比温度校准更能预测和修复在线结果。",
+      "counter_hypothesis": "在线分布漂移使固定混淆矩阵很快失效，离线方向性偏差并不比 F1 更稳定。",
+      "falsification_rule": "匹配 F1 后，方向性偏差对在线行为和真实质量的增量解释度小于 2%，且 calibration 不优于未校准 judge。",
+      "minimum_experiment": "用同一基础 verifier 构造 F1 匹配但 FPR/FNR 不同的阈值/重采样版本，在精确 oracle 隐藏的引用与数学任务上跑短 GRPO，比较行为分布和 oracle score。",
+      "primary_risk": "工作簿 G13/G14 已覆盖离线指标与在线质量脱节、在线校准漂移；最新 citation-verifier 论文也已把方向性偏差与 RL 风险直接连接。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "离线选错 verifier 会把偏差系统性写入 policy。"},
+        "novelty": {"value": 0, "reason": "与工作簿既有空白及 2026 年 citation verifier 结论重叠明显。"},
+        "discriminating_power": {"value": 2, "reason": "F1 匹配设计可单独识别方向性偏差。"},
+        "feasibility": {"value": 2, "reason": "阈值和重采样即可构造受控 verifier。"},
+        "measurability": {"value": 2, "reason": "FPR/FNR、行为频率、在线 score 和 oracle score 均可测。"},
+        "expected_information_value": {"value": 1, "reason": "适合作为 C01 的基线和机制消融，但不宜单独作为新主问题。"}
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": ["C02", "C03"],
+    "why_this_question": "C01 同时满足价值、差异性和可落地性：它不是再做一次宏观 FLOP 网格，也不是单独发明 rollout allocator 或 judge router，而是把三个已被分别证实的误差—计算通道放进同一个组内在线决策问题。隐藏精确 oracle 使最小实验可以在小模型上干净证伪；若成功，贡献既是新的训练时 acquisition objective，也是可复用的 compute allocation 方法；若失败并退化为固定比例，同样能给出重要边界。",
+    "research_question_contract": {
+      "final_question": "在固定总反馈算力的 GRPO/在线 RLHF 中，能否根据组内的 policy-sampling uncertainty、同一验证器复评方差与跨验证器错误相关性，在线选择生成新 rollout、复评已有响应或调用异质验证器，从而比任一静态分配策略更少产生 advantage 符号错误并提高隐藏真值任务收益？",
+      "hypothesis": "三类动作对应三个不同可约误差源；以单位 FLOP 下的预计 advantage 符号错误下降为 acquisition objective 的在线分配器，会因组而异地选择动作，并在等 FLOP 下优于各单轴方法和最佳静态混合。",
+      "counter_hypothesis": "验证器错误以共享偏差为主或成本结构极端，最优分配因而与组状态无关；联合分配器会退化为一个固定比例，且不改善隐藏 oracle 结果。",
+      "independent_variables": [
+        "预算策略：uniform、rollout-only、repeat-only、strong-judge router、fixed heterogeneous jury、RACE pilot-best static mix、joint online allocator",
+        "总反馈预算：按实测 rollout token FLOPs 与 verifier inference FLOPs 匹配的低/中两个预算带",
+        "误差结构：同一 verifier 的随机复评方差、跨 verifier 误差相关性、方向性 FPR/FNR",
+        "任务与 policy 状态：数学/代码两类隐藏精确 oracle 任务，早期/中期两个 checkpoint"
+      ],
+      "dependent_variables": [
+        "主指标：相对隐藏 oracle 的 group-wise advantage 符号错误率",
+        "oracle advantage 与估计 advantage 的 Kendall/Spearman 排序一致性",
+        "估计 policy gradient 与 oracle policy gradient 的余弦相似度",
+        "等 FLOP 下 held-out oracle pass@1、best@k 与学习曲线面积",
+        "分配行为：三类动作占比、按不确定性分层后的条件策略与单位 FLOP 信息增益"
+      ],
+      "controls": [
+        "统一 policy、prompt batch、采样温度、最大长度、optimizer、更新步数与随机种子",
+        "所有方法使用相同的实测总 FLOP，而不是只匹配调用次数",
+        "训练算法看不到精确答案/单元测试 oracle；oracle 只用于评估和构造反事实梯度",
+        "最强静态混合在独立开发集上调参，测试集不再改比例",
+        "用受控噪声 verifier 验证误差分解，再用真实异质 LLM judge 做外部复现"
+      ],
+      "minimum_experiment": "阶段 A：用 2,000 个数学/代码 prompt、每组最多 8 个 rollout、一个 1.5B–3B policy 和三个不同家族的 7B–14B judge，离线记录所有可选动作结果并在隐藏 oracle 下评估 counterfactual allocation。阶段 B：选最优联合策略与六个强基线做 50–100 步短 GRPO，至少 3 个种子；主结论先以 advantage 符号错误和 gradient cosine 为准，在线 held-out oracle score 为闭环验证。",
+      "falsification_rule": "若在两类任务、两个 checkpoint 和至少三个种子中，联合分配器相对最强静态基线的 advantage 符号错误率平均下降不足 1 个百分点，且 held-out oracle score 或学习 AUC 的提升不足 0.5 个百分点/95% 置信区间覆盖零，则拒绝主假设；若动作比例不随不确定性状态改变，也视为机制失败。",
+      "expected_contribution": "提出并验证训练时 feedback-compute allocation 的新对象：不是宏观 search/learning/feedback 比例，而是每个 GRPO 组内针对不同误差源选择下一单位算力的 acquisition rule；同时提供 advantage sign reliability、等 FLOP 记账和可复现基线套件。",
+      "boundary_conditions": [
+        "首先只声称适用于使用随机或学习型 verifier 的 group-relative 在线优化，不声称改善纯确定性 rule-based RLVR",
+        "若跨 verifier 存在高 shared-error floor，异质 jury 的收益有理论上限",
+        "若 rollout 与 verifier 成本相差多个数量级，最优策略可能退化为固定单轴动作",
+        "隐藏精确 oracle 的数学/代码结果不能直接外推到主观开放任务，开放任务需第二阶段人评或高置信 jury 复核",
+        "多轮 agentic trajectory 的前缀相关性不满足独立 rollout 假设，应作为后续扩展"
+      ],
+      "compute_budget_assumption": "最小闭环按 4 张 A100 80GB 或等效算力、3–7 GPU-days 设计；policy 为 1.5B–3B，三名 judge 采用 7B–14B 量化推理。预算比较按实际生成 token 与 verifier forward/generation FLOPs 记账，并报告 wall-clock 作为次要系统指标。",
+      "data_requirements": [
+        "约 2,000 个训练 prompt 与 500–1,000 个独立测试 prompt，覆盖数学精确答案和代码隐藏单元测试",
+        "每个 prompt 的候选 rollout、三个异质 judge 的重复评分及精确 oracle 标签",
+        "独立开发集用于静态比例和 acquisition threshold 调参，测试集只做一次冻结评估",
+        "至少三个随机种子，以及完整的 token、FLOP、延迟和 judge 路由日志",
+        "用于方向性偏差压力测试的受控 verifier 混淆矩阵或重采样版本"
+      ]
+    }
+  },
+  "decision_log": [
+    {
+      "date": "2026-08-21",
+      "phase": "local-corpus-audit",
+      "decision": "读取工作簿的总览、42 条研究空白、940 条核心池、5,608 条完整文献池和 240 条 2026 arXiv；把 G04/G05/G13/G14/G17/G23/G28/G40 等视为去重约束，不把候选映射审计结果当研究证据。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "primary-source-search",
+      "decision": "核验 20 条 2025–2026 一手论文来源，重点覆盖 RLVR support、多样性、rollout 分配、reward uncertainty、verifier 复评、跨模型错误相关性和自验证代理任务。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "novelty-collision",
+      "decision": "发现 RACE 已研究 search/learning/feedback 的宏观 FLOP 分配，因此否决宽泛预算题；将 C01 收紧为 GRPO 组内三动作在线选择，并以 advantage 符号错误为目标。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "hard-gate-rejection",
+      "decision": "C05 被并入 C01 的机制消融；C06 与工作簿 G23/G28/G40 重叠；C07 已被 Dark Room 大幅覆盖；C08 与工作簿 G13/G14 及 citation-verifier 结论重叠，均未通过非冗余门槛。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "selection",
+      "decision": "选择 C01 为主问题；C02 future-trainability probe 与 C03 proxy-validity swap 分别作为测量型和边界型备选。选择不依赖用户评分。"
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "LLM 后训练新问题发现：在线反馈算力分配",
+    "description": "基于本地 2025–2026 研究问题工作簿与 20 条最新一手论文的模式 2 研究问题发现报告。",
+    "generatedAt": "2026-08-21T18:00:00+08:00",
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# LLM 后训练新问题发现：在线反馈算力分配"
+      },
+      {
+        "id": "executive-summary",
+        "type": "markdown",
+        "body": "## 执行摘要\n\n**建议主攻：训练时的组内反馈算力分配。** 在固定总反馈算力下，让每个 GRPO 组在线决定下一单位算力用于生成新 rollout、复评已有响应，还是调用错误去相关的异质验证器；目标不是最大化离线 verifier F1，而是最小化会直接改变梯度方向的 advantage 符号错误。\n\n该问题通过了真实缺口、非冗余、可证伪、可执行、可测量和伦理六项硬门槛。它与现有工作的边界清楚：SARA/VIP 只分 rollout，uncertainty routing 只分 cheap/strong judge，repeated verification 只研究复评，jury 只研究跨模型选择，RACE 只做宏观 FLOP 网格。尚未发现把三类动作放进同一训练时 acquisition rule 的一手论文。"
+      },
+      {
+        "id": "local-corpus-section",
+        "type": "markdown",
+        "body": "## 本地证据底座\n\n工作簿已经覆盖动态 group size、reward noise、verifier calibration、合成数据血缘、闭环同源偏差和多样性坍缩等密集区域。真正可用的新窗口位于这些主题的交叉处，而不是再单独提出其中一项。"
+      },
+      {
+        "id": "corpus-inventory-table-block",
+        "type": "table",
+        "tableId": "corpus-inventory-table",
+        "layout": "full"
+      },
+      {
+        "id": "primary-question-section",
+        "type": "markdown",
+        "body": "## 主问题\n\n> **在固定总反馈算力的 GRPO/在线 RLHF 中，能否根据组内的 policy-sampling uncertainty、同一验证器复评方差与跨验证器错误相关性，在线选择生成新 rollout、复评已有响应或调用异质验证器，从而比任一静态分配策略更少产生 advantage 符号错误并提高隐藏真值任务收益？**\n\n三类动作对应三个不同的可约误差源：新 rollout 扩充 policy support，复评降低同一 judge 的随机方差，异质 verifier 降低模型特有的相关偏差。成功的分配器应随组状态改变动作；如果它始终退化为固定比例，机制假设即失败。"
+      },
+      {
+        "id": "candidate-score-chart-block",
+        "type": "chart",
+        "chartId": "candidate-score-chart",
+        "layout": "full"
+      },
+      {
+        "id": "collision-section",
+        "type": "markdown",
+        "body": "## 新颖性碰撞\n\n最重要的碰撞是 RACE：它已经把 search、learning 与 feedback 放入统一 FLOP 记账，因此宽泛的“搜索和反馈预算怎么分”不成立。主问题的增量必须限定为 **group-level next-action selection**，并以隐藏 oracle 下的 advantage sign reliability 为目标。"
+      },
+      {
+        "id": "collision-table-block",
+        "type": "table",
+        "tableId": "collision-table",
+        "layout": "full"
+      },
+      {
+        "id": "experiment-section",
+        "type": "markdown",
+        "body": "## 最小可证伪实验\n\n在训练时隐藏精确答案/单元测试 oracle 的数学与代码任务上，使用一个 1.5B–3B policy 和三个不同家族的 7B–14B judge。固定每组等价 FLOP，比较 uniform、SARA/VIP rollout-only、uncertainty-to-strong-judge、fixed-repeat、fixed-jury、RACE pilot-best static mix 与联合在线分配器。\n\n**主指标：** advantage 符号错误率；其次为 advantage 排序一致性、oracle/estimated gradient cosine、held-out oracle pass@1 与学习曲线面积。\n\n**拒绝线：** 相对最强静态基线的符号错误率平均下降不足 1 个百分点，且 held-out oracle score/AUC 提升不足 0.5 个百分点或 95% 置信区间覆盖零；动作比例不随不确定性状态变化也视为机制失败。\n\n最小闭环预计需要约 2,000 个训练 prompt、500–1,000 个测试 prompt、50–100 个更新、3 个种子，以及 4 张 A100 80GB 或等效算力的 3–7 GPU-days。"
+      },
+      {
+        "id": "candidate-section",
+        "type": "markdown",
+        "body": "## 候选组合\n\n两个备选分别覆盖测量问题和外部效度问题：低预算预测 future trainability，以及用跨代理/检测器/评审器交换识别 RLSVR 的 proxy gaming。四个候选因被主问题吸收或与工作簿/最新论文重叠而淘汰。"
+      },
+      {
+        "id": "candidate-table-block",
+        "type": "table",
+        "tableId": "candidate-table",
+        "layout": "full"
+      },
+      {
+        "id": "boundaries-section",
+        "type": "markdown",
+        "body": "## 边界与风险\n\n- 首轮只对 noisy/learned verifier 下的 group-relative 在线优化提出结论，不外推到纯确定性 rule-based RLVR。\n- 数学/代码隐藏 oracle 是机制测试，不足以证明开放任务收益；开放任务需追加冻结的人评或异质高置信 jury。\n- 如果不同 verifier 共享同一盲点，异质化仍受 shared-error floor 限制。\n- 2026 arXiv 论文按预印本证据处理；投稿前必须重新执行最近工作碰撞。\n- 六维 0–2 评分只是筛选证据强度；硬门槛优先，分数不是效应量或成功概率。"
+      },
+      {
+        "id": "sources-section",
+        "type": "markdown",
+        "body": "## 来源说明\n\n报告使用本地工作簿作为高召回研究地形与去重约束，使用 20 条已在线核验的一手论文作为研究证据。完整 observation、closest-prior 映射、硬门槛、评分理由、决策日志和研究问题契约保存在同名结构化会话 JSON 中。"
+      }
+    ],
+    "charts": [
+      {
+        "id": "candidate-score-chart",
+        "title": "候选问题证据评分",
+        "subtitle": "六维 0–2 级评分加总（满分 12）；硬门槛优先于总分，分值不是连续效应量",
+        "intent": "comparison",
+        "question": "八个候选在价值、新颖性、判别力、可行性、可测量性和信息价值上的证据强度如何？",
+        "rationale": "横向条形图适合比较带长标签的有限候选；同时保留各维度、硬门槛和选择状态用于审计。",
+        "type": "horizontalBar",
+        "dataset": "candidate_scores",
+        "sourceId": "src_session",
+        "encodings": {
+          "x": {
+            "field": "short_label",
+            "type": "nominal",
+            "aggregate": "none",
+            "label": "候选问题"
+          },
+          "y": {
+            "field": "total_score",
+            "type": "quantitative",
+            "aggregate": "none",
+            "format": "number",
+            "label": "证据评分"
+          },
+          "tooltip": [
+            {"field": "candidate_id", "type": "text", "label": "候选 ID"},
+            {"field": "total_score", "type": "quantitative", "format": "number", "label": "总分"},
+            {"field": "hard_gate", "type": "text", "label": "硬门槛"},
+            {"field": "decision", "type": "text", "label": "决策"},
+            {"field": "novelty", "type": "quantitative", "format": "number", "label": "新颖性"}
+          ]
+        },
+        "xAxisTitle": "候选问题",
+        "yAxisTitle": "证据评分（0–12）",
+        "valueFormat": "number",
+        "unit": "分",
+        "layout": "full",
+        "labels": {"values": "all"},
+        "maxRows": 8,
+        "palette": {"kind": "sequential", "name": "blue"},
+        "settings": {"sort": "descending", "categoryLabelPolicy": "wrap", "showValues": true},
+        "surface": {"surface": "export", "viewMode": "both"}
+      }
+    ],
+    "tables": [
+      {
+        "id": "corpus-inventory-table",
+        "title": "本地工作簿规模与用途",
+        "subtitle": "2025–2026 高召回研究池；用于研究地形和去重，不作为新颖性结论的唯一证据",
+        "dataset": "corpus_inventory",
+        "defaultSort": {"field": "count", "direction": "desc"},
+        "density": "dense",
+        "sourceId": "src_workbook",
+        "layout": "full",
+        "columns": [
+          {"field": "scope", "label": "范围", "type": "text"},
+          {"field": "count", "label": "数量", "format": "number", "type": "number"},
+          {"field": "role", "label": "本轮用途", "type": "text"}
+        ]
+      },
+      {
+        "id": "collision-table",
+        "title": "主问题与最近工作的边界",
+        "subtitle": "每行说明最近工作已经解决什么，以及主问题仍需解决什么",
+        "dataset": "collision_matrix",
+        "defaultSort": {"field": "prior", "direction": "asc"},
+        "density": "spacious",
+        "sourceId": "src_session",
+        "layout": "full",
+        "columns": [
+          {"field": "prior", "label": "最近工作", "type": "text"},
+          {"field": "solved", "label": "已经解决", "type": "text"},
+          {"field": "remaining", "label": "尚未解决", "type": "text"}
+        ]
+      },
+      {
+        "id": "candidate-table",
+        "title": "八个候选的硬门槛与决策",
+        "subtitle": "总分用于排序；任何硬门槛失败都会优先淘汰",
+        "dataset": "candidate_scores",
+        "defaultSort": {"field": "total_score", "direction": "desc"},
+        "density": "dense",
+        "sourceId": "src_session",
+        "layout": "full",
+        "columns": [
+          {"field": "candidate_id", "label": "ID", "type": "text"},
+          {"field": "short_label", "label": "候选", "type": "text"},
+          {"field": "total_score", "label": "评分", "format": "number", "type": "number"},
+          {"field": "hard_gate", "label": "硬门槛", "type": "text"},
+          {"field": "decision", "label": "决策", "type": "text"},
+          {"field": "collision_note", "label": "碰撞结论", "type": "text"}
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "src_workbook",
+        "label": "LLM_posttraining_research_questions_2025_2026.xlsx",
+        "path": "project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx",
+        "query": {
+          "engine": "DuckDB",
+          "sql": "SELECT * FROM (VALUES (1, '完整高召回文献池', 5608, '研究地形与去重底座'), (2, '核心研究问题', 940, '高相关论文精读入口'), (3, '2025 正式会议', 5368, '成熟近邻与已占据问题'), (4, '2026 arXiv', 240, '最新预印本碰撞'), (5, '已有研究空白', 42, '本轮非冗余硬约束')) AS inventory(display_order, scope, count, role) ORDER BY display_order",
+          "description": "读取总览、研究空白与选题、核心研究问题、完整文献池、2026 arXiv 和口径与来源工作表。",
+          "executed_at": "2026-08-21T15:20:00+08:00",
+          "language": "SQL",
+          "tables_used": ["project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx"],
+          "filters": ["只读分析", "不修改工作簿", "已有候选映射审计不作为研究证据"],
+          "metric_definitions": ["数量为各工作表的非表头记录数；研究空白数量为 42。"]
+        }
+      },
+      {
+        "id": "src_session",
+        "label": "模式 2 结构化研究会话",
+        "path": "modes/codex-research-question/results/2026-08-21-online-feedback-budget-allocation.json",
+        "query": {
+          "engine": "DuckDB",
+          "sql": "WITH candidates AS (SELECT unnest(candidate_questions) AS c FROM read_json_auto('modes/codex-research-question/results/2026-08-21-online-feedback-budget-allocation.json')) SELECT c.candidate_id, c.scores.importance.value AS importance, c.scores.novelty.value AS novelty, c.scores.discriminating_power.value AS discriminating_power, c.scores.feasibility.value AS feasibility, c.scores.measurability.value AS measurability, c.scores.expected_information_value.value AS information_value, c.scores.importance.value + c.scores.novelty.value + c.scores.discriminating_power.value + c.scores.feasibility.value + c.scores.measurability.value + c.scores.expected_information_value.value AS total_score FROM candidates ORDER BY total_score DESC, c.candidate_id",
+          "description": "由当前 Codex 根据固定模式 2 协议生成并通过本地 complete validator 的候选、评分、硬门槛与选择快照。",
+          "executed_at": "2026-08-21T18:00:00+08:00",
+          "language": "SQL",
+          "tables_used": ["modes/codex-research-question/results/2026-08-21-online-feedback-budget-allocation.json"],
+          "filters": ["20 条已核验一手来源", "8 个候选", "硬门槛优先于评分"],
+          "metric_definitions": ["total_score 为 importance、novelty、discriminating_power、feasibility、measurability、expected_information_value 六项 0–2 分之和；满分 12。"]
+        }
+      },
+      {"id": "paper_e01", "label": "Verifier-Induced Support Reshaping in On-Policy Optimization", "href": "https://arxiv.org/abs/2608.00220"},
+      {"id": "paper_e02", "label": "Understanding Diversity Collapse in RLVR via the Lens of Overtraining", "href": "https://arxiv.org/abs/2606.15455"},
+      {"id": "paper_e03", "label": "ReCo: Reweighting GRPO Against Distributional Concentration", "href": "https://arxiv.org/abs/2607.26862"},
+      {"id": "paper_e04", "label": "PAEC: Position-Aware Entropy Calibration for LLM Reasoning in RLVR", "href": "https://arxiv.org/abs/2606.08543"},
+      {"id": "paper_e05", "label": "BODHI", "href": "https://arxiv.org/abs/2608.02867"},
+      {"id": "paper_e06", "label": "SARA", "href": "https://arxiv.org/abs/2607.26253"},
+      {"id": "paper_e07", "label": "Adaptive Rollout Allocation for Online RLVR", "href": "https://arxiv.org/abs/2602.01601"},
+      {"id": "paper_e08", "label": "Where Should RL Post-Training Compute Go?", "href": "https://arxiv.org/abs/2607.13389"},
+      {"id": "paper_e09", "label": "Ask a Strong LLM Judge when Your Reward Model is Uncertain", "href": "https://arxiv.org/abs/2510.20369"},
+      {"id": "paper_e10", "label": "LLM-as-a-Verifier", "href": "https://arxiv.org/abs/2607.05391"},
+      {"id": "paper_e11", "label": "LLMs as a Jury", "href": "https://arxiv.org/abs/2607.10139"},
+      {"id": "paper_e12", "label": "Citation Verifier Benchmark", "href": "https://arxiv.org/abs/2607.08700"},
+      {"id": "paper_e13", "label": "RewardUQ", "href": "https://arxiv.org/abs/2602.24040"},
+      {"id": "paper_e14", "label": "The Dark Room in the Reward Channel", "href": "https://arxiv.org/abs/2607.21273"},
+      {"id": "paper_e15", "label": "From RLVR to RLSVR", "href": "https://arxiv.org/abs/2607.23802"},
+      {"id": "paper_e16", "label": "LLM-as-a-Coach", "href": "https://arxiv.org/abs/2607.18110"},
+      {"id": "paper_e17", "label": "Self-Verified Distillation", "href": "https://arxiv.org/abs/2605.26132"},
+      {"id": "paper_e18", "label": "Outcome-Masked GRPO", "href": "https://arxiv.org/abs/2608.03119"},
+      {"id": "paper_e19", "label": "Improving Generalization Robustness of Multimodal RLVR", "href": "https://arxiv.org/abs/2608.08802"},
+      {"id": "paper_e20", "label": "Reward Specification and Benchmark Reliability in GRPO-based LLM Unlearning", "href": "https://arxiv.org/abs/2608.17804"}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-21T18:00:00+08:00",
+    "status": "ready",
+    "datasets": {
+      "corpus_inventory": [
+        {"display_order": 1, "scope": "完整高召回文献池", "count": 5608, "role": "研究地形与去重底座"},
+        {"display_order": 2, "scope": "核心研究问题", "count": 940, "role": "高相关论文精读入口"},
+        {"display_order": 3, "scope": "2025 正式会议", "count": 5368, "role": "成熟近邻与已占据问题"},
+        {"display_order": 4, "scope": "2026 arXiv", "count": 240, "role": "最新预印本碰撞"},
+        {"display_order": 5, "scope": "已有研究空白", "count": 42, "role": "本轮非冗余硬约束"}
+      ],
+      "candidate_scores": [
+        {"rank_order": 1, "candidate_id": "C01", "short_label": "联合反馈预算分配", "importance": 2, "novelty": 2, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 2, "total_score": 12, "hard_gate": "通过", "decision": "主问题", "collision_note": "三类动作尚未被联合为训练时 acquisition rule"},
+        {"rank_order": 2, "candidate_id": "C02", "short_label": "未来可训练性 probe", "importance": 2, "novelty": 1, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 2, "total_score": 11, "hard_gate": "通过", "decision": "备选 1", "collision_note": "future trainability 已提出；增量在低预算预测与选择 regret"},
+        {"rank_order": 3, "candidate_id": "C03", "short_label": "代理有效性交换", "importance": 2, "novelty": 2, "discriminating_power": 2, "feasibility": 1, "measurability": 2, "information_value": 2, "total_score": 11, "hard_gate": "通过", "decision": "备选 2", "collision_note": "RLSVR 已验证增益；跨代理/检测器交换仍缺"},
+        {"rank_order": 4, "candidate_id": "C04", "short_label": "跨层 support 中介", "importance": 2, "novelty": 1, "discriminating_power": 2, "feasibility": 1, "measurability": 2, "information_value": 1, "total_score": 9, "hard_gate": "通过", "decision": "保留", "collision_note": "单项干预拥挤；等效比较与语义中介仍有空间"},
+        {"rank_order": 5, "candidate_id": "C05", "short_label": "相关误差 cross-fit", "importance": 2, "novelty": 1, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 1, "total_score": 10, "hard_gate": "未通过：非冗余", "decision": "并入 C01", "collision_note": "是 C01 的机制消融，不宜独立主线"},
+        {"rank_order": 6, "candidate_id": "C06", "short_label": "同源循环确认", "importance": 2, "novelty": 0, "discriminating_power": 2, "feasibility": 1, "measurability": 2, "information_value": 1, "total_score": 8, "hard_gate": "未通过：非冗余", "decision": "淘汰", "collision_note": "与工作簿 G23/G28/G40 直接重叠"},
+        {"rank_order": 7, "candidate_id": "C07", "short_label": "reward shortcut 预警", "importance": 2, "novelty": 0, "discriminating_power": 1, "feasibility": 1, "measurability": 2, "information_value": 1, "total_score": 7, "hard_gate": "未通过：非冗余", "decision": "淘汰", "collision_note": "Dark Room 已覆盖核心预测量和机制"},
+        {"rank_order": 8, "candidate_id": "C08", "short_label": "方向性 verifier bias", "importance": 2, "novelty": 0, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 1, "total_score": 9, "hard_gate": "未通过：非冗余", "decision": "并入 C01", "collision_note": "与 G13/G14 和 citation-verifier 论文重叠"}
+      ],
+      "collision_matrix": [
+        {"display_order": 1, "prior": "SARA / VIP", "solved": "按 prompt 分配或提前停止新 rollout", "remaining": "奖励可靠性被假定；不比较复评与异质 verifier"},
+        {"display_order": 2, "prior": "RACE", "solved": "宏观 search / learning / feedback FLOP 前沿", "remaining": "不做 group-level 下一动作选择，也不优化 advantage sign"},
+        {"display_order": 3, "prior": "Uncertainty-to-strong-judge routing", "solved": "将高 epistemic uncertainty 的响应对交给强 judge", "remaining": "不与新增 rollout、同 judge 复评和异质 panel 联合分配"},
+        {"display_order": 4, "prior": "LLM-as-a-Verifier", "solved": "复评降方差及相关偏差的递减收益", "remaining": "没有训练时联合 allocator"},
+        {"display_order": 5, "prior": "LLMs as a Jury", "solved": "跨模型误差去相关与 shared-error floor", "remaining": "对象是推理时选择，不是在线 policy gradient"},
+        {"display_order": 6, "prior": "Citation verifier benchmark", "solved": "相近 F1 下的方向性 FPR/FNR 差异", "remaining": "没有将方向性偏差变成组内计算 acquisition objective"}
+      ]
+    }
+  },
+  "sources": [
+    {"id": "src_workbook", "label": "LLM_posttraining_research_questions_2025_2026.xlsx", "path": "project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx"},
+    {"id": "src_session", "label": "模式 2 结构化研究会话", "path": "modes/codex-research-question/results/2026-08-21-online-feedback-budget-allocation.json"}
+  ],
+  "package_info": {
+    "artifact_kind": "portable-research-report",
+    "version": "0.28.0"
+  }
+}
