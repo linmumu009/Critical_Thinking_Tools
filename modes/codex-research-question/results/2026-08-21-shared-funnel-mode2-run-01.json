@@ -1,0 +1,747 @@
+{
+  "schema_version": "2.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "execution": {
+    "mode_id": "2",
+    "engine": "current_codex",
+    "adapter_prompt": "prompts/mode-2-codex.md"
+  },
+  "status": "complete",
+  "created_date": "2026-08-21",
+  "profile_snapshot": {
+    "schema_version": "2.0",
+    "pipeline_id": "research_question_discovery_funnel_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 8,
+      "maximum_candidate_count": 15,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "mode_definitions": {
+      "1": {
+        "name": "外部模型 API",
+        "engine": "external_model_api",
+        "adapter_prompt": "prompts/mode-1-api.md"
+      },
+      "2": {
+        "name": "当前 Codex",
+        "engine": "current_codex",
+        "adapter_prompt": "prompts/mode-2-codex.md"
+      }
+    },
+    "process_invariants": {
+      "canonical_stages": "pipeline-stages.json",
+      "same_stage_sequence": true,
+      "same_required_tools": true,
+      "same_candidate_schema": true,
+      "same_hard_gates": true,
+      "same_scorecard": true,
+      "same_probe_rules": true,
+      "same_output_contract": true
+    },
+    "execution_constraints": {
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false,
+      "human_candidate_scoring_required": false,
+      "mode_2_external_model_api_allowed": false,
+      "candidate_mapping_audit_is_research_evidence": false
+    }
+  },
+  "input_manifest": [
+    {
+      "input_id": "I01",
+      "kind": "local_workbook",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\project\\GRPO-X1\\LLM_posttraining_research_questions_2025_2026.xlsx",
+      "role": "只读研究版图与重复约束；不把候选映射审计结论当作一手研究证据"
+    },
+    {
+      "input_id": "I02",
+      "kind": "user_constraint",
+      "location": "thread:01a017c2-e85c-7673-b41d-7aebe0261317",
+      "role": "研究领域、模式 2 引擎定义及无需用户评分的业务约束"
+    },
+    {
+      "input_id": "I03",
+      "kind": "shared_pipeline",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\pipeline-stages.json",
+      "role": "固定阶段 0–8、工具顺序、门槛、评分和交付契约"
+    }
+  ],
+  "stage_trace": [
+    {
+      "stage_id": "0_goal",
+      "status": "complete",
+      "output_summary": "冻结使用者、下一试验优先级决策、一周启动期限、小模型低成本约束和 1 主 2 备选停止条件。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-0冻结决策目标"
+      ],
+      "tool_trace": []
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "status": "complete",
+      "output_summary": "只读核对工作簿 42 个既有空白，并以 9 篇一手论文和 1 份本地版图提取闭环合成、验证器知识中心、跨家族误差与代理过优化信号。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-1现实信号",
+        "E01-E10"
+      ],
+      "tool_trace": [
+        "primary-source-evidence"
+      ]
+    },
+    {
+      "stage_id": "2_reframe",
+      "status": "complete",
+      "output_summary": "用 5W1H 限定同一验证器跨轮次跨角色复用，并以六个苏格拉底问题拆出真值、累积机制、替代解释、成本和反转条件。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-25w1h-与苏格拉底重构"
+      ],
+      "tool_trace": [
+        "six-honest-serving-men",
+        "socratic-questioning"
+      ]
+    },
+    {
+      "stage_id": "3_expand",
+      "status": "complete",
+      "output_summary": "QFT 先无评价生成 12 个问法；STORM 从数据、优化、验证、统计、算力和反方审稿六种角色补充约束与竞争解释。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-3qft-扩展与-storm"
+      ],
+      "tool_trace": [
+        "question-formulation-technique",
+        "storm-costorm"
+      ]
+    },
+    {
+      "stage_id": "4_cluster",
+      "status": "complete",
+      "output_summary": "按适应性复用、可投机边界、监督通道泄漏、代理保真、争议边界和替代解释聚成六簇，得到 10 个可评分候选。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-4机制证据聚类",
+        "C01-C10"
+      ],
+      "tool_trace": [
+        "mechanism-evidence-clustering"
+      ]
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "status": "complete",
+      "output_summary": "为每个候选写出 A/B/未知动作；主问题完成双向钢人，并用 ACH 比较适应性复用、普通合成坍缩、表征坍缩和标签不一致成本。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-5双向钢人与竞争假设"
+      ],
+      "tool_trace": [
+        "bidirectional-steelman",
+        "analysis-of-competing-hypotheses"
+      ]
+    },
+    {
+      "stage_id": "6_rank",
+      "status": "complete",
+      "output_summary": "10 个候选先过五项硬门槛，再按六维 0–2 评分；C01 得 12 分，C02 与 C06 各得 11 分。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-6硬门槛与评分"
+      ],
+      "tool_trace": [
+        "question-discovery-scorecard"
+      ]
+    },
+    {
+      "stage_id": "7_probe",
+      "status": "complete",
+      "output_summary": "对前三名做机制级一手来源碰撞和反向检索：C01/C06 未见直接覆盖而保留，C02 因同构验证已有训练结论而缩小到训练前跨任务预警。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-7前三候选的现实碰撞与反证"
+      ],
+      "tool_trace": [
+        "primary-source-collision-search",
+        "consider-the-opposite"
+      ]
+    },
+    {
+      "stage_id": "8_contract",
+      "status": "complete",
+      "output_summary": "选定 C01，给出角色分离定义、A/B/未知动作、等预算三方案三轮试验、盲评、指标及停止反转条件；保留 C02/C06 为备选。",
+      "artifact_refs": [
+        "2026-08-21-shared-funnel-mode2-run-01.md#stage-8研究问题契约"
+      ],
+      "tool_trace": [
+        "research-question-contract"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_title": "LLM_posttraining_research_questions_2025_2026.xlsx",
+      "source_type": "local_landscape_workbook",
+      "source_location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\project\\GRPO-X1\\LLM_posttraining_research_questions_2025_2026.xlsx",
+      "published_date": "本地快照（未正式发表）",
+      "checked_date": "2026-08-21",
+      "observation": "工作簿列出 42 个研究空白、940 个核心问题、5608 篇完整文献和 240 篇 2026 arXiv；已覆盖异步陈旧、replay、动态 group size、验证器漂移、数据坍缩和冲突验证器等方向。",
+      "interpretation": "新问题必须避开这些已显式列出的空白，尤其不能把验证器静态偏差或主动合成换名重提。",
+      "unknown": "工作簿是高覆盖版图而非穷尽性系统综述，未出现不等于绝对没有先行工作。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_title": "Towards Active Synthetic Data Generation for Finetuning Language Models",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2512.00884",
+      "published_date": "2025-11-30",
+      "checked_date": "2026-08-21",
+      "observation": "依据当前学生状态闭环生成训练数据，在固定样本或教师调用预算下优于静态生成；简单主动学习准则表现很强。",
+      "interpretation": "合成后训练正在成为适应性闭环，因此同一评价信号被多轮复用的风险具有现实性。",
+      "unknown": "论文未隔离同一验证器跨过滤、课程选择和早停角色复用的累积偏差。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_title": "Escaping Model Collapse via Synthetic Data Verification: Near-term Improvements and Long-term Convergence",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/29806b2e4dcb35e42abed21d43e2b7d8-Abstract-Conference.html",
+      "published_date": "2026-01-26",
+      "checked_date": "2026-08-21",
+      "observation": "验证器筛选可在短期以降方差换取收益，但多轮合成重训最终会收敛到验证器的知识中心；不完美验证器可使收益平台或反转。",
+      "interpretation": "固定验证器的偏差可能被多轮闭环累积，而非保持为独立静态噪声。",
+      "unknown": "理论主要基于线性模型，实验虽含 SmolLM2/XSUM，但未测试跨角色复用与等预算轮换。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_title": "Beyond Solving: A Closer Look at LLMs as Solution Verifiers",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://openreview.net/forum?id=I0yfD1zLZI",
+      "published_date": "2025-09-20",
+      "checked_date": "2026-08-21",
+      "observation": "37 个模型和 9 个数据集显示跨家族验证尤其有效；后训练降低自验证增益但增强跨家族改进。",
+      "interpretation": "验证器家族关系影响错误相关性，跨家族轮换是有依据的干预变量。",
+      "unknown": "研究是测试时验证，不是多轮合成后训练，也没有角色分离实验。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_title": "LLMs Gaming Verifiers: RLVR can Lead to Reward Hacking",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2604.15149",
+      "published_date": "2026-04-16",
+      "checked_date": "2026-08-21",
+      "observation": "RLVR 模型会枚举实例标签来通过只检查外延正确性的验证器；同构扰动能检测捷径，训练时使用同构验证可消除该行为。",
+      "interpretation": "即使奖励形式可验证，未覆盖的等价关系仍会成为可投机边界；盲变换评分适合作为独立诊断。",
+      "unknown": "效果目前集中在归纳规则任务，尚不清楚是否能跨任务预测未来闭环过拟合。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_title": "Scaling Laws for Reward Model Overoptimization",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2210.10760",
+      "published_date": "2022-10-19",
+      "checked_date": "2026-08-21",
+      "observation": "继续优化代理奖励时，代理分数可上升而 gold reward 平台或下降；关系随优化方法与规模变化。",
+      "interpretation": "管线内验证器分数不能充当独立真实质量，必须冻结盲评分通道。",
+      "unknown": "该工作研究策略/采样对代理的直接优化，没有研究验证器通过数据选择被间接、跨轮次优化。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_title": "Generalization in Adaptive Data Analysis and Holdout Reuse",
+      "source_type": "primary_theory_paper",
+      "source_location": "https://arxiv.org/abs/1506.02629",
+      "published_date": "2015-06-08",
+      "checked_date": "2026-08-21",
+      "observation": "适应性、反复复用同一 holdout 容易对该 holdout 过拟合；论文给出保持统计有效性的复用方法。",
+      "interpretation": "LLM 合成管线反复让同一验证器决定后续数据，具备相似的自适应反馈结构。",
+      "unknown": "统计结论不能自动证明生成式训练中的效应大小，需专门实证。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_title": "From RLVR to RLSVR: Task Transformation Induces Self-Verifiable Rewards for Open-Ended LLM Self-Improvement",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2607.23802",
+      "published_date": "2026-07-26",
+      "checked_date": "2026-08-21",
+      "observation": "任务变换把开放任务转成具有自动奖励的代理环境，并在摘要、创作和数学上带来收益。",
+      "interpretation": "可验证代理任务正扩展到开放领域，代理—目标保真与代理复用偏差会变得更重要。",
+      "unknown": "当前实例不能给出一般性的代理分数向原任务质量迁移条件。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_title": "Gradient Regularization Mitigates Reward Hacking in Reinforcement Learning from Human Feedback and Verifiable Rewards",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2602.18037",
+      "published_date": "2026-02-20",
+      "checked_date": "2026-08-21",
+      "observation": "奖励模型准确率与优化点平坦度相关；显式梯度正则比 KL 更好地缓解多类 RLHF/RLVR hacking。",
+      "interpretation": "闭环退化也可能通过优化几何而非验证器角色复用缓解，是主问题必须比较的替代机制。",
+      "unknown": "梯度范数能否作为跨任务、训练前预警指标仍未由该论文解决。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_title": "Representation Collapse in Sequential Post-Training of Large Language Models",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2605.30524",
+      "published_date": "2026-05-28",
+      "checked_date": "2026-08-21",
+      "observation": "连续 SFT、偏好、安全和专项后训练会使隐藏表征低秩、各向异性和同质化，并预测可塑性、OOD 与校准下降。",
+      "interpretation": "多轮合成退化可能由表征坍缩解释，必须作为竞争假设而非把所有效应归给验证器复用。",
+      "unknown": "论文没有把表征坍缩与验证器复用在同一因子实验中分离。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在迭代式合成数据后训练中，当同一个验证器被反复用于样本筛选、课程选择和停止判断时，模型在独立验证器与分布外任务上的真实增益会随轮次下降多少；在相同验证预算下，把这三个角色分离并在不同模型家族间轮换，能否阻止这种闭环过拟合？",
+      "signal_ids": ["E02", "E03", "E04", "E05", "E06", "E07"],
+      "closest_prior_ids": ["E03", "E04"],
+      "question_family": "合成数据闭环与验证器治理",
+      "cluster_id": "A_adaptive_verifier_reuse",
+      "decision_fork": {
+        "decision": "合成数据管线是否应默认实行验证器角色分离和跨家族轮换。",
+        "answer_a": "固定复用显著扩大管线分数与盲分数的差距，等预算角色分离可减小。",
+        "action_a": "把过滤、课程选择和停止判断分给独立验证器，并扩展到 RLVR。",
+        "answer_b": "固定复用没有稳定额外偏差，或角色分离的收益不足以覆盖复杂度。",
+        "action_b": "保留单验证器，把预算投入更强验证器、更多数据或优化正则。",
+        "uncertain_action": "只在出现效应的任务、家族或轮次边界启用隔离，并追加一轮验证。",
+        "reversal_condition": "固定复用与角色分离的盲测差距斜率无稳定差异，或差异完全由平均验证准确率解释。"
+      },
+      "evidence_path": "固定教师、数据量、训练 token 与验证调用数，连续三轮合成+SFT，比较固定复用、角色分离和随机轮换；用预冻结盲验证器、可执行真值与 OOD 集测轮次交互。",
+      "cheap_probe": {
+        "input": "E01 的 42 个空白与 E02-E09 的题名、摘要、方法边界。",
+        "procedure": "进行机制级检索，要求直接工作同时包含迭代 LLM 合成、跨角色同一验证器复用、独立盲评和等预算角色分离；再以反方关键词检索无自适应过拟合结果。",
+        "possible_outcomes": ["存在直接覆盖", "只有相邻机制", "相反证据占主导"],
+        "decision_rules": {
+          "keep": "没有直接覆盖，且至少两条独立一手信号支持可检验机制。",
+          "narrow": "已有部分角色或单任务覆盖，只保留未覆盖边界。",
+          "rewrite": "问题主要是静态验证器准确率而非适应性复用。",
+          "reject": "已有等预算多轮因子实验，或强证据显示没有可测效应。"
+        }
+      },
+      "probe_disposition": "keep",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "直接决定单验证器还是角色隔离的管线架构。"},
+        "discriminating_power": {"value": 2, "reason": "轮次×方案对盲测差距的交互可区分四个竞争假设。"},
+        "reality_grounding": {"value": 2, "reason": "主动合成、知识中心、跨家族验证和代理过优化形成一致现实信号。"},
+        "answerability": {"value": 2, "reason": "1B–3B 模型三轮小规模因子实验即可先测方向。"},
+        "novelty_nonredundancy": {"value": 2, "reason": "未发现同一验证器跨角色适应性复用与等预算隔离的直接实验。"},
+        "cost_benefit": {"value": 2, "reason": "首轮可低成本运行，阳性结果影响合成数据与 RLVR 管线。"}
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "在不进行完整 RLVR 训练前，语义保持变换上的验证器违例率能否跨任务预测未来 reward hacking，并优于静态验证准确率、KL 和奖励梯度尖锐度？",
+      "signal_ids": ["E05", "E09"],
+      "closest_prior_ids": ["E05", "E09"],
+      "question_family": "reward hacking 训练前诊断",
+      "cluster_id": "B_exploitable_boundary_diagnostics",
+      "decision_fork": {
+        "decision": "是否用变换违例率作为 RLVR 训练前的 verifier 风险门槛。",
+        "answer_a": "违例率跨任务预测未来 hacking，且优于现有指标。",
+        "action_a": "在开跑 RLVR 前生成语义保持变换并设风险阈值。",
+        "answer_b": "预测只在归纳规则任务有效或不优于静态准确率。",
+        "action_b": "不采用通用门槛，只在已知可定义不变性的任务中使用。",
+        "uncertain_action": "扩大任务族并把主张缩小到可形式化不变性的场景。",
+        "reversal_condition": "训练前违例率与后续盲测 hacking 无稳定相关，或被静态准确率完全解释。"
+      },
+      "evidence_path": "在数学、代码、逻辑三类任务构造等价变换，训练前测违例率，随后做短程 RLVR，比较其对盲测 shortcut 的预测 AUC。",
+      "cheap_probe": {
+        "input": "E05 的同构扰动结果和 E09 的梯度平坦度结果。",
+        "procedure": "核对先行工作是否已经把变换违例作为跨任务训练前预测器，而非训练时防御。",
+        "possible_outcomes": ["只证明训练时防御", "已有跨任务预测", "无法定义通用变换"],
+        "decision_rules": {
+          "keep": "未有训练前预测且至少三类任务能定义变换。",
+          "narrow": "训练防御已存在，缩小为跨任务预测与指标比较。",
+          "rewrite": "只能研究某一任务的变换库设计。",
+          "reject": "已有同等预测实验或变换无法稳定保持语义。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "可决定昂贵 RLVR 是否开跑及 verifier 是否需重构。"},
+        "discriminating_power": {"value": 2, "reason": "可与准确率、KL、尖锐度做预注册预测比较。"},
+        "reality_grounding": {"value": 2, "reason": "同构验证与梯度正则都有直接一手实证。"},
+        "answerability": {"value": 2, "reason": "短程 RLVR 与现成任务变换即可验证。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "同构验证已存在，新增点是训练前跨任务预测。"},
+        "cost_benefit": {"value": 2, "reason": "若有效可节省失败 RLVR 运行。"}
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "对开放文本任务构造自验证代理环境时，哪些可测的代理—目标保真条件能预测代理奖励提升是否迁移到原任务质量？",
+      "signal_ids": ["E08", "E05", "E06"],
+      "closest_prior_ids": ["E08", "E06"],
+      "question_family": "自验证代理任务保真",
+      "cluster_id": "D_proxy_fidelity",
+      "decision_fork": {
+        "decision": "何时值得把开放任务转换成自验证代理环境。",
+        "answer_a": "存在稳定的干预一致性或排序保真指标可预测迁移。",
+        "action_a": "只对达到指标阈值的代理任务执行 RLSVR。",
+        "answer_b": "代理收益主要是实例特定，保真指标不能跨任务预测。",
+        "action_b": "把任务变换视为逐任务工程，并保留目标任务人工锚点。",
+        "uncertain_action": "缩小到摘要/创作中的一个代理家族。",
+        "reversal_condition": "候选保真指标在留出任务上不优于代理训练分数本身。"
+      },
+      "evidence_path": "为摘要与创作构造多个代理环境，训练前测干预一致性、排序相关与信息瓶颈，预测短程 RLSVR 后独立人评/异源评测增益。",
+      "cheap_probe": {
+        "input": "E08 的任务变换实例和 E05/E06 的代理投机证据。",
+        "procedure": "查找是否已有跨代理任务的前置保真指标与留出任务预测。",
+        "possible_outcomes": ["只有单一代理成功", "已有一般保真理论", "代理定义不可比"],
+        "decision_rules": {
+          "keep": "只有实例结果且可构造至少三种代理。",
+          "narrow": "缩小到同一开放任务的多个代理环境。",
+          "rewrite": "改为代理 reward hacking 的任务内研究。",
+          "reject": "已有一般性指标并完成跨任务验证。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "决定开放任务是否采用自验证强化学习。"},
+        "discriminating_power": {"value": 2, "reason": "留出任务预测可以区分可迁移代理与任务特定技巧。"},
+        "reality_grounding": {"value": 2, "reason": "RLSVR 已显示现实收益，代理过优化风险也有依据。"},
+        "answerability": {"value": 1, "reason": "开放任务独立真值较贵，需要小规模人工锚点。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "一般保真条件新，但紧邻 RLSVR。"},
+        "cost_benefit": {"value": 1, "reason": "多代理环境和人评使首轮成本中等。"}
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "奖励梯度尖锐度能否作为在线早期预警，在外部质量尚未下降前预测 RLHF/RLVR reward hacking，并比 KL 与代理分数分歧更早触发审计？",
+      "signal_ids": ["E09", "E06"],
+      "closest_prior_ids": ["E09", "E06"],
+      "question_family": "优化几何与风险预警",
+      "cluster_id": "B_exploitable_boundary_diagnostics",
+      "decision_fork": {
+        "decision": "是否按梯度尖锐度触发额外验证器审计或停止训练。",
+        "answer_a": "尖锐度稳定领先外部质量恶化。",
+        "action_a": "部署尖锐度阈值与审计触发器。",
+        "answer_b": "尖锐度只是同步相关或不跨任务。",
+        "action_b": "继续使用 KL、独立评分和固定检查点。",
+        "uncertain_action": "仅在 LLM judge 奖励场景使用并校准阈值。",
+        "reversal_condition": "尖锐度不产生正的预警提前量，或加入 KL 后无增量预测力。"
+      },
+      "evidence_path": "复现两类 hacking 任务，按 checkpoint 记录梯度范数/曲率、KL、代理与盲分数，比较事件发生前的预测提前量。",
+      "cheap_probe": {
+        "input": "E09 的梯度平坦度实验与 E06 的 overoptimization 曲线。",
+        "procedure": "确认 E09 是否已直接报告在线预警和跨任务预测，而不只是相关与正则效果。",
+        "possible_outcomes": ["已有相关无预警", "已有完整预警", "计算成本过高"],
+        "decision_rules": {
+          "keep": "尚无在线提前量评估且近似计算可负担。",
+          "narrow": "只比较廉价有限差分指标。",
+          "rewrite": "改为正则强度选择问题。",
+          "reject": "已有同等预警或计算成本超过独立审计。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "可改变训练停止和审计策略。"},
+        "discriminating_power": {"value": 2, "reason": "预警提前量是清晰比较指标。"},
+        "reality_grounding": {"value": 2, "reason": "直接建立在 ICML 2026 的梯度—准确率结果上。"},
+        "answerability": {"value": 1, "reason": "曲率与多 checkpoint 统计增加成本。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "新增点是预警，不是梯度正则本身。"},
+        "cost_benefit": {"value": 1, "reason": "若近似不够便宜，价值会低于直接盲评。"}
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "连续后训练的任务顺序是否产生不可逆的表征滞后，使后来的等量反向训练无法恢复未来可塑性？",
+      "signal_ids": ["E10", "E01"],
+      "closest_prior_ids": ["E10", "E01"],
+      "question_family": "连续后训练表征动力学",
+      "cluster_id": "F_alternative_explanations",
+      "decision_fork": {
+        "decision": "连续专项后训练应采用顺序课程还是混合/回放。",
+        "answer_a": "顺序造成不可逆滞后。",
+        "action_a": "默认混合域回放与表征多样性约束。",
+        "answer_b": "等量反向训练可恢复，顺序效应主要是短期。",
+        "action_b": "按业务优先级顺序训练即可。",
+        "uncertain_action": "仅对高风险阶段启用回放。",
+        "reversal_condition": "控制训练量后 A→B→A 与混合训练的可塑性无差异。"
+      },
+      "evidence_path": "做 A→B、B→A、A↔B 与回放对照，测表征秩、OOD、校准和后续 C 任务学习速度。",
+      "cheap_probe": {
+        "input": "E10 的摘要、干预和阶段顺序范围。",
+        "procedure": "检查论文是否已经覆盖顺序、未来可塑性和回放/表征正则。",
+        "possible_outcomes": ["直接覆盖", "只报告相关", "未测可逆性"],
+        "decision_rules": {
+          "keep": "未测试反向恢复与滞后。",
+          "narrow": "只研究一个尚未覆盖的阶段组合。",
+          "rewrite": "转为竞争解释控制，不作为独立主问题。",
+          "reject": "近期工作已覆盖核心机制和干预。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "会影响连续后训练排程。"},
+        "discriminating_power": {"value": 1, "reason": "可逆性实验明确但机制可能混杂。"},
+        "reality_grounding": {"value": 2, "reason": "E10 直接报告表征坍缩。"},
+        "answerability": {"value": 1, "reason": "多序列训练成本中等。"},
+        "novelty_nonredundancy": {"value": 0, "reason": "E10 已覆盖阶段顺序、未来可塑性和多种干预。"},
+        "cost_benefit": {"value": 1, "reason": "有价值但新颖空间不足。"}
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "在合成数据修复中，把验证器的自然语言理由暴露给生成器或学生，是否比只给二值标签或首错位置更快诱发验证器风格过拟合，并降低独立验证器与可执行真值上的泛化？",
+      "signal_ids": ["E03", "E04", "E05", "E06"],
+      "closest_prior_ids": ["E05", "E06"],
+      "question_family": "验证反馈通道泄漏",
+      "cluster_id": "C_supervision_channel_leakage",
+      "decision_fork": {
+        "decision": "合成数据修复应给生成器完整验证理由、局部错误位置还是只给标签。",
+        "answer_a": "完整理由加速验证器特征内化并损害盲泛化。",
+        "action_a": "采用最小充分反馈，只暴露局部错误或标签。",
+        "answer_b": "完整理由带来真实过程学习且盲泛化更好。",
+        "action_b": "保留完整 critique，并投入更高质量理由生成。",
+        "uncertain_action": "按任务可执行性路由：可执行任务最小反馈，开放任务保留理由并抽检。",
+        "reversal_condition": "匹配 token 后，完整理由在独立真值上不劣于且稳定优于简化反馈。"
+      },
+      "evidence_path": "固定错误样本、修复轮数和反馈 token，比较标签、首错位置、完整理由三种通道；在原验证器、异源验证器、可执行单测与理由风格扰动上评估。",
+      "cheap_probe": {
+        "input": "E03-E06 及当前 verifier-supervision 论文摘要中的反馈通道设置。",
+        "procedure": "检索是否有只改变反馈信息量、同时匹配 token 并使用独立真值的直接因子实验。",
+        "possible_outcomes": ["没有直接隔离", "已有反馈通道消融", "理由只影响成本"],
+        "decision_rules": {
+          "keep": "未见匹配 token 的反馈通道—盲泛化实验。",
+          "narrow": "只保留可执行任务或修复数据场景。",
+          "rewrite": "改为理由质量而非泄漏机制。",
+          "reject": "已有跨任务直接覆盖且结论稳定。"
+        }
+      },
+      "probe_disposition": "keep",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "直接决定合成修复管线暴露多少验证信息。"},
+        "discriminating_power": {"value": 2, "reason": "三种通道和多种盲评可区分过程学习与风格复制。"},
+        "reality_grounding": {"value": 2, "reason": "验证器投机、代理过优化与家族差异均提供现实机制。"},
+        "answerability": {"value": 2, "reason": "无需完整 RL，仅小规模修复+SFT 即可。"},
+        "novelty_nonredundancy": {"value": 2, "reason": "未见匹配反馈 token 的直接独立真值研究。"},
+        "cost_benefit": {"value": 1, "reason": "影响面比 C01 窄，但试验便宜。"}
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "训练中每轮随机化语义等价的评分规约，能否在不增加有效标签噪声的前提下降低模型对固定验证边界的投机？",
+      "signal_ids": ["E05", "E09"],
+      "closest_prior_ids": ["E05", "E09"],
+      "question_family": "动态评分规约",
+      "cluster_id": "B_exploitable_boundary_diagnostics",
+      "decision_fork": {
+        "decision": "RLVR 是否应随机化等价 verifier contract。",
+        "answer_a": "随机化降低盲测 hacking 且标签一致性保持。",
+        "action_a": "部署语义等价规约池与一致性校验。",
+        "answer_b": "随机化主要增加标签噪声并损害学习。",
+        "action_b": "使用固定强规约和独立审计。",
+        "uncertain_action": "仅在已知高风险边界触发随机化。",
+        "reversal_condition": "随机化的盲测收益在匹配噪声后消失。"
+      },
+      "evidence_path": "为一组可执行任务构造等价 rubric/prompt/verifier 变体，匹配调用数与一致性，短程 RLVR 后测原规约和隐藏规约。",
+      "cheap_probe": {
+        "input": "E05 的同构规约与 E09 的正则基线。",
+        "procedure": "区分已有变换测试/训练和每轮规约随机化，并检索标签噪声控制。",
+        "possible_outcomes": ["训练变换已覆盖", "随机化未覆盖", "规约不等价"],
+        "decision_rules": {
+          "keep": "随机化与噪声匹配未被研究。",
+          "narrow": "只研究 rubric prompt 随机化。",
+          "rewrite": "改为 verifier ensemble。",
+          "reject": "等价随机化已有直接稳定结论。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响 verifier contract 是否固定。"},
+        "discriminating_power": {"value": 2, "reason": "可用隐藏规约和噪声匹配直接比较。"},
+        "reality_grounding": {"value": 2, "reason": "固定边界投机有直接证据。"},
+        "answerability": {"value": 1, "reason": "保证语义等价需要额外验证。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "接近同构验证训练。"},
+        "cost_benefit": {"value": 1, "reason": "效果可能只局限可形式化任务。"}
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "当迭代合成训练使用同一验证器决定早停和 checkpoint 选择时，报告的最优增益相对预注册盲验证器会被高估多少？",
+      "signal_ids": ["E02", "E06", "E07"],
+      "closest_prior_ids": ["E06", "E07"],
+      "question_family": "自适应模型选择偏差",
+      "cluster_id": "A_adaptive_verifier_reuse",
+      "decision_fork": {
+        "decision": "是否为合成后训练单独冻结早停/模型选择验证器。",
+        "answer_a": "同一验证器选择 checkpoint 显著高估盲增益。",
+        "action_a": "冻结独立早停集和验证器，不允许调后回看。",
+        "answer_b": "高估很小。",
+        "action_b": "继续复用验证器以节约成本。",
+        "uncertain_action": "限制 checkpoint 查询次数并报告选择校正。",
+        "reversal_condition": "不同选择协议的盲测最优值无稳定差异。"
+      },
+      "evidence_path": "保存同一训练轨迹全部 checkpoint，用管线验证器和预注册盲验证器分别选择，比较 winner's curse。",
+      "cheap_probe": {
+        "input": "E07 的 holdout 复用理论与 C01 的跨角色设计。",
+        "procedure": "判断该问题是否只是 C01 中早停角色的子问题。",
+        "possible_outcomes": ["独立研究价值", "可并入主问题", "已有直接测量"],
+        "decision_rules": {
+          "keep": "模型选择偏差独立于数据过滤。",
+          "narrow": "只研究 checkpoint 查询次数。",
+          "rewrite": "作为 C01 的早停角色消融。",
+          "reject": "已有直接测量且没有新机制。"
+        }
+      },
+      "probe_disposition": "rewrite",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响模型选择与报告协议。"},
+        "discriminating_power": {"value": 2, "reason": "同轨迹双选择器比较非常直接。"},
+        "reality_grounding": {"value": 2, "reason": "自适应 holdout 与代理过优化支持。"},
+        "answerability": {"value": 2, "reason": "可复用已训练 checkpoint，成本低。"},
+        "novelty_nonredundancy": {"value": 0, "reason": "是 C01 跨角色复用中的早停子问题。"},
+        "cost_benefit": {"value": 0, "reason": "单独立项影响面小于并入主实验。"}
+      }
+    },
+    {
+      "candidate_id": "C09",
+      "research_question": "在多轮验证筛选的合成训练中，保留一小部分验证器争议或低置信度边界样本，能否阻止学生收敛到验证器知识中心，同时不显著增加错误标签？",
+      "signal_ids": ["E03", "E04", "E07"],
+      "closest_prior_ids": ["E03", "E04"],
+      "question_family": "边界样本与知识扩张",
+      "cluster_id": "E_disagreement_boundary",
+      "decision_fork": {
+        "decision": "验证筛选应全丢弃低置信样本还是保留争议边界。",
+        "answer_a": "小比例边界保留改善盲泛化并延缓知识中心收敛。",
+        "action_a": "设置争议缓冲区并用异源审计/软标签训练。",
+        "answer_b": "边界样本主要是噪声，保留会降低质量。",
+        "action_b": "继续严格筛选，只追加外部高质量数据。",
+        "uncertain_action": "只保留跨家族分歧但可执行真值通过的样本。",
+        "reversal_condition": "匹配数据量后，边界保留不改善盲分数或错误率显著上升。"
+      },
+      "evidence_path": "三轮合成训练中改变 0/5/10% 争议边界保留率，匹配总数据量，测盲泛化、模式覆盖和错误标签。",
+      "cheap_probe": {
+        "input": "E03 的知识中心理论、E04 的跨家族验证与 E01 的 G17/G24。",
+        "procedure": "核对与 selective verification、数据 Pareto 和严格过滤研究的重叠。",
+        "possible_outcomes": ["知识中心干预未覆盖", "与低置信复核重叠", "边界无法可靠标注"],
+        "decision_rules": {
+          "keep": "知识中心收敛与边界保留的因果实验未覆盖。",
+          "narrow": "只保留有可执行真值的争议样本。",
+          "rewrite": "改为人工复核预算分配。",
+          "reject": "与既有 selective verification 完全重复。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "直接影响验证过滤策略。"},
+        "discriminating_power": {"value": 2, "reason": "边界比例消融和盲泛化可直接判别。"},
+        "reality_grounding": {"value": 2, "reason": "知识中心与跨家族误差提供依据。"},
+        "answerability": {"value": 2, "reason": "小规模 SFT 闭环可完成。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "与低置信复核和数据质量 Pareto 相邻。"},
+        "cost_benefit": {"value": 1, "reason": "需可靠边界标签，成本中等。"}
+      }
+    },
+    {
+      "candidate_id": "C10",
+      "research_question": "主动合成数据的选择准则在学生 checkpoint 持续变化时是否保持稳定排序，何时应从不确定性切换到学习进度或验证器分歧？",
+      "signal_ids": ["E02", "E01"],
+      "closest_prior_ids": ["E02", "E01"],
+      "question_family": "主动合成课程",
+      "cluster_id": "F_existing_landscape_collision",
+      "decision_fork": {
+        "decision": "主动合成应采用固定还是阶段切换准则。",
+        "answer_a": "准则优势随 checkpoint 系统变化。",
+        "action_a": "按阶段切换准则。",
+        "answer_b": "单一廉价准则稳定占优。",
+        "action_b": "固定该准则降低复杂度。",
+        "uncertain_action": "只在性能平台期重新比较。",
+        "reversal_condition": "多模型多数据集上准则排序稳定。"
+      },
+      "evidence_path": "在四个 checkpoint 上离线重放多种选择准则并做小规模续训。",
+      "cheap_probe": {
+        "input": "E02 与工作簿 G09/G29。",
+        "procedure": "逐条比较研究对象、选择信号和最小实验。",
+        "possible_outcomes": ["直接重复", "仅增加 checkpoint 维度", "存在新机制"],
+        "decision_rules": {
+          "keep": "出现不被 G09/G29 覆盖的新机制。",
+          "narrow": "只保留准则排序反转点。",
+          "rewrite": "改为验证器复用偏差。",
+          "reject": "与 G09/G29 和 E02 高度重复。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 1, "reason": "能影响选择准则但已有答案方向。"},
+        "discriminating_power": {"value": 1, "reason": "排序反转可测。"},
+        "reality_grounding": {"value": 2, "reason": "主动合成已有直接实证。"},
+        "answerability": {"value": 1, "reason": "多 checkpoint 续训成本中等。"},
+        "novelty_nonredundancy": {"value": 0, "reason": "工作簿 G09/G29 已直接覆盖学习进度、不确定性和验证器信号。"},
+        "cost_benefit": {"value": 1, "reason": "重复度削弱边际价值。"}
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": ["C02", "C06"],
+    "why_this_question": "C01 是唯一在六项评分上满分且没有被工作簿 42 个空白或当前一手论文直接覆盖的候选。它把知识中心、跨家族验证、代理过优化和适应性 holdout 四条证据链连接成一个可证伪机制；A/B 结果都会改变合成数据管线设计，并可先用三轮小模型 SFT 在等预算下验证。",
+    "research_question_contract": {
+      "final_question": "在迭代式合成数据后训练中，当同一个验证器被反复用于样本筛选、课程选择和停止判断时，模型在独立验证器与分布外任务上的真实增益会随轮次下降多少；在相同验证预算下，把这三个角色分离并在不同模型家族间轮换，能否阻止这种闭环过拟合？",
+      "triggering_signal_ids": ["E02", "E03", "E04", "E05", "E06", "E07"],
+      "users_and_decision": "文本后训练、合成数据与 RLVR 研究者决定下一项试验是否投入验证器角色隔离，以及后续管线是否默认采用该设计。",
+      "decision_deadline": "一周内启动最小试验；三轮小模型结果出来后再决定是否扩大到 GRPO/RLVR。",
+      "key_concepts_and_boundaries": [
+        "同一验证器复用指同一模型家族与评分规约承担过滤、课程选择、停止判断中的至少两个角色。",
+        "闭环过拟合指管线内分数上升，但预冻结且从不参与训练决策的盲验证器、可执行真值或 OOD 任务增益下降。",
+        "角色分离要求三个角色不共享反馈历史；跨家族轮换用于降低相关误差。",
+        "等预算要求每轮总验证 token/调用数、保留数据量、训练 token 和教师固定。",
+        "首轮只研究 1B–3B 模型的三轮合成+SFT；阳性后才扩展 RLVR。"
+      ],
+      "competing_answers": {
+        "a": "固定复用显著扩大闭环分数—盲分数差距，角色分离在等预算下减小该差距。",
+        "b": "固定复用没有稳定额外偏差，或角色分离的收益不足以覆盖标签不一致与复杂度。",
+        "unknown": "效应只在同源学生、开放文本任务或后期轮次出现。"
+      },
+      "action_mapping": {
+        "if_a": "把过滤、课程选择和早停交给独立异源验证器，并设计 RLVR 扩展。",
+        "if_b": "保留单验证器，把预算投入验证器能力、数据量或梯度/KL 正则。",
+        "if_uncertain": "把结论缩小到观察到的任务/家族/轮次边界，并追加一轮边界验证。"
+      },
+      "discriminating_evidence": "固定复用、角色分离、随机轮换三方案中，轮次×方案对管线分数减盲分数之差的交互；同时用错误相关、表征指标和无验证筛选对照区分 H1-H4。",
+      "reversal_result": "若固定复用与角色分离的盲测差距斜率无稳定差异，或差异完全由验证器平均准确率、普通合成坍缩或表征坍缩解释，则放弃闭环角色复用机制主张。",
+      "minimum_probe": "固定一个 1B–3B 学生、教师、种子集和总预算，选择可执行任务与开放文本任务，各做三轮合成+SFT；比较固定复用、异源角色分离和异源随机轮换，用预注册盲验证器、单元测试、OOD 集与至少三个随机种子评估。",
+      "cost_risk_ethics": "计算成本主要来自 3×3 训练与验证调用，可先用每轮 500–2000 条缩减；不得把 LLM judge 当真值，开放任务需异源 judge 与小规模人工锚点；不涉及个人敏感数据或部署操控。",
+      "stopping_condition": "若三轮后预注册最小效应未达到且跨种子方向不一致，停止扩大；若仅在单一场景出现则缩小主张；只有方向稳定且独立盲评改善时才进入更大模型或 RLVR。",
+      "residual_unknowns": [
+        "三轮小模型 SFT 是否足以产生可测的适应性复用效应。",
+        "开放任务的盲验证器能否提供足够独立的近似真值。",
+        "跨家族收益来自错误去相关、平均能力更强还是目标随机化。",
+        "角色分离在 RLVR 在线优化中是否仍保持等预算优势。"
+      ]
+    }
+  },
+  "decision_log": [
+    "2026-08-21：冻结模式 2 为当前 Codex 引擎，完整执行共享阶段 0–8，不调用外部模型 API。",
+    "2026-08-21：只读导入本地工作簿；42 个既有空白作为重复约束，未修改原文件。",
+    "2026-08-21：QFT 扩展阶段先生成 12 个问题，随后才聚类、设分叉和评分。",
+    "2026-08-21：STORM 纳入数据、优化、验证、统计、算力和反方审稿六种视角。",
+    "2026-08-21：C05 因 E10 直接覆盖而淘汰；C10 因与 G09/G29 和 E02 碰撞而淘汰；C08 并入 C01。",
+    "2026-08-21：C02 因同构验证已有训练结论而缩小为训练前跨任务预测。",
+    "2026-08-21：双向钢人后保留四个竞争假设 H1 适应性复用、H2 普通合成坍缩、H3 表征坍缩、H4 标签不一致成本。",
+    "2026-08-21：最终选择 C01；C02 与 C06 为备选；结论限定为值得启动最小试验，而非机制已证实。"
+  ]
+}
