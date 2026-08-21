@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "mode_id": "codex_research_question_discovery_v1",
+  "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+  "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+  "focus_areas": [
+    "文本后训练的数据质量、配比、课程与选择",
+    "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+    "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+    "奖励模型、验证器、过程监督与奖励投机",
+    "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+  ],
+  "adjacent_areas": [
+    "数据去污染与成员推断",
+    "推理时扩展与训练时扩展的替代关系",
+    "弱到强监督与自举退化",
+    "多轮交互、工具使用和长程信用分配",
+    "训练成本、数据成本与评测可信度"
+  ],
+  "workflow_defaults": {
+    "language": "zh-CN",
+    "recent_evidence_window_months": 18,
+    "minimum_source_count": 8,
+    "minimum_candidate_count": 6,
+    "maximum_candidate_count": 12,
+    "backup_question_count": 2,
+    "primary_question_count": 1
+  },
+  "execution_constraints": {
+    "processor": "current_codex",
+    "external_model_api_allowed": false,
+    "human_scoring_required": false,
+    "live_primary_source_search_required": true,
+    "claim_novelty_without_collision_search": false
+  }
+}
