@@ -4,7 +4,7 @@
 
 状态：在 API 运行前冻结；全自动审计已完成
 
-身份：本协议现固定为 [API 模式 1](API-MODE-1-FROZEN-v0.4.md)。模式 2 不修改或复用本协议的评分链路。
+身份：本协议现固定为 [模式 1：API 自动审计](API-MODE-1-FROZEN-v0.4.md)。[模式 2](CODEX-DIRECT-MODE-PROTOCOL-v0.4.md)由当前 Codex 直接处理，不修改、不调用也不复用本协议的 API 评分链路。
 
 ## 目标与替代关系
 
