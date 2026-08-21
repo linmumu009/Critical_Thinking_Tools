@@ -66,7 +66,7 @@ python benchmark.py calibration-schedule --output results/calibration-v0.2.json
 python benchmark.py run product-01 --condition A
 ```
 
-候选映射审计只保留已完成并冻结的 API 自动模式：
+候选映射审计只保留已完成并冻结的 API 自动实现。这里的“API 模式 1”是 v0.4 审计文件的历史名称，不再代表项目当前的研究问题发现模式 1：
 
 - **模式 1（API，已冻结并已有结果）**：外部模型 API 用两个条件盲提示独立评分，只有分歧字段才交给第三个自动角色仲裁；定义见 [API-MODE-1-FROZEN-v0.4.md](API-MODE-1-FROZEN-v0.4.md)。
 
@@ -79,13 +79,13 @@ python automated_mapping_audit.py finalize
 
 模式 1 结果固定在 [automated-review-v0.4/](automated-review-v0.4/)：双评审映射一致率为 `0.901`、kappa 为 `0.868`，原自动匹配与仲裁共识有 `67/384`（`17.45%`）不一致，路线建议为 `fix_mapping_interface_before_gq2`。旧 [blind-review-v0.4/](blind-review-v0.4/) 双人离线包仅作可选材料，不是必经步骤。
 
-仓库的[模式 2](../../modes/codex-research-question/)是独立的业务工作流：当前 Codex 为大模型文本后训练、数据合成和 GRPO/RLVR 方向发现研究问题。它不执行本 benchmark 的候选映射审计，也不读取这里的评分结果。
+项目当前的[研究问题发现模式](../../modes/codex-research-question/)使用同一条问题发现漏斗：模式 1 由外部模型 API 执行，模式 2 由当前 Codex 执行；两者只更换引擎和适配提示词，不改变阶段、工具、门槛或输出。本目录的候选映射审计只是 benchmark 诊断，不能作为任何模式的研究证据。
 
 `schedule` 使用固定随机种子生成 108 次盲测的随机执行顺序；可用 `--seed` 改变顺序并保留复现参数。运行计划、会话和结果默认不提交到 Git，以免把未审查输出混入基准定义。
 
 `calibration-schedule` 生成 v0.2 的 12 次校准集：每个案例运行一次，并保证每个领域内 A/B/C 各出现一次。本轮已经完成，但因 12/12 次提问前选择最佳行动而未通过天花板门槛；详见 [v0.2 校准报告](CALIBRATION-REPORT-v0.2.md)。在反事实成对案例通过预检前，不恢复 108 次正式矩阵。
 
-`run` 每次开始都会要求选择一种模式：
+benchmark 的 `run` 每次开始都会要求选择一种执行后端；这里的后端选择与研究问题发现的模式编号遵循同一原则，但只作用于合成案例实验：
 
 1. **API 自动运行**：程序逐轮调用模型、向模型返回 Oracle 答案并保存结果。
 2. **Codex 直接处理**：把公开案例交给当前 Codex 对话，由 Codex 逐题作答，终端负责返回 Oracle 答案和记录结果。

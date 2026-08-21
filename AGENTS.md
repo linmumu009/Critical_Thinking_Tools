@@ -12,9 +12,12 @@
 ## Research-question modes
 
 - When the user starts a new research-question discovery run, ask them to choose mode 1 or mode 2 before execution unless they already specified the mode.
-- Mode 1 is the existing external-model API experimental pipeline under `benchmarks/question-discovery-v0.1/`.
-- Mode 2 has exactly one business goal: discover a strong research question for LLM text post-training, synthetic data, GRPO/RLVR, and adjacent areas.
-- Before executing mode 2, read `modes/codex-research-question/PROTOCOL.md` and `research-profile.json` completely.
-- Mode 2 is executed by the current Codex. It must not read API credentials, call the user's configured external model API, reuse candidate-mapping audit results as research evidence, or require the user to score candidates.
-- Mode 2 should work autonomously from current primary sources and the fixed profile. Ask the user only when a missing constraint would materially change the research direction.
-- Save completed mode 2 research artifacts in `modes/codex-research-question/results/`, validate them with the local session validator, and include them in the versioned Git update.
+- Mode 1 and mode 2 execute the same research-question discovery pipeline. Mode 1 uses the external-model API engine; mode 2 uses the current Codex engine. They are engine choices, not different methods.
+- Before executing either mode, read `modes/codex-research-question/PROTOCOL.md`, `research-profile.json`, and `pipeline-stages.json` completely, plus the adapter prompt for the selected mode.
+- Do not add, remove, merge, reorder, or reinterpret stages, required thinking tools, candidate schema, hard gates, scorecard, cheap-probe rules, or output contract for only one mode. A process change must update the shared pipeline and apply to both engines.
+- The shared pipeline is the repository's Question Discovery Funnel: goal, reality signals, 5W1H/Socratic reframing, QFT, STORM, mechanism/evidence clustering, bidirectional steelman and competing hypotheses, scorecard ranking, cheap reality probes, and the final question contract.
+- Mode 2 must not read API credentials or call the user's configured external model API. Engine-specific prompts may adapt execution mechanics to Codex, but cannot replace the shared workflow with an autonomous Codex-only workflow.
+- Neither mode requires the user to score candidates. Ask the user only when a missing real-world constraint or authorization would materially change the direction.
+- Candidate-mapping audit outputs from `benchmarks/question-discovery-v0.1/` are benchmark diagnostics, not research evidence for either mode.
+- Save completed research artifacts in `modes/codex-research-question/results/`, validate them with the local session validator, and include them in the versioned Git update.
+- Sessions with schema version 1.0 in the results directory are historical autonomous-workflow artifacts and must not be described as completed mode 2 runs.

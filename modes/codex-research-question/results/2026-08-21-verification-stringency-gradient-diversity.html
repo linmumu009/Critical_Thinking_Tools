@@ -34,6 +34,7 @@ html:not([data-portable-source-tooltips-ready]) .portable-chart-summary>.portabl
 </style>
 </head>
 <body>
+<div style="max-width:1200px;margin:16px auto;padding:14px 18px;border:2px solid #b45309;background:#fffbeb;color:#78350f;font:600 15px/1.5 system-ui,sans-serif">历史候选材料：本报告使用已撤销的 Codex 自主六阶段流程，不是共享问题发现漏斗的正式模式 2 结果。</div>
 <main id="data-analytics-portable-fallback" class="portable-fallback" data-portable-fallback="true" data-portable-surface="report"><header class="portable-page-header"><div class="portable-page-heading"><p class="portable-surface-label">Data Analytics report</p><h1>LLM 合成数据新问题：严格验证会不会筛掉正确的少数解法</h1><p class="portable-description">基于本地 2025–2026 研究问题工作簿与 15 条最新一手论文的第二次独立模式 2 技术研究报告。</p></div><div class="portable-page-meta"><time datetime="2026-08-21T22:00:00+08:00">Aug 21, 2026, 2:00 PM UTC</time></div></header><div class="portable-block-stack">
 <div class="portable-block portable-layout-full" data-artifact-block-id="technical-summary" data-artifact-block-type="markdown" data-layout="full"><section class="portable-markdown"><h2>技术摘要</h2>
 <p><strong>建议主攻：验证严格度造成的正确样本选择偏差。</strong> 合成推理数据筛得更严通常能提高标签精度，但多次复评或全票通过可能系统性误拒绝验证器不熟悉、却由隐藏 oracle 判定正确的少数推理路线。主问题要求在同一候选池、相同接受 token、相同 accepted precision 和相同总 FLOP 下，判断这种 <code>verification selection pressure</code> 是否压低梯度多样性与 OOD 泛化，并测试“正确性下限 + G-Vendi”是否优于全票通过。</p>

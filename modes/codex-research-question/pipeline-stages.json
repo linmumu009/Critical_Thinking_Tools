@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "canonical_source": "../../tools/question-discovery-funnel/README.md",
+  "checkpoint_policy": "每阶段保存并校验产物；两种模式均不要求用户给候选打分，只有缺少会改变方向的真实约束时才暂停。",
+  "stages": [
+    {
+      "stage_id": "0_goal",
+      "name": "决策或探索目标",
+      "required_tools": [],
+      "required_output": "研究使用者、要做的研究决策、探索目标与停止条件"
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "name": "现实信号",
+      "required_tools": ["primary-source-evidence"],
+      "required_output": "可追溯观察、解释与未知三栏，以及本地输入清单"
+    },
+    {
+      "stage_id": "2_reframe",
+      "name": "5W1H 与层级重构",
+      "required_tools": ["six-honest-serving-men", "socratic-questioning"],
+      "required_output": "8–15 个改变对象、边界、机制、使用者或时间尺度的实质不同表述"
+    },
+    {
+      "stage_id": "3_expand",
+      "name": "问题空间扩展",
+      "required_tools": ["question-formulation-technique", "storm-costorm"],
+      "required_output": "生成与评价分离的候选池、八类问题覆盖、多视角检索来源与后续问题"
+    },
+    {
+      "stage_id": "4_cluster",
+      "name": "按机制与证据聚类去重",
+      "required_tools": ["mechanism-evidence-clustering"],
+      "required_output": "候选簇、代表问题、合并与删除理由"
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "name": "决策分叉与竞争答案",
+      "required_tools": ["bidirectional-steelman", "analysis-of-competing-hypotheses"],
+      "required_output": "每个候选的合理答案 A/B/未知、行动映射与反转条件"
+    },
+    {
+      "stage_id": "6_rank",
+      "name": "硬门槛与信息价值排序",
+      "required_tools": ["question-discovery-scorecard"],
+      "required_output": "先过五项硬门槛，再按六项 0–2 评分比较，不超过三个入围候选"
+    },
+    {
+      "stage_id": "7_probe",
+      "name": "廉价现实试探",
+      "required_tools": ["primary-source-collision-search", "consider-the-opposite"],
+      "required_output": "每个入围候选的最小试探及保留、缩小、改写、淘汰规则"
+    },
+    {
+      "stage_id": "8_contract",
+      "name": "问题契约与交付",
+      "required_tools": ["research-question-contract"],
+      "required_output": "一个主问题、两个备选，以及主问题的完整问题契约"
+    }
+  ]
+}

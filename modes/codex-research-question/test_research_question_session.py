@@ -2,37 +2,49 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import unittest
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
-SPEC = importlib.util.spec_from_file_location(
-    "research_question_session", ROOT / "research_question_session.py"
-)
-assert SPEC is not None and SPEC.loader is not None
+MODULE_PATH = Path(__file__).with_name("research_question_session.py")
+SPEC = importlib.util.spec_from_file_location("research_question_session", MODULE_PATH)
+assert SPEC and SPEC.loader
 rqs = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(rqs)
 
 
 class ResearchQuestionSessionTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.profile = rqs.load_json(ROOT / "research-profile.json")
+    def setUp(self) -> None:
+        self.profile = rqs.load_json(rqs.DEFAULT_PROFILE)
+        self.pipeline = rqs.load_json(rqs.DEFAULT_PIPELINE)
 
-    def complete_fixture(self) -> dict:
-        session = rqs.initial_session(copy.deepcopy(self.profile))
+    def complete_fixture(self, mode: str = "2") -> dict:
+        session = rqs.initial_session(self.profile, self.pipeline, mode)
         session["status"] = "complete"
+        session["input_manifest"] = [
+            {
+                "input_id": "I01",
+                "kind": "spreadsheet",
+                "location": "D:\\research\\questions.xlsx",
+                "role": "local prior-work map and reality signal",
+            }
+        ]
+        for stage in session["stage_trace"]:
+            stage["status"] = "complete"
+            stage["output_summary"] = f"completed {stage['stage_id']}"
+            stage["artifact_refs"] = [f"session://{stage['stage_id']}"]
         session["evidence"] = [
             {
-                "evidence_id": f"E{index:03d}",
-                "source_url": f"https://example.org/source-{index}",
+                "evidence_id": f"E{index:02d}",
                 "source_title": f"Primary source {index}",
                 "source_type": "paper",
+                "source_location": f"https://example.org/paper-{index}",
                 "published_date": "2026-01-01",
                 "checked_date": "2026-08-21",
-                "observation": f"Observed research tension {index}",
-                "relevance": "It leaves a falsifiable post-training uncertainty.",
+                "observation": f"Observed research tension {index}.",
+                "interpretation": "This may change a post-training research decision.",
+                "unknown": "The controlled mechanism remains unknown.",
             }
             for index in range(1, 9)
         ]
@@ -45,88 +57,179 @@ class ResearchQuestionSessionTests(unittest.TestCase):
             {
                 "candidate_id": f"Q{index}",
                 "research_question": f"Research question {index}?",
-                "observation_ids": [f"E{index:03d}"],
-                "closest_prior_ids": [f"E{index + 1:03d}"],
-                "hypothesis": "A controlled intervention changes the measured outcome.",
-                "counter_hypothesis": "The apparent change is explained by compute or data.",
-                "falsification_rule": "Reject the hypothesis when the controlled effect vanishes.",
-                "minimum_experiment": "Run a small-model controlled comparison.",
-                "primary_risk": "The evaluator may reward its own artifacts.",
+                "signal_ids": [f"E{index:02d}"],
+                "closest_prior_ids": [f"E{((index) % 8) + 1:02d}"],
+                "question_family": "mechanism",
+                "cluster_id": f"C{index}",
+                "decision_fork": {
+                    "decision": "Choose which mechanism to test first.",
+                    "answer_a": "The intervention changes the mechanism.",
+                    "action_a": "Run the intervention experiment.",
+                    "answer_b": "Compute or data explains the result.",
+                    "action_b": "Do not invest in the intervention.",
+                    "uncertain_action": "Collect one cheaper diagnostic.",
+                    "reversal_condition": "A matched-control result reverses the choice.",
+                },
+                "evidence_path": "A matched small-model experiment can answer it.",
+                "cheap_probe": {
+                    "input": "Existing checkpoints and a small held-out set.",
+                    "procedure": "Run a matched diagnostic before full training.",
+                    "possible_outcomes": ["mechanism signal", "no controlled signal"],
+                    "decision_rules": {
+                        "keep": "Keep when the mechanism signal replicates.",
+                        "narrow": "Narrow when it appears in one task only.",
+                        "rewrite": "Rewrite when the measured proxy is invalid.",
+                        "reject": "Reject when matched controls remove the effect.",
+                    },
+                },
+                "probe_disposition": "keep",
                 "hard_gates": copy.deepcopy(gates),
                 "scores": copy.deepcopy(scores),
             }
-            for index in range(1, 7)
+            for index in range(1, 9)
         ]
         session["selection"] = {
             "primary_candidate_id": "Q1",
             "backup_candidate_ids": ["Q2", "Q3"],
-            "why_this_question": "It has the clearest gap and cheapest decisive test.",
+            "why_this_question": "It has the clearest decision fork and cheapest probe.",
             "research_question_contract": {
-                "final_question": "Does the intervention improve out-of-domain behavior?",
-                "hypothesis": "It improves behavior beyond the training verifier distribution.",
-                "counter_hypothesis": "It only overfits the verifier distribution.",
-                "independent_variables": ["training intervention"],
-                "dependent_variables": ["held-out task accuracy"],
-                "controls": ["tokens", "compute", "base checkpoint"],
-                "minimum_experiment": "Compare two small checkpoints with matched compute.",
-                "falsification_rule": "Reject if held-out gains disappear under matched compute.",
-                "expected_contribution": "Separate real generalization from verifier overfitting.",
-                "boundary_conditions": ["text-only models", "verifiable tasks"],
-                "compute_budget_assumption": "Two small-model post-training runs.",
-                "data_requirements": ["training prompts", "held-out verifier family"],
+                "final_question": "Does the intervention improve OOD behavior?",
+                "triggering_signal_ids": ["E01", "E02"],
+                "users_and_decision": "The research team must choose the next experiment.",
+                "decision_deadline": "Before the next training allocation.",
+                "key_concepts_and_boundaries": ["text-only models", "verifiable tasks"],
+                "competing_answers": {
+                    "a": "The intervention improves genuine generalization.",
+                    "b": "The gain is verifier or compute overfitting.",
+                    "unknown": "The available test is underpowered.",
+                },
+                "action_mapping": {
+                    "if_a": "Invest in the full experiment.",
+                    "if_b": "Stop this direction.",
+                    "if_uncertain": "Collect the predefined diagnostic.",
+                },
+                "discriminating_evidence": "Matched-compute held-out behavior.",
+                "reversal_result": "The effect disappears under matched controls.",
+                "minimum_probe": "Compare two small checkpoints.",
+                "cost_risk_ethics": "Low compute; public or licensed data only.",
+                "stopping_condition": "Stop after the preregistered confidence bound.",
+                "residual_unknowns": ["scaling behavior", "open-ended tasks"],
             },
         }
         session["decision_log"] = [
-            {"candidate_id": "Q1", "decision": "keep", "reason": "passes gates"}
+            {"candidate_id": "Q1", "decision": "keep", "reason": "passes the funnel"}
         ]
         return session
 
-    def test_profile_fixes_single_business_and_codex_processor(self) -> None:
-        rqs.validate_profile(self.profile)
-        self.assertIn("研究问题", self.profile["business_goal"])
-        constraints = self.profile["execution_constraints"]
-        self.assertEqual(constraints["processor"], "current_codex")
-        self.assertFalse(constraints["external_model_api_allowed"])
-        self.assertFalse(constraints["human_scoring_required"])
+    def test_profile_defines_engine_swap_not_process_swap(self) -> None:
+        rqs.validate_profile(self.profile, self.pipeline)
+        self.assertEqual(
+            self.profile["mode_definitions"]["1"]["engine"], "external_model_api"
+        )
+        self.assertEqual(
+            self.profile["mode_definitions"]["2"]["engine"], "current_codex"
+        )
+        self.assertTrue(
+            all(
+                value is True
+                for key, value in self.profile["process_invariants"].items()
+                if key.startswith("same_")
+            )
+        )
 
-    def test_initial_session_contains_no_api_or_review_queue(self) -> None:
-        session = rqs.initial_session(self.profile)
-        self.assertEqual(session["mode_id"], rqs.MODE_ID)
-        self.assertEqual(session["status"], "collecting_evidence")
+    def test_both_modes_have_identical_pipeline_and_schema(self) -> None:
+        api = rqs.initial_session(self.profile, self.pipeline, "1")
+        codex = rqs.initial_session(self.profile, self.pipeline, "2")
+        self.assertNotEqual(api["execution"], codex["execution"])
+        for session in (api, codex):
+            session.pop("execution")
+        self.assertEqual(api, codex)
+
+    def test_mode_2_adapter_forbids_external_model_api(self) -> None:
+        session = rqs.initial_session(self.profile, self.pipeline, "2")
+        self.assertEqual(session["execution"]["engine"], "current_codex")
         self.assertNotIn("api_config", session)
-        self.assertNotIn("review_order", session)
-        rqs.validate_session(session)
+        prompt = (
+            rqs.ROOT / session["execution"]["adapter_prompt"]
+        ).read_text(encoding="utf-8")
+        self.assertIn("不调用其配置的模型 API", prompt)
 
-    def test_incomplete_session_cannot_be_claimed_complete(self) -> None:
-        session = rqs.initial_session(self.profile)
-        with self.assertRaisesRegex(ValueError, "not complete"):
-            rqs.validate_session(session, require_complete=True)
+    def test_engine_prompts_embed_the_same_shared_stage_contract(self) -> None:
+        api_prompt = rqs.build_stage_prompt(
+            self.profile, self.pipeline, "1", "3_expand"
+        )
+        codex_prompt = rqs.build_stage_prompt(
+            self.profile, self.pipeline, "2", "3_expand"
+        )
+        marker = "--- SHARED STAGE CONTRACT ---\n"
+        self.assertNotEqual(api_prompt.split(marker)[0], codex_prompt.split(marker)[0])
+        self.assertEqual(api_prompt.split(marker)[1], codex_prompt.split(marker)[1])
+        self.assertIn('"question-formulation-technique"', api_prompt)
+        self.assertIn('"storm-costorm"', api_prompt)
 
-    def test_complete_research_question_contract_passes(self) -> None:
+    def test_complete_sessions_pass_for_both_engines(self) -> None:
+        for mode in rqs.MODES:
+            rqs.validate_session(
+                self.complete_fixture(mode),
+                self.profile,
+                self.pipeline,
+                require_complete=True,
+            )
+
+    def test_complete_status_enforces_stage_completion_without_cli_flag(self) -> None:
         session = self.complete_fixture()
-        rqs.validate_session(session, require_complete=True)
+        session["stage_trace"][7]["status"] = "pending"
+        with self.assertRaisesRegex(ValueError, "pending stage"):
+            rqs.validate_session(session, self.profile, self.pipeline)
 
-    def test_evidence_and_prior_references_must_be_traceable(self) -> None:
+    def test_stage_order_and_required_tools_cannot_drift(self) -> None:
         session = self.complete_fixture()
-        session["evidence"][0]["source_url"] = "not-a-url"
-        with self.assertRaisesRegex(ValueError, "HTTP"):
-            rqs.validate_session(session, require_complete=True)
+        session["stage_trace"][2], session["stage_trace"][3] = (
+            session["stage_trace"][3],
+            session["stage_trace"][2],
+        )
+        with self.assertRaisesRegex(ValueError, "order differs"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
 
         session = self.complete_fixture()
-        session["candidate_questions"][0]["closest_prior_ids"] = ["MISSING"]
-        with self.assertRaisesRegex(ValueError, "unknown evidence"):
-            rqs.validate_session(session, require_complete=True)
+        session["stage_trace"][3]["tool_trace"].remove("storm-costorm")
+        with self.assertRaisesRegex(ValueError, "tool sequence differs"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
 
-    def test_primary_must_pass_gates_and_backups_must_be_distinct(self) -> None:
+    def test_selected_candidates_must_pass_scorecard_and_probe(self) -> None:
         session = self.complete_fixture()
-        session["candidate_questions"][0]["hard_gates"]["falsifiable"] = False
+        session["candidate_questions"][0]["hard_gates"]["answerable"] = False
         with self.assertRaisesRegex(ValueError, "every hard gate"):
-            rqs.validate_session(session, require_complete=True)
+            rqs.validate_session(session, self.profile, self.pipeline, True)
 
         session = self.complete_fixture()
-        session["selection"]["backup_candidate_ids"] = ["Q2", "Q2"]
-        with self.assertRaisesRegex(ValueError, "distinct valid backup"):
-            rqs.validate_session(session, require_complete=True)
+        session["candidate_questions"][1]["probe_disposition"] = "reject"
+        with self.assertRaisesRegex(ValueError, "rejected probe"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
+
+    def test_evidence_and_contract_references_are_traceable(self) -> None:
+        session = self.complete_fixture()
+        session["candidate_questions"][0]["signal_ids"] = ["MISSING"]
+        with self.assertRaisesRegex(ValueError, "unknown evidence"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
+
+        session = self.complete_fixture()
+        session["selection"]["research_question_contract"][
+            "triggering_signal_ids"
+        ] = ["MISSING"]
+        with self.assertRaisesRegex(ValueError, "unknown signals"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
+
+    def test_legacy_autonomous_sessions_are_not_official_mode_2_runs(self) -> None:
+        legacy = json.loads(
+            (
+                rqs.ROOT
+                / "results"
+                / "2026-08-21-online-feedback-budget-allocation.json"
+            ).read_text(encoding="utf-8")
+        )
+        with self.assertRaisesRegex(ValueError, "legacy autonomous session"):
+            rqs.validate_session(legacy, self.profile, self.pipeline, True)
 
 
 if __name__ == "__main__":

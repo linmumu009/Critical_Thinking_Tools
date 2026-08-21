@@ -3,14 +3,14 @@
   "manifest": {
     "version": 1,
     "surface": "report",
-    "title": "LLM 后训练新问题发现：在线反馈算力分配",
-    "description": "基于本地 2025–2026 研究问题工作簿与 20 条最新一手论文的模式 2 研究问题发现报告。",
+    "title": "历史候选材料：在线反馈算力分配",
+    "description": "使用已撤销的 Codex 自主六阶段流程生成；不是共享问题发现漏斗的正式模式 2 结果。",
     "generatedAt": "2026-08-21T18:00:00+08:00",
     "blocks": [
       {
         "id": "title",
         "type": "markdown",
-        "body": "# LLM 后训练新问题发现：在线反馈算力分配"
+        "body": "# 历史候选材料：在线反馈算力分配\n\n> 本报告不是共享问题发现漏斗的正式模式 2 结果。"
       },
       {
         "id": "executive-summary",

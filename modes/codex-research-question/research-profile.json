@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.0",
-  "mode_id": "codex_research_question_discovery_v1",
+  "schema_version": "2.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
   "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
   "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
   "focus_areas": [
@@ -21,16 +21,38 @@
     "language": "zh-CN",
     "recent_evidence_window_months": 18,
     "minimum_source_count": 8,
-    "minimum_candidate_count": 6,
-    "maximum_candidate_count": 12,
+    "minimum_candidate_count": 8,
+    "maximum_candidate_count": 15,
     "backup_question_count": 2,
     "primary_question_count": 1
   },
+  "mode_definitions": {
+    "1": {
+      "name": "外部模型 API",
+      "engine": "external_model_api",
+      "adapter_prompt": "prompts/mode-1-api.md"
+    },
+    "2": {
+      "name": "当前 Codex",
+      "engine": "current_codex",
+      "adapter_prompt": "prompts/mode-2-codex.md"
+    }
+  },
+  "process_invariants": {
+    "canonical_stages": "pipeline-stages.json",
+    "same_stage_sequence": true,
+    "same_required_tools": true,
+    "same_candidate_schema": true,
+    "same_hard_gates": true,
+    "same_scorecard": true,
+    "same_probe_rules": true,
+    "same_output_contract": true
+  },
   "execution_constraints": {
-    "processor": "current_codex",
-    "external_model_api_allowed": false,
-    "human_scoring_required": false,
     "live_primary_source_search_required": true,
-    "claim_novelty_without_collision_search": false
+    "claim_novelty_without_collision_search": false,
+    "human_candidate_scoring_required": false,
+    "mode_2_external_model_api_allowed": false,
+    "candidate_mapping_audit_is_research_evidence": false
   }
 }

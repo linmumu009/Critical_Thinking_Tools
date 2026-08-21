@@ -34,6 +34,7 @@ html:not([data-portable-source-tooltips-ready]) .portable-chart-summary>.portabl
 </style>
 </head>
 <body>
+<div style="max-width:1200px;margin:16px auto;padding:14px 18px;border:2px solid #b45309;background:#fffbeb;color:#78350f;font:600 15px/1.5 system-ui,sans-serif">历史候选材料：本报告使用已撤销的 Codex 自主六阶段流程，不是共享问题发现漏斗的正式模式 2 结果。</div>
 <main id="data-analytics-portable-fallback" class="portable-fallback" data-portable-fallback="true" data-portable-surface="report"><header class="portable-page-header"><div class="portable-page-heading"><p class="portable-surface-label">Data Analytics report</p><h1>LLM 后训练新问题发现：在线反馈算力分配</h1><p class="portable-description">基于本地 2025–2026 研究问题工作簿与 20 条最新一手论文的模式 2 研究问题发现报告。</p></div><div class="portable-page-meta"><time datetime="2026-08-21T18:00:00+08:00">Aug 21, 2026, 10:00 AM UTC</time></div></header><div class="portable-block-stack">
 <div class="portable-block portable-layout-full" data-artifact-block-id="executive-summary" data-artifact-block-type="markdown" data-layout="full"><section class="portable-markdown"><h2>执行摘要</h2>
 <p><strong>建议主攻：训练时的组内反馈算力分配。</strong> 在固定总反馈算力下，让每个 GRPO 组在线决定下一单位算力用于生成新 rollout、复评已有响应，还是调用错误去相关的异质验证器；目标不是最大化离线 verifier F1，而是最小化会直接改变梯度方向的 advantage 符号错误。</p>
