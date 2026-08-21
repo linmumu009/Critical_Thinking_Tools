@@ -1,0 +1,244 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "LLM 合成数据新问题：严格验证会不会筛掉正确的少数解法",
+    "description": "基于本地 2025–2026 研究问题工作簿与 15 条最新一手论文的第二次独立模式 2 技术研究报告。",
+    "generatedAt": "2026-08-21T22:00:00+08:00",
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# LLM 合成数据新问题：严格验证会不会筛掉正确的少数解法"
+      },
+      {
+        "id": "technical-summary",
+        "type": "markdown",
+        "body": "## 技术摘要\n\n**建议主攻：验证严格度造成的正确样本选择偏差。** 合成推理数据筛得更严通常能提高标签精度，但多次复评或全票通过可能系统性误拒绝验证器不熟悉、却由隐藏 oracle 判定正确的少数推理路线。主问题要求在同一候选池、相同接受 token、相同 accepted precision 和相同总 FLOP 下，判断这种 `verification selection pressure` 是否压低梯度多样性与 OOD 泛化，并测试“正确性下限 + G-Vendi”是否优于全票通过。\n\n该候选通过真实缺口、非冗余、可证伪、可执行、可测量和伦理六项硬门槛。其最近碰撞边界明确：Self-Verified Distillation 已研究生成数量与验证强度，却没有识别 oracle-correct 模式的结构性误拒绝；Prismatic Synthesis 已证明 G-Vendi 与 OOD 强相关，并明确把验证协议与数据多样性的相互作用列为未来方向。"
+      },
+      {
+        "id": "key-finding-section",
+        "type": "markdown",
+        "body": "## 八个候选中，只有四个通过全部硬门槛\n\nC01 和 C02 的证据评分同为 12 分，但 C01 更适合作为主问题：它有一个直接可干预的机制、隐藏 oracle 下的干净识别条件，以及可落地的筛选器。C02 把 verification cost 当作正确样本价值指标，适合作为备选测量论文；C03 检验异质 jury 是否比同模型复评保留更多正确模式。评分只表示当前证据强度，硬门槛失败优先于总分。"
+      },
+      {
+        "id": "candidate-score-chart-block",
+        "type": "chart",
+        "chartId": "candidate-score-chart",
+        "layout": "full"
+      },
+      {
+        "id": "scope-definitions-section",
+        "type": "markdown",
+        "body": "## 范围、数据与关键定义\n\n**研究对象：** 用 LLM verifier 对数学/代码合成推理轨迹做离线筛选，再进行 SFT/RFT。首轮不对开放问答或在线 GRPO 作直接外推。\n\n**选择压力：** 在真实正确轨迹内部，筛选器对某些推理簇的通过概率系统性更低，而不是随机丢样本。\n\n**accepted precision：** 被筛选进入训练集的轨迹中，隐藏精确 oracle 判定正确的比例。所有主比较必须匹配该值。\n\n**有用多样性：** 以冻结 proxy model 的样本梯度方向有效秩 G-Vendi 为主，以 BODHI-style 语义分支和梯度簇覆盖为稳健性指标；不把词面改写数量当作核心多样性。\n\n**OOD：** 与训练问题不同的题型、提示模板和生成器家族；ID pass@1 作为 guardrail。"
+      },
+      {
+        "id": "corpus-section",
+        "type": "markdown",
+        "body": "## 本地研究地形用于去重，不替代一手证据\n\n工作簿含 5,608 条高召回记录、940 条核心论文、240 条 2026 arXiv 和 42 个已整理空白。G24 的质量—多样性 Pareto、G25 的自训练坍缩、G26 的语义去重、G29 的主动合成和 G18 的验证器冲突均被视为本轮非冗余约束。"
+      },
+      {
+        "id": "corpus-inventory-table-block",
+        "type": "table",
+        "tableId": "corpus-inventory-table",
+        "layout": "full"
+      },
+      {
+        "id": "primary-question-section",
+        "type": "markdown",
+        "body": "## 主问题把宽泛 Pareto 收紧为可证伪机制\n\n> **在合成推理数据管线中，增加重复验证次数并要求更高的一致通过率，是否会在提升标签精度的同时，系统性删除验证成本高但实际正确的少数推理模式，压低梯度空间多样性和 OOD 泛化；在相同接受样本数与总算力下，‘正确性下限 + 梯度多样性约束’的筛选是否优于全票通过？**\n\n主假设预言：提高共识严格度后，误拒绝应集中在梯度稀疏簇和少见语义分支；如果误拒绝与推理模式无关，或 precision-matched 的多样性筛选不能提高 OOD，机制即失败。"
+      },
+      {
+        "id": "collision-section",
+        "type": "markdown",
+        "body": "## 最近工作留下的是一条窄缺口\n\n最关键的两个碰撞不是威胁，而是识别条件。Self-Verified Distillation 已经证明严格验证有用并观察到 coverage 问题，所以不能再声称‘验证太严可能少数据’；Prismatic Synthesis 已经证明梯度多样性预测 OOD，所以不能再只做多样性相关性。非重复增量必须同时做到：只看 oracle-correct 轨迹、匹配 accepted precision/规模/FLOP、定位结构性误拒绝，并验证一个可部署修正。"
+      },
+      {
+        "id": "collision-table-block",
+        "type": "table",
+        "tableId": "collision-table",
+        "layout": "full"
+      },
+      {
+        "id": "method-section",
+        "type": "markdown",
+        "body": "## 最小实验先诊断，再训练\n\n**阶段 A：冻结候选池诊断。** 从约 4,000 个数学/代码 prompt 出发，让两个 7B–14B 生成器每题各采 8 条轨迹；收集三个异家族 verifier 各 5 次判断。隐藏答案/单元测试 oracle 只用于判断真实正确性。比较不筛选、单次判断、同模型复评、1/3、2/3、3/3、Weaver 加权 panel、oracle 上限和质量下限+G-Vendi。\n\n**阶段 B：等条件训练。** 构造约 20k–40k 条训练集，匹配接受 token、oracle precision、总生成+验证 FLOP 和 student 训练 token；用同一 1.5B–3B student、三个种子 SFT。主指标为跨题型、跨模板、跨生成器 OOD，ID pass@1 为 guardrail。\n\n**拒绝线：** 若严格度提高后正确样本 G-Vendi/语义分支覆盖下降不足 5%，稀疏簇误拒绝不更高，并且质量下限+G-Vendi 相对最强严格/加权 panel 的 OOD 提升不足 1 个百分点或 95% 置信区间覆盖零，则拒绝主假设。预计 4 张 A100 80GB 或等效算力、4–8 GPU-days。"
+      },
+      {
+        "id": "robustness-section",
+        "type": "markdown",
+        "body": "## 稳健性检查决定结论能否成立\n\n- G-Vendi 只在质量可比时解释，因此等 accepted precision 是硬控制，不是可选消融。\n- 使用异家族 gradient proxy 和语义分支指标复核，避免一个 proxy 定义了全部结果。\n- 阈值只在开发集调节，冻结测试集一次评估；报告至少三个训练种子的置信区间。\n- 同一冻结候选池比较所有筛选器，避免重新生成造成分布漂移。\n- 若多样性方法通过降低 precision、增加训练 token 或偷用更多 verifier FLOP 才获益，判定机制失败。"
+      },
+      {
+        "id": "limitations-section",
+        "type": "markdown",
+        "body": "## 边界与限制\n\n数学/代码的隐藏 oracle 只能支持第一阶段机制结论；开放任务没有完整 oracle，需要后续盲人评或冻结的高置信异质 panel。确定性符号验证器若完整覆盖所有合法解法，结构性误拒绝可能接近零。跨模型 jury 仍有 shared-error floor。多样性也不是越高越好，质量下限和 ID guardrail 必须保留。2026 arXiv 均按预印本证据处理，投稿前需重新碰撞最新论文。"
+      },
+      {
+        "id": "next-step-section",
+        "type": "markdown",
+        "body": "## 推荐下一步\n\n先做不训练 student 的阶段 A 小试：每个任务先取 500 个 prompt、每题 16 条候选，验证严格度是否真的让 oracle-correct 轨迹的 G-Vendi 和稀疏簇覆盖下降。只有这个机制信号跨数学/代码都出现，再投入完整三种子 SFT。这样能把最昂贵的训练放在一个已经观察到选择压力的设置上。"
+      },
+      {
+        "id": "further-questions-section",
+        "type": "markdown",
+        "body": "## 两个进一步问题\n\n**备选一：** 在 oracle-correct 轨迹内部，可靠通过所需的模型家族数和重复判断数，能否预测稀有推理模式的 OOD 边际价值？\n\n**备选二：** 在 accepted precision 相同的条件下，跨家族 jury 是否比同模型重复自验证保留更多正确梯度簇并产生更强 OOD 蒸馏？\n\n完整 15 条来源、8 个候选、评分理由、决策日志和研究问题契约保存在同名结构化会话 JSON。"
+      }
+    ],
+    "charts": [
+      {
+        "id": "candidate-score-chart",
+        "title": "八个候选的模式 2 证据评分",
+        "subtitle": "六维 0–2 级评分加总（满分 12）；硬门槛失败优先于总分",
+        "intent": "comparison",
+        "question": "本轮八个候选在重要性、新颖性、判别力、可行性、可测量性和信息价值上的证据强度如何？",
+        "rationale": "横向条形图适合比较长标签候选；表格保留各维评分、硬门槛与碰撞结论供审计。",
+        "type": "horizontalBar",
+        "dataset": "candidate_scores",
+        "sourceId": "src_session",
+        "encodings": {
+          "x": {"field": "short_label", "type": "nominal", "aggregate": "none", "label": "候选问题"},
+          "y": {"field": "total_score", "type": "quantitative", "aggregate": "none", "format": "number", "label": "证据评分"},
+          "tooltip": [
+            {"field": "candidate_id", "type": "text", "label": "候选 ID"},
+            {"field": "total_score", "type": "quantitative", "format": "number", "label": "总分"},
+            {"field": "hard_gate", "type": "text", "label": "硬门槛"},
+            {"field": "decision", "type": "text", "label": "决策"},
+            {"field": "novelty", "type": "quantitative", "format": "number", "label": "新颖性"}
+          ]
+        },
+        "xAxisTitle": "候选问题",
+        "yAxisTitle": "证据评分（0–12）",
+        "valueFormat": "number",
+        "unit": "分",
+        "layout": "full",
+        "labels": {"values": "all"},
+        "maxRows": 8,
+        "palette": {"kind": "sequential", "name": "blue"},
+        "settings": {"sort": "descending", "categoryLabelPolicy": "wrap", "showValues": true},
+        "surface": {"surface": "export", "viewMode": "both"}
+      }
+    ],
+    "tables": [
+      {
+        "id": "corpus-inventory-table",
+        "title": "本地工作簿规模与本轮用途",
+        "subtitle": "2025–2026 高召回研究池；作为研究地形和去重约束，不作为新颖性结论的唯一证据",
+        "dataset": "corpus_inventory",
+        "defaultSort": {"field": "count", "direction": "desc"},
+        "density": "dense",
+        "sourceId": "src_workbook",
+        "layout": "full",
+        "columns": [
+          {"field": "scope", "label": "范围", "type": "text"},
+          {"field": "count", "label": "数量", "format": "number", "type": "number"},
+          {"field": "role", "label": "本轮用途", "type": "text"}
+        ]
+      },
+      {
+        "id": "collision-table",
+        "title": "主问题与最近工作的非重复边界",
+        "subtitle": "每行说明最近工作已经解决什么，以及本轮仍需完成的 precision-matched 机制增量",
+        "dataset": "collision_matrix",
+        "defaultSort": {"field": "display_order", "direction": "asc"},
+        "density": "spacious",
+        "sourceId": "src_session",
+        "layout": "full",
+        "columns": [
+          {"field": "display_order", "label": "顺序", "format": "number", "type": "number"},
+          {"field": "prior", "label": "最近工作", "type": "text"},
+          {"field": "solved", "label": "已经解决", "type": "text"},
+          {"field": "remaining", "label": "本轮非重复增量", "type": "text"}
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "src_workbook",
+        "label": "LLM_posttraining_research_questions_2025_2026.xlsx",
+        "path": "project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx",
+        "query": {
+          "engine": "DuckDB",
+          "sql": "SELECT * FROM (VALUES (1, '完整高召回文献池', 5608, '研究地形与去重底座'), (2, '核心研究问题', 940, '高相关论文精读入口'), (3, '2025 正式会议', 5368, '成熟近邻与已占据问题'), (4, '2026 arXiv', 240, '最新预印本碰撞'), (5, '已有研究空白', 42, '本轮非冗余硬约束')) AS inventory(display_order, scope, count, role) ORDER BY display_order",
+          "description": "只读导入总览、研究空白与选题、核心研究问题、完整文献池、2026 arXiv 和口径与来源工作表。",
+          "executed_at": "2026-08-21T20:00:00+08:00",
+          "language": "SQL",
+          "tables_used": ["project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx"],
+          "filters": ["只读分析", "不修改工作簿", "已有候选映射审计不作为研究证据"],
+          "metric_definitions": ["数量为工作簿总览声明及相应工作表的非表头记录数。"]
+        }
+      },
+      {
+        "id": "src_session",
+        "label": "第二次独立模式 2 结构化研究会话",
+        "path": "modes/codex-research-question/results/2026-08-21-verification-stringency-gradient-diversity.json",
+        "query": {
+          "engine": "DuckDB",
+          "sql": "WITH candidates AS (SELECT unnest(candidate_questions) AS c FROM read_json_auto('modes/codex-research-question/results/2026-08-21-verification-stringency-gradient-diversity.json')) SELECT c.candidate_id, c.scores.importance.value AS importance, c.scores.novelty.value AS novelty, c.scores.discriminating_power.value AS discriminating_power, c.scores.feasibility.value AS feasibility, c.scores.measurability.value AS measurability, c.scores.expected_information_value.value AS information_value, c.scores.importance.value + c.scores.novelty.value + c.scores.discriminating_power.value + c.scores.feasibility.value + c.scores.measurability.value + c.scores.expected_information_value.value AS total_score FROM candidates ORDER BY total_score DESC, c.candidate_id",
+          "description": "当前 Codex 按模式 2 固定协议生成并通过 complete validator 的候选、评分、硬门槛与选择快照。",
+          "executed_at": "2026-08-21T22:00:00+08:00",
+          "language": "SQL",
+          "tables_used": ["modes/codex-research-question/results/2026-08-21-verification-stringency-gradient-diversity.json"],
+          "filters": ["15 条已核验一手来源", "8 个候选", "硬门槛优先于评分", "独立排除上一轮候选"],
+          "metric_definitions": ["total_score 为 importance、novelty、discriminating_power、feasibility、measurability、expected_information_value 六项 0–2 分之和；满分 12。"]
+        }
+      },
+      {"id": "paper_e01", "label": "Self-Verified Distillation", "href": "https://arxiv.org/abs/2605.26132"},
+      {"id": "paper_e02", "label": "Prismatic Synthesis", "href": "https://arxiv.org/abs/2505.20161"},
+      {"id": "paper_e03", "label": "SPARQ", "href": "https://arxiv.org/abs/2506.06499"},
+      {"id": "paper_e04", "label": "AdaSTaR", "href": "https://arxiv.org/abs/2505.16322"},
+      {"id": "paper_e05", "label": "Beyond Rejection Sampling: Trajectory Fusion", "href": "https://arxiv.org/abs/2602.04391"},
+      {"id": "paper_e06", "label": "ReSyn", "href": "https://arxiv.org/abs/2602.20117"},
+      {"id": "paper_e07", "label": "LLMs as a Jury", "href": "https://arxiv.org/abs/2607.10139"},
+      {"id": "paper_e08", "label": "BODHI", "href": "https://arxiv.org/abs/2608.02867"},
+      {"id": "paper_e09", "label": "Understanding Diversity Collapse in RLVR", "href": "https://arxiv.org/abs/2606.15455"},
+      {"id": "paper_e10", "label": "Verifier-Induced Support Reshaping", "href": "https://arxiv.org/abs/2608.00220"},
+      {"id": "paper_e11", "label": "Multi-Agent Verification", "href": "https://arxiv.org/abs/2502.20379"},
+      {"id": "paper_e12", "label": "Shrinking the Generation-Verification Gap with Weak Verifiers", "href": "https://arxiv.org/abs/2506.18203"},
+      {"id": "paper_e13", "label": "RewardUQ", "href": "https://arxiv.org/abs/2602.24040"},
+      {"id": "paper_e14", "label": "Know When To Fold 'Em", "href": "https://arxiv.org/abs/2605.14062"},
+      {"id": "paper_e15", "label": "AI Evaluation Should Measure Verification Cost, Not Correctness Alone", "href": "https://arxiv.org/abs/2608.08709"}
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-21T22:00:00+08:00",
+    "status": "ready",
+    "datasets": {
+      "corpus_inventory": [
+        {"display_order": 1, "scope": "完整高召回文献池", "count": 5608, "role": "研究地形与去重底座"},
+        {"display_order": 2, "scope": "核心研究问题", "count": 940, "role": "高相关论文精读入口"},
+        {"display_order": 3, "scope": "2025 正式会议", "count": 5368, "role": "成熟近邻与已占据问题"},
+        {"display_order": 4, "scope": "2026 arXiv", "count": 240, "role": "最新预印本碰撞"},
+        {"display_order": 5, "scope": "已有研究空白", "count": 42, "role": "本轮非冗余硬约束"}
+      ],
+      "candidate_scores": [
+        {"rank_order": 1, "candidate_id": "C01", "short_label": "严格验证的正确模式误杀", "importance": 2, "novelty": 2, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 2, "total_score": 12, "hard_gate": "通过", "decision": "主问题", "collision_note": "连接验证强度与梯度多样性，并做等 precision 因果识别"},
+        {"rank_order": 2, "candidate_id": "C02", "short_label": "正确样本 verification cost", "importance": 2, "novelty": 2, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 2, "total_score": 12, "hard_gate": "通过", "decision": "备选 1", "collision_note": "verification cost 尚未用于预测正确训练样本的 OOD 价值"},
+        {"rank_order": 3, "candidate_id": "C03", "short_label": "异质 jury 保持训练支持", "importance": 2, "novelty": 1, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 2, "total_score": 11, "hard_gate": "通过", "decision": "备选 2", "collision_note": "测试时 jury 已有；训练集 precision-matched 支持仍缺"},
+        {"rank_order": 4, "candidate_id": "C04", "short_label": "通过倾向加权纠偏", "importance": 2, "novelty": 1, "discriminating_power": 2, "feasibility": 2, "measurability": 2, "information_value": 1, "total_score": 10, "hard_gate": "通过", "decision": "方法消融", "collision_note": "统计方法成熟；LLM verifier acceptance 应用有增量但独立新颖性有限"},
+        {"rank_order": 5, "candidate_id": "C05", "short_label": "生成与验证预算比例", "importance": 2, "novelty": 0, "discriminating_power": 1, "feasibility": 1, "measurability": 2, "information_value": 0, "total_score": 6, "hard_gate": "未通过：真实缺口/非冗余", "decision": "淘汰", "collision_note": "Self-Verified Distillation 已直接做 n×v 消融"},
+        {"rank_order": 6, "candidate_id": "C06", "short_label": "宽泛质量多样性 Pareto", "importance": 2, "novelty": 0, "discriminating_power": 1, "feasibility": 1, "measurability": 2, "information_value": 0, "total_score": 6, "hard_gate": "未通过：真实缺口/非冗余", "decision": "淘汰", "collision_note": "SPARQ、Prismatic 与工作簿 G24 已覆盖"},
+        {"rank_order": 7, "candidate_id": "C07", "short_label": "STaR 覆盖与课程采样", "importance": 2, "novelty": 0, "discriminating_power": 1, "feasibility": 2, "measurability": 2, "information_value": 0, "total_score": 7, "hard_gate": "未通过：真实缺口/非冗余", "decision": "淘汰", "collision_note": "AdaSTaR 与 G09/G29 已覆盖"},
+        {"rank_order": 8, "candidate_id": "C08", "short_label": "拒绝轨迹修复或融合", "importance": 2, "novelty": 0, "discriminating_power": 1, "feasibility": 2, "measurability": 2, "information_value": 0, "total_score": 7, "hard_gate": "未通过：真实缺口/非冗余", "decision": "淘汰", "collision_note": "TrajFusion 与工作簿 G30 已覆盖"}
+      ],
+      "collision_matrix": [
+        {"display_order": 1, "prior": "Self-Verified Distillation", "solved": "生成数 n × 重复验证强度 v；全票多阶段过滤；下游 pass@1", "remaining": "识别哪些 oracle-correct 推理模式被误拒，并在等 precision 下修正"},
+        {"display_order": 2, "prior": "Prismatic Synthesis", "solved": "G-Vendi 预测 OOD；在梯度空间生成稀缺样本", "remaining": "验证协议如何重塑正确样本梯度支持；作者明确列为未来方向"},
+        {"display_order": 3, "prior": "SPARQ / AdaSTaR", "solved": "quality-diversity 生成；题目覆盖和能力匹配课程", "remaining": "同一正确候选池内 verifier consensus 的结构性选择偏差"},
+        {"display_order": 4, "prior": "LLMs as a Jury / Weaver", "solved": "测试时跨模型错误去相关与加权 verifier panel", "remaining": "accepted precision 匹配后的训练集模式覆盖和 OOD 蒸馏"},
+        {"display_order": 5, "prior": "BODHI / Verifier-Induced Support Reshaping", "solved": "语义分支测量；在线 RLVR 的未来支持损失", "remaining": "离线合成数据筛选的正确样本误拒绝与可部署修正"},
+        {"display_order": 6, "prior": "Trajectory Fusion", "solved": "利用错误轨迹、反思和正确轨迹作为监督", "remaining": "不训练错误轨迹，而是研究实际正确轨迹被 verifier 误拒"}
+      ]
+    }
+  },
+  "sources": [
+    {"id": "src_workbook", "label": "LLM_posttraining_research_questions_2025_2026.xlsx", "path": "project/GRPO-X1/LLM_posttraining_research_questions_2025_2026.xlsx"},
+    {"id": "src_session", "label": "第二次独立模式 2 结构化研究会话", "path": "modes/codex-research-question/results/2026-08-21-verification-stringency-gradient-diversity.json"}
+  ],
+  "package_info": {
+    "artifact_kind": "portable-research-report",
+    "version": "0.29.0"
+  }
+}

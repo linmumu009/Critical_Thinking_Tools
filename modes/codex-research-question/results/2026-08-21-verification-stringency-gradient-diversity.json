@@ -1,0 +1,496 @@
+{
+  "schema_version": "1.0",
+  "mode_id": "codex_research_question_discovery_v1",
+  "status": "complete",
+  "created_date": "2026-08-21",
+  "profile_snapshot": {
+    "schema_version": "1.0",
+    "mode_id": "codex_research_question_discovery_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 6,
+      "maximum_candidate_count": 12,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "execution_constraints": {
+      "processor": "current_codex",
+      "external_model_api_allowed": false,
+      "human_scoring_required": false,
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_url": "https://arxiv.org/abs/2605.26132",
+      "source_title": "Self-Verified Distillation: Your Language Model Is Secretly Its Own Synthetic Data Pipeline",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-05-20",
+      "checked_date": "2026-08-21",
+      "observation": "该工作用三阶段、重复调用且全票通过的自验证筛选合成推理数据；更强验证通常改善下游结果，但验证过强且生成数不足时会留下过少训练数据。作者明确承认保守验证可能拒绝有用解答，并提出验证强度与训练覆盖的相互作用。",
+      "relevance": "这是主问题最近的直接起点；它扫描生成数和重复验证强度，却没有测量正确样本中哪些推理模式被选择性拒绝，也没有在等精度、等数据量下加入梯度多样性约束。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_url": "https://arxiv.org/abs/2505.20161",
+      "source_title": "Prismatic Synthesis: Gradient-based Data Diversification Boosts Generalization in LLM Reasoning",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2025-05-26 (v2 2026-07-19)",
+      "checked_date": "2026-08-21",
+      "observation": "G-Vendi 用样本梯度方向的有效秩测量与推理相关的多样性，在控制数据规模和质量后，对数学/NLI 的 OOD 表现达到约 0.9 的 Spearman 相关；论文明确把验证协议、质量筛选与梯度多样性的相互作用列为未来工作。",
+      "relevance": "给主问题提供可测中介变量和一条作者明确指出的缺口；但 G-Vendi 不能脱离数据质量单独比较，所以实验必须匹配标签精度。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_url": "https://arxiv.org/abs/2506.06499",
+      "source_title": "SPARQ: Synthetic Problem Generation for Reasoning via Quality-Diversity Algorithms",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2025-06-06 (v2 2025-06-17)",
+      "checked_date": "2026-08-21",
+      "observation": "SPARQ 在合成数学问题上观察到质量更影响分布内表现，而多样性更影响 OOD 泛化，并通过 quality-diversity 算法同时扩展两者。",
+      "relevance": "否定了宽泛的‘质量和多样性是否需要权衡’作为新问题；本轮必须识别验证器严格度造成的具体选择压力。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_url": "https://arxiv.org/abs/2505.16322",
+      "source_title": "AdaSTaR: Adaptive Data Sampling for Training Self-Taught Reasoners",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2025-05-22 (v3 2025-10-06)",
+      "checked_date": "2026-08-21",
+      "observation": "AdaSTaR 平衡不同题目的采样并按模型能力组织课程；它发现偏向困难题虽然提高覆盖，却会让错误过程但最终答案正确的 false-positive CoT 增加约 9%。",
+      "relevance": "说明多样性干预必须有质量下限；但其多样性是题目/观察采样平衡，不是验证器在正确轨迹内部造成的推理模式选择偏差。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_url": "https://arxiv.org/abs/2602.04391",
+      "source_title": "Beyond Rejection Sampling: Trajectory Fusion for Scaling Mathematical Reasoning",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-02-04",
+      "checked_date": "2026-08-21",
+      "observation": "TrajFusion 不再简单丢弃错误轨迹，而把选定错误、反思提示和正确轨迹融合为试错式监督，在困难和长推理问题上优于普通 RFT。",
+      "relevance": "占据了‘被拒绝错误是否也有训练价值’的近邻；主问题不训练错误轨迹，而研究实际正确样本被验证器误拒后的支持损失。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_url": "https://arxiv.org/abs/2602.20117",
+      "source_title": "ReSyn: Autonomously Scaling Synthetic Environments for Reasoning Models",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-02-23",
+      "checked_date": "2026-08-21",
+      "observation": "ReSyn 自动生成带实例生成器和验证器的多样推理环境；消融显示验证监督和任务多样性都对 OOD 推理增益有独立贡献。",
+      "relevance": "支持把验证质量和覆盖同时纳入数据管线，但没有研究同一候选池中验证严格度如何重塑被接受轨迹的支持。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_url": "https://arxiv.org/abs/2607.10139",
+      "source_title": "LLMs as a Jury: Cross-Model Consensus Can Outperform Process Reward Models for LLM Reasoning",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-11 (v3 2026-08-17)",
+      "checked_date": "2026-08-21",
+      "observation": "跨模型 jury 的收益来自错误去相关；重复同一模型无法跨过相关错误上限，且跨模型仍存在 shared-error floor。",
+      "relevance": "为备选问题的同家族复评与跨家族 panel 比较提供机制；论文研究测试时答案选择，没有测训练数据覆盖与下游 OOD。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_url": "https://arxiv.org/abs/2608.02867",
+      "source_title": "BODHI: Do LLMs Branch Out and Discover Heterogeneous Inferences?",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-08-03",
+      "checked_date": "2026-08-21",
+      "observation": "BODHI 用语义等价树区分表面变化和真实推理分支，并发现 RLVR 后语义分支熵明显收缩。",
+      "relevance": "提供独立于 G-Vendi 的正确轨迹内部推理模式覆盖指标，可用于确认筛选效应不是词面多样性假象。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_url": "https://arxiv.org/abs/2606.15455",
+      "source_title": "Understanding Diversity Collapse in RLVR via the Lens of Overtraining",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-06-13",
+      "checked_date": "2026-08-21",
+      "observation": "标准 RLVR 可能在 pass@1 提升时降低高 k pass@k；论文把机制归因于已饱和题目的继续更新，并用 Bayesian Boundary Gating 保护推理边界。",
+      "relevance": "说明最终 pass@1 会掩盖支持收缩；但对象是在线 RL 过训练，而非离线合成数据的验证筛选。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_url": "https://arxiv.org/abs/2608.00220",
+      "source_title": "Verifier-Induced Support Reshaping in On-Policy Optimization",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-07-31",
+      "checked_date": "2026-08-21",
+      "observation": "RLVR 可改善当前目标却降低后续目标在固定 rollout 预算内可采样到的成功轨迹；该工作将其定义为 effective rewardable support，并用顺序训练验证未来可训练性受损。",
+      "relevance": "占据在线优化的 verifier-induced support 机制；本轮研究的是训练前的离线筛选选择偏差，并要求等标签精度和等接受数据量。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_url": "https://arxiv.org/abs/2502.20379",
+      "source_title": "Multi-Agent Verification: Scaling Test-Time Compute with Multiple Verifiers",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2025-02-27",
+      "checked_date": "2026-08-21",
+      "observation": "MAV 把验证器数量作为测试时扩展轴，并展示多个 aspect verifier 在弱到强和自改进设置下优于单验证器。",
+      "relevance": "证明验证器组合形式是重要变量，但没有问严格共识是否会选择性拒绝少数正确训练模式。"
+    },
+    {
+      "evidence_id": "E12",
+      "source_url": "https://arxiv.org/abs/2506.18203",
+      "source_title": "Shrinking the Generation-Verification Gap with Weak Verifiers",
+      "source_type": "NeurIPS 2025 paper / primary paper",
+      "published_date": "2025-06-22 (v3 2026-08-06)",
+      "checked_date": "2026-08-21",
+      "observation": "Weaver 用弱监督估计多个弱验证器的准确性并做加权组合，优于简单平均/多数表决；主要评估测试时候选选择。",
+      "relevance": "提供质量匹配的强 panel 基线，避免把简单全票规则当作唯一共识方法；仍未评估训练数据的梯度多样性。"
+    },
+    {
+      "evidence_id": "E13",
+      "source_url": "https://arxiv.org/abs/2602.24040",
+      "source_title": "RewardUQ: A Unified Framework for Uncertainty-Aware Reward Models",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-02-27",
+      "checked_date": "2026-08-21",
+      "observation": "RewardUQ 系统比较 reward model 的 epistemic uncertainty 方法，并强调准确性和校准需联合评估。",
+      "relevance": "支持用重复判断概率而非单次通过标签估计 acceptance propensity；但没有把不确定性用于修正验证筛选后的数据分布。"
+    },
+    {
+      "evidence_id": "E14",
+      "source_url": "https://arxiv.org/abs/2605.14062",
+      "source_title": "Know When To Fold 'Em: Token-Efficient LLM Synthetic Data Generation via Multi-Stage In-Flight Rejection",
+      "source_type": "arXiv preprint / primary paper",
+      "published_date": "2026-05-13",
+      "checked_date": "2026-08-21",
+      "observation": "MSIFR 在生成中途用规则验证器提前终止低质量轨迹，报告 11%–77% token 节省，并论证在其条件效用设定下不偏置保留样本的期望效用。",
+      "relevance": "是筛选效率强基线；它关注期望效用和 token 成本，不测正确轨迹的推理模式支持或 OOD 泛化。"
+    },
+    {
+      "evidence_id": "E15",
+      "source_url": "https://arxiv.org/abs/2608.08709",
+      "source_title": "AI Evaluation Should Measure Verification Cost, Not Correctness Alone",
+      "source_type": "arXiv position paper / primary paper",
+      "published_date": "2026-08-09",
+      "checked_date": "2026-08-21",
+      "observation": "该文提出相对于有限验证预算测量 verification cost，并指出正确率会掩盖不同样本的验证难度；目前主要是概念性工具。",
+      "relevance": "启发备选测量问题：实际正确但验证成本高的轨迹，可能不是应丢弃的低质样本，而是验证器不熟悉的少数模式。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在合成推理数据管线中，增加重复验证次数并要求更高的一致通过率，是否会在提升标签精度的同时，系统性删除验证成本高但实际正确的少数推理模式，压低梯度空间多样性和 OOD 泛化；在相同接受样本数与总算力下，‘正确性下限 + 梯度多样性约束’的筛选是否优于全票通过？",
+      "observation_ids": ["E01", "E02", "E03", "E04", "E07", "E08", "E12", "E13"],
+      "closest_prior_ids": ["E01", "E02", "E03", "E04"],
+      "hypothesis": "验证器对常见、模板化推理更易达成一致，因此严格共识的误拒绝不是随机的，而会集中在梯度空间稀疏、语义分支少见但 oracle 正确的轨迹；在保持相同标签精度、接受 token 数和验证 FLOP 后，先满足校准正确性下限再最大化 G-Vendi 的筛选会保留更多有用支持并提高 OOD。",
+      "counter_hypothesis": "严格验证主要去除真实错误，误拒绝与推理模式无关；所谓多样性损失只是数据量减少或噪声增加造成的。匹配标签精度和数据量后，梯度多样性约束不会优于全票通过。",
+      "falsification_rule": "在数学和代码两个任务、两个生成器家族、至少三个种子上，若提高共识严格度后，oracle-correct 轨迹的 G-Vendi/语义分支覆盖相对等规模宽松筛选平均下降不足 5%，误拒绝率在梯度稀疏簇中不高于常见簇，且质量下限加多样性筛选相对最强严格基线的 OOD 平均准确率提升不足 1 个百分点或 95% 置信区间覆盖零，则拒绝主假设。",
+      "minimum_experiment": "用约 4,000 个数学/代码 prompt，每题从两个 7B–14B 生成器各采样 8 条轨迹；精确答案/单元测试 oracle 只用于诊断，不进入筛选。收集三个不同模型家族验证器的 5 次重复判断，构造 single、same-family repeat、1/3、2/3、3/3、Weaver-style weighted panel、oracle filter 与 quality-floor+G-Vendi 筛选。所有训练集匹配接受 token 数、oracle precision（通过阈值/抽样匹配）和总生成+验证 FLOP；用同一 1.5B–3B student、三个种子训练，测 ID、跨题型/跨模板 OOD、G-Vendi、BODHI-style 语义分支和正确样本误拒绝分布。",
+      "primary_risk": "最接近的两篇工作已分别提出验证强度—覆盖交互和梯度多样性—OOD 关系；贡献必须建立在严格的等精度、等数据量因果对照和可复用筛选规则上，不能只报告相关性。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "合成数据管线普遍依赖验证过滤；若严格筛选丢掉正确长尾，扩大验证预算反而可能牺牲泛化。"},
+        "novelty": {"value": 2, "reason": "最近工作分别研究验证强度和梯度多样性，但未发现等精度条件下验证选择压力的因果识别与修正。"},
+        "discriminating_power": {"value": 2, "reason": "隐藏 oracle 可将真错误去除与正确模式误拒绝分开，梯度簇和语义树可定位选择偏差。"},
+        "feasibility": {"value": 2, "reason": "可先在数学/代码的精确 oracle 上用小 student 和冻结候选池完成，不必立即做人评开放任务。"},
+        "measurability": {"value": 2, "reason": "标签精度、误拒绝率、G-Vendi、语义分支、ID/OOD 与 FLOP 均可预注册。"},
+        "expected_information_value": {"value": 2, "reason": "正结果给出新筛选方法；负结果则支持全票验证在匹配条件下没有隐藏的泛化代价。"}
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "在已由隐藏 oracle 确认正确的合成推理轨迹中，‘被验证器可靠通过所需的模型家族数和重复判断数’这一验证成本，能否识别少见但有下游训练价值的推理模式，并比单次 verifier 分数、损失、难度和表面多样性更好地预测 OOD 边际收益？",
+      "observation_ids": ["E02", "E07", "E08", "E13", "E15"],
+      "closest_prior_ids": ["E02", "E15"],
+      "hypothesis": "在真实正确样本内部，中等偏高验证成本经常来自验证器对非典型推理的不熟悉，因而与梯度新颖性和 OOD 边际价值呈倒 U 关系；极高成本才更多对应含糊或过程缺陷。",
+      "counter_hypothesis": "验证成本只反映措辞、长度或验证器随机性；控制损失、题目难度、长度和 G-Vendi 后，它不提供独立训练价值信号。",
+      "falsification_rule": "控制题目、长度、难度、generator likelihood、loss 和梯度簇后，验证成本对 held-out influence/OOD 子集训练收益的增量解释度不足 2%，且验证成本分层采样不优于随机同规模采样 0.5 个百分点，则拒绝假设。",
+      "minimum_experiment": "复用 C01 的冻结候选池，只在 oracle-correct 轨迹上估计同模型复评与跨模型 jury 的通过成本；按成本分层构造等规模、等难度、等长度子集，用小 student 做 20–30 个短训练或 influence-function 预筛，再以完整三种子训练确认是否存在倒 U 型 OOD 价值曲线。",
+      "primary_risk": "验证成本可能高度依赖 prompt 和模型家族，成为不稳定的风格指标；需要跨 verifier panel 复现才足以成为独立贡献。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "把难验证的正确样本从‘应丢弃’改为潜在高价值训练信号，会改变合成数据筛选逻辑。"},
+        "novelty": {"value": 2, "reason": "verification cost 近期主要被用于可靠性概念，未发现用于正确训练样本价值预测。"},
+        "discriminating_power": {"value": 2, "reason": "限定 oracle-correct 后可排除‘只是更错’这一最强替代解释。"},
+        "feasibility": {"value": 2, "reason": "可复用主实验数据，新增成本主要是重复判断和短子集训练。"},
+        "measurability": {"value": 2, "reason": "验证调用数、跨家族一致性、梯度新颖性和 OOD influence 均可量化。"},
+        "expected_information_value": {"value": 2, "reason": "即使无独立预测力，也能否定一个很有诱惑力的‘难验证等于稀有价值’叙事。"}
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "在接受集标签精度相同的条件下，跨模型家族 jury 是否比同一模型的重复自验证更少误拒绝稀有但正确的推理模式，并因此产生更高梯度多样性和更强 OOD 蒸馏收益？",
+      "observation_ids": ["E01", "E02", "E07", "E11", "E12"],
+      "closest_prior_ids": ["E07", "E11", "E12"],
+      "hypothesis": "跨家族错误去相关既减少错误接受，也减少单家族共享盲点造成的正确模式误拒绝；在通过阈值调到相同 precision 后，跨家族 jury 的 accepted set 会覆盖更多梯度簇。",
+      "counter_hypothesis": "跨家族模型对非标准正确解法分歧更大，或同家族 verifier 更理解生成器格式；precision 匹配后，jury 不会保留更多有用模式。",
+      "falsification_rule": "在两类任务与两个生成器家族上，precision 匹配后跨家族 jury 的 oracle-correct 簇覆盖/G-Vendi 相对同模型复评提升不足 5%，且 OOD 训练收益不足 1 个百分点或区间覆盖零，则拒绝假设。",
+      "minimum_experiment": "固定同一候选池和相同验证调用 FLOP，比较一个 verifier 的 9 次复评、三个同家族 verifier 各 3 次、三个异家族 verifier 各 3 次，以及 Weaver 加权 panel；调阈值匹配 accepted precision 和 token 数，随后做同一 student 的三种子 SFT。",
+      "primary_risk": "LLMs as a Jury 已充分建立测试时错误去相关；若只证明训练时也提高准确率会显得增量不足，必须把正确模式误拒绝和梯度多样性作为主贡献。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "直接决定合成数据验证预算应买重复判断还是买模型异质性。"},
+        "novelty": {"value": 1, "reason": "跨模型错误去相关已建立，新意在训练集支持和 precision-matched 比较。"},
+        "discriminating_power": {"value": 2, "reason": "同候选、同 FLOP、同 precision 可隔离 panel 错误相关结构。"},
+        "feasibility": {"value": 2, "reason": "主实验候选池可直接复用，只需改变验证 panel。"},
+        "measurability": {"value": 2, "reason": "误拒绝、簇覆盖、G-Vendi、OOD 与错误相关性明确。"},
+        "expected_information_value": {"value": 2, "reason": "结果可直接指导自验证合成系统的 panel 设计。"}
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "能否用重复验证估计每条已接受合成轨迹的通过倾向，并采用截断逆倾向加权，纠正严格过滤造成的选择偏差，而不把大量被拒绝或高噪样本直接送入训练？",
+      "observation_ids": ["E01", "E02", "E13", "E14"],
+      "closest_prior_ids": ["E01", "E02", "E13"],
+      "hypothesis": "在 accepted-only 数据上，按逆通过概率上调难通过但已接受的样本，可部分恢复严格过滤前的正确模式分布；截断权重和质量下限可控制方差与噪声。",
+      "counter_hypothesis": "通过倾向估计误差大且与真实正确性混杂，逆权重只会放大边缘错误和优化方差，不能改善 OOD。",
+      "falsification_rule": "在有效样本量匹配后，截断逆倾向加权相对未加权严格筛选的正确簇覆盖提升不足 5%，OOD 提升不足 1 个百分点，或训练方差/ID 退化超过其 OOD 收益，则拒绝假设。",
+      "minimum_experiment": "在 3/3 严格接受集上用每个 verifier 的重复 Bernoulli 判断拟合通过概率，比较 unweighted、clipped IPW、self-normalized IPW、质量下限+IPW 与 C01 的显式多样性选择；统一训练 token、optimizer 和随机种子。",
+      "primary_risk": "逆倾向加权是成熟统计思想，LLM 场景的新颖性主要来自验证筛选结构；若没有清晰的支持恢复机制，可能被视为标准方法迁移。",
+      "hard_gates": {
+        "real_gap": true,
+        "non_redundant": true,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "无需使用被拒绝数据即可修正严格筛选，部署成本低。"},
+        "novelty": {"value": 1, "reason": "统计方法不新，但对重复 verifier acceptance 的应用尚少见。"},
+        "discriminating_power": {"value": 2, "reason": "与显式多样性选择和未加权接受集可直接比较。"},
+        "feasibility": {"value": 2, "reason": "只需已有重复判断和训练时权重。"},
+        "measurability": {"value": 2, "reason": "有效样本量、权重方差、簇覆盖和 ID/OOD 都可测。"},
+        "expected_information_value": {"value": 1, "reason": "若失败可能只是倾向估计不足，负结果的可迁移性有限。"}
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "在固定总数据构造算力下，合成推理数据应优先增加候选生成数量，还是增加每条候选的重复验证强度，二者最优比例如何随模型能力和任务变化？",
+      "observation_ids": ["E01", "E14"],
+      "closest_prior_ids": ["E01"],
+      "hypothesis": "弱模型更需要生成覆盖，强模型更需要验证精度，最优比例随初始成功率变化。",
+      "counter_hypothesis": "相同总算力下始终存在一个近似固定的生成—验证比例。",
+      "falsification_rule": "不同模型/任务的最优比例无显著交互，或统一比例与逐任务最优差异不足 0.5 个百分点。",
+      "minimum_experiment": "在三个模型规模和三个任务上做 n×v IsoFLOP 网格，比较接受率、精度和下游 pass@1。",
+      "primary_risk": "Self-Verified Distillation 已直接扫描 n 与 v，报告两者交互和模型规模差异；仅扩展网格不满足非冗余门槛。",
+      "hard_gates": {
+        "real_gap": false,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "对实际数据构造成本重要。"},
+        "novelty": {"value": 0, "reason": "最近工作已做核心 n×v 实验并给出相同结论。"},
+        "discriminating_power": {"value": 1, "reason": "网格能找最优点但缺乏新机制。"},
+        "feasibility": {"value": 1, "reason": "多规模完整 IsoFLOP 网格成本高。"},
+        "measurability": {"value": 2, "reason": "成本、接受率和下游表现清楚。"},
+        "expected_information_value": {"value": 0, "reason": "大概率重复已有结论。"}
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "合成推理数据的正确性、多样性和难度是否存在稳定的 Pareto 前沿，并能否预测分布内与分布外收益？",
+      "observation_ids": ["E02", "E03", "E04", "E06"],
+      "closest_prior_ids": ["E02", "E03"],
+      "hypothesis": "质量主导 ID，多样性主导 OOD，复杂度同时作用于两者。",
+      "counter_hypothesis": "数据规模和题目难度足以解释表现，多样性没有独立作用。",
+      "falsification_rule": "控制规模和正确率后，多样性对 OOD 的增量解释度不足 2%。",
+      "minimum_experiment": "构造质量×多样性×难度的等规模数据网格并训练小模型。",
+      "primary_risk": "SPARQ、Prismatic Synthesis 与本地工作簿 G24 已直接覆盖该宽泛问题。",
+      "hard_gates": {
+        "real_gap": false,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "是合成数据的核心设计问题。"},
+        "novelty": {"value": 0, "reason": "已有论文和工作簿空白均明确覆盖。"},
+        "discriminating_power": {"value": 1, "reason": "大网格能描述前沿但难给新机制。"},
+        "feasibility": {"value": 1, "reason": "多维网格需要大量训练。"},
+        "measurability": {"value": 2, "reason": "QDC 和 ID/OOD 均有指标。"},
+        "expected_information_value": {"value": 0, "reason": "新信息增量很低。"}
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "自训练推理数据应按题目覆盖、当前成功率还是学习进度进行动态采样，才能减少已会题目的重复训练并覆盖困难题？",
+      "observation_ids": ["E04", "E09"],
+      "closest_prior_ids": ["E04"],
+      "hypothesis": "覆盖与课程联合采样优于随机和单一难度采样。",
+      "counter_hypothesis": "随机采样在足够数据下同样有效。",
+      "falsification_rule": "等 FLOP 下联合采样不优于最佳基线。",
+      "minimum_experiment": "复现 STaR/AdaSTaR 并加入学习进度基线。",
+      "primary_risk": "AdaSTaR 已直接解决观察覆盖和课程联合采样；工作簿 G09/G29 也覆盖相邻问题。",
+      "hard_gates": {
+        "real_gap": false,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "可提高自训练算力效率。"},
+        "novelty": {"value": 0, "reason": "最近论文已提出相同联合机制。"},
+        "discriminating_power": {"value": 1, "reason": "主要是方法复现与扩展。"},
+        "feasibility": {"value": 2, "reason": "已有公开算法可复现。"},
+        "measurability": {"value": 2, "reason": "FLOP、覆盖和准确率清楚。"},
+        "expected_information_value": {"value": 0, "reason": "难形成独立新贡献。"}
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "被验证器拒绝的错误推理轨迹应直接丢弃、修复后再训练，还是与反思和正确轨迹融合为试错监督？",
+      "observation_ids": ["E05", "E14"],
+      "closest_prior_ids": ["E05"],
+      "hypothesis": "结构化融合错误和修复能教会模型识别失败并改善困难任务。",
+      "counter_hypothesis": "错误上下文污染大于反思收益，纯正确 RFT 更稳。",
+      "falsification_rule": "融合策略在困难/长推理任务上不优于 RFT。",
+      "minimum_experiment": "比较 reject、local repair、reflection fusion 和 full regenerate。",
+      "primary_risk": "TrajFusion 已直接提出并验证错误—反思—正确轨迹融合；工作簿 G30 也覆盖修复粒度。",
+      "hard_gates": {
+        "real_gap": false,
+        "non_redundant": false,
+        "falsifiable": true,
+        "feasible": true,
+        "measurable": true,
+        "ethical": true
+      },
+      "scores": {
+        "importance": {"value": 2, "reason": "被拒绝轨迹占据大量生成成本。"},
+        "novelty": {"value": 0, "reason": "最近工作与本地空白已直接覆盖。"},
+        "discriminating_power": {"value": 1, "reason": "比较清楚但问题已被做掉。"},
+        "feasibility": {"value": 2, "reason": "可基于现有 RFT 管线完成。"},
+        "measurability": {"value": 2, "reason": "困难任务收益和污染率明确。"},
+        "expected_information_value": {"value": 0, "reason": "除非引入全新机制，否则只是重复。"}
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": ["C02", "C03"],
+    "why_this_question": "C01 把两个已经被分别验证、却尚未连接的问题变成一个可证伪机制：Self-Verified Distillation 表明更强验证有效但会拒绝有用样本并影响覆盖，Prismatic Synthesis 表明梯度多样性强烈关联 OOD 且明确把验证协议—多样性关系留作未来工作。本轮不再宽泛讨论质量—多样性 Pareto，而是在隐藏 oracle 下识别严格共识对‘实际正确轨迹’的非随机误拒绝，并在等 precision、等接受 token、等总 FLOP 下测试一个可部署筛选规则。它与上一轮反馈算力分配完全不同，最小实验也能在数学/代码和小 student 上闭环。",
+    "research_question_contract": {
+      "final_question": "在合成推理数据管线中，增加重复验证次数并要求更高的一致通过率，是否会在提升标签精度的同时，系统性删除验证成本高但实际正确的少数推理模式，压低梯度空间多样性和 OOD 泛化；在相同接受样本数与总算力下，‘正确性下限 + 梯度多样性约束’的筛选是否优于全票通过？",
+      "hypothesis": "严格共识对正确样本的误拒绝具有结构性：验证器更容易一致接受常见、模板化推理，而对梯度空间稀疏、语义分支少见但 oracle 正确的轨迹更容易分歧或拒绝。先用校准 verifier 设置正确性下限，再在满足下限的候选中最大化梯度多样性，会在不降低接受集标签精度的前提下提高 OOD 泛化。",
+      "counter_hypothesis": "验证器严格度主要在做正确的去噪，误拒绝与推理模式无关；严格筛选后的多样性下降完全由样本量或精度差异解释。匹配接受 token、标签精度和总算力后，多样性约束不会改善下游泛化。",
+      "independent_variables": [
+        "验证严格度：不筛选、单次判断、同模型 5 次复评、1/3、2/3、3/3 跨模型共识、Weaver-style 加权 panel",
+        "筛选目标：全票通过、固定分数阈值、质量下限+语义多样性、质量下限+G-Vendi",
+        "panel 结构：同一模型/同家族重复与三个异家族 verifier",
+        "生成器与任务：两个模型家族，数学精确答案和代码隐藏单元测试两类任务",
+        "预算带：相同生成+验证 FLOP 下的低、中两个数据构造预算"
+      ],
+      "dependent_variables": [
+        "接受集 oracle precision、recall 及 oracle-correct 轨迹 false-rejection rate",
+        "正确轨迹的误拒绝在梯度簇、题目难度、长度、语义分支和生成器 likelihood 上的条件分布",
+        "接受集 G-Vendi、BODHI-style 语义分支熵、梯度簇覆盖和有效样本数",
+        "同 student、同 token 训练后的 ID pass@1 与跨题型、跨模板、跨生成器 OOD 表现",
+        "验证成本、接受 token、总生成/验证 FLOP、wall-clock 与单位 FLOP OOD 增益"
+      ],
+      "controls": [
+        "精确 oracle 只用于诊断和最终评估，任何可部署筛选方法都看不到 oracle 标签",
+        "比较训练集匹配接受 token 数、oracle precision 与总生成+验证 FLOP，避免把规模/质量差异冒充多样性效果",
+        "统一 student 初始化、optimizer、训练 token、batch、学习率、随机种子和 checkpoint 选择规则",
+        "用相同冻结候选池比较筛选器，避免重新生成造成候选分布漂移",
+        "G-Vendi 使用冻结的小 proxy model，并以异家族 proxy 和语义分支指标做稳健性检查",
+        "阈值只在开发集调节，测试集一次冻结评估；至少三个训练种子并报告置信区间"
+      ],
+      "minimum_experiment": "阶段 A：从约 4,000 个训练 prompt 和 1,000 个测试 prompt 中，每题由两个 7B–14B 生成器各采 8 条数学/代码推理轨迹；用答案匹配/隐藏单元测试得到只用于研究诊断的 oracle，并收集三个不同家族 verifier 各 5 次判断。对不同严格度画出 accepted precision、正确样本误拒绝、G-Vendi 与语义分支曲线。阶段 B：从同一候选池构造约 20k–40k 条、token 数和 oracle precision 匹配的数据集，比较全票通过、加权 panel、随机 precision-matched、质量下限+语义多样性和质量下限+G-Vendi。用一个 1.5B–3B student、三个种子做等 token SFT，主看跨题型/跨模板 OOD，ID 作为 guardrail。",
+      "falsification_rule": "若在数学和代码、两个生成器家族、至少三个种子上，提高共识严格度后 oracle-correct 轨迹的 G-Vendi/语义分支覆盖相对等规模宽松筛选平均下降不足 5%，梯度稀疏簇的误拒绝率不高于常见簇；并且质量下限+G-Vendi 相对最强严格/加权 panel 基线的 OOD 平均提升不足 1 个百分点或 95% 置信区间覆盖零，则拒绝主假设。若多样性方法通过降低 precision 或增加训练 token 才获益，也判定机制失败。",
+      "expected_contribution": "提出‘verification selection pressure’：把验证器不仅视为标签去噪器，也视为会改变正确训练样本支持的选择机制；给出 precision-matched 的识别协议、正确样本验证成本/误拒绝指标，以及一个正确性下限+梯度多样性约束的可部署筛选器。",
+      "boundary_conditions": [
+        "首轮只对可用隐藏精确 oracle 诊断正确性的数学/代码推理任务成立，不直接声称开放任务也有相同误拒绝结构",
+        "若 verifier 是确定性符号检查器且完整覆盖所有合法解法，结构性误拒绝空间可能接近零",
+        "G-Vendi 只有在数据质量可比时才可解释，不能把任意来源数据的分数直接横比",
+        "跨模型 panel 仍可能有 shared-error floor；异质性不能消除所有正确模式误拒绝",
+        "语义/梯度多样性并非越高越好，质量下限和 ID guardrail 是必要条件",
+        "SFT 结果不能自动外推到在线 GRPO；若首轮成立，再研究 verifier-filtered rollout buffer 的在线版本"
+      ],
+      "compute_budget_assumption": "最小闭环按 4 张 A100 80GB 或等效算力、4–8 GPU-days 设计。候选生成和 verifier 判断可离线批量完成；student 为 1.5B–3B。所有比较记录生成 token、verifier token/FLOP、接受 token 和训练 token，主比较使用等总数据构造 FLOP与等训练 token。",
+      "data_requirements": [
+        "约 4,000 个训练 prompt 与 1,000 个冻结测试 prompt，覆盖数学精确答案和代码隐藏单元测试",
+        "两个生成器家族、每题约 16 条候选轨迹及其生成 likelihood、长度和随机种子",
+        "三个异家族 verifier 的至少 5 次重复判断、完整判定概率/理由摘要与调用成本",
+        "仅用于研究诊断的精确 oracle 标签，以及按开发/测试严格隔离的阈值调节集",
+        "冻结 proxy model 的样本梯度投影、语义分支/步骤结构表示和簇标识",
+        "各筛选数据集的 accepted precision、token、FLOP、数据血缘及三个 student 训练种子的完整日志"
+      ]
+    }
+  },
+  "decision_log": [
+    {
+      "date": "2026-08-21",
+      "phase": "independent-run-start",
+      "decision": "按用户‘开始’执行第二次独立模式 2；排除上一轮的在线反馈算力分配、future-trainability probe 与 RLSVR proxy swap，不把旧备选重新包装为新结果。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "local-corpus-audit",
+      "decision": "重新只读导入工作簿，确认 5,608 条高召回记录、940 条核心论文、240 条 2026 arXiv 与 42 个已整理空白；将 G24 质量—多样性 Pareto、G25 自训练坍缩、G26 语义去重、G29 主动合成等作为去重边界。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "primary-source-search",
+      "decision": "核验 15 条 2025–2026 一手来源，重点覆盖自验证蒸馏、梯度多样性、quality-diversity、STaR 采样、错误轨迹融合、异质 verifier jury、support collapse 与 verification cost。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "novelty-collision",
+      "decision": "Self-Verified Distillation 已回答生成数与验证强度的基本交互，SPARQ/Prismatic/G24 已回答宽泛质量—多样性问题；因此否决 C05/C06，将新缺口收紧到等 precision 条件下严格共识对 oracle-correct 推理模式的结构性误拒绝。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "hard-gate-rejection",
+      "decision": "C07 与 AdaSTaR 及 G09/G29 重叠；C08 与 TrajFusion 及 G30 重叠，均未通过真实缺口和非冗余门槛。C04 可执行但统计方法新颖性有限，保留为主问题方法消融而非备选。"
+    },
+    {
+      "date": "2026-08-21",
+      "phase": "selection",
+      "decision": "选择 C01 为主问题；C02 将 verification cost 转为正确样本价值测量，C03 检验 cross-family jury 的支持保持边界。选择和评分由当前 Codex 按固定画像完成，不需要用户打分。"
+    }
+  ]
+}
