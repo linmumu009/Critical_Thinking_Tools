@@ -32,6 +32,12 @@ v0.4 将实验推进到候选问题生成：新增 4 组未参与旧提示设计
 
 v0.4 三种子正式结果见 [CANDIDATE-GENERATION-REPORT-v0.4.md](CANDIDATE-GENERATION-REPORT-v0.4.md)：两阶段 G0 的下游主指标高于同期原生 N，但候选覆盖未过门槛；GQ/GS 相对 G0 的增量不足，GB 不适合作为默认候选生成器。随后按 [AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md](AUTOMATED-MAPPING-AUDIT-PROTOCOL-v0.4.md) 完成双评审加分歧仲裁的条件盲自动审计，不要求人工参与；[敏感性报告](automated-review-v0.4/AUTOMATED-SENSITIVITY-REPORT.md)显示原匹配与仲裁共识有 `17.45%` 不一致，下一步先修匹配接口。
 
+v0.5 在不改变 v0.4 四组新案例、盲匹配器和 8 问预算的前提下，新增 GF“完整问题发现漏斗”候选生成器，与 G0 原生、GQ QFT、GS STORM、GB 双向钢人同场比较。GF 在单次调用中压缩执行目标、现实信号、5W1H/苏格拉底重构、QFT、STORM、机制聚类、双向钢人/竞争假设、硬门槛、评分和 cheap-probe 重写。
+
+该对照只衡量压缩提示下的候选覆盖和后续决策价值，不等同于正式模式 1/2 的真实检索与多阶段运行。v0.4 已完成结果、报告和盲审仍冻结为 G0/GQ/GS/GB，不会因 GF 注册而被重算。v0.5 的运行入口仍为 `candidate_benchmark.py`，计划包含 N、A、G0、GQ、GS、GB、GF 七个条件。
+
+冻结比较、84 个成对单元、指标、推进门槛和停止规则见 [FULL-FUNNEL-BENCHMARK-v0.5.md](FULL-FUNNEL-BENCHMARK-v0.5.md)。
+
 ## 当前范围
 
 - 12 个合成但内部可判定的决策案例。

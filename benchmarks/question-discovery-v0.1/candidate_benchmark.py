@@ -20,6 +20,7 @@ GENERATOR_FILES = {
     "GQ": "generator-qft.md",
     "GS": "generator-storm.md",
     "GB": "generator-steelman.md",
+    "GF": "generator-full-funnel.md",
 }
 FREE_QUESTION_FILES = {"N": "native.md", "A": "baseline.md"}
 RUN_CONDITIONS = tuple(FREE_QUESTION_FILES) + tuple(GENERATOR_FILES)
@@ -356,7 +357,7 @@ def save_candidate_artifact(
 ) -> Path:
     now = datetime.now(timezone.utc)
     artifact = {
-        "benchmark_version": "0.4",
+        "benchmark_version": "0.5",
         "created_at_utc": now.isoformat(),
         "pair_id": pair_id,
         "generator": generator,
@@ -388,7 +389,7 @@ def save_result(
 ) -> Path:
     now = datetime.now(timezone.utc)
     result = {
-        "benchmark_version": "0.4",
+        "benchmark_version": "0.5",
         "created_at_utc": now.isoformat(),
         "pair_id": pair_id,
         "condition": condition,
@@ -400,7 +401,7 @@ def save_result(
     }
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     path = RESULTS_DIR / (
-        f"{pair_id}-{condition}-v0.4-paired-seed{model_seed}-"
+        f"{pair_id}-{condition}-v0.5-paired-seed{model_seed}-"
         f"{now.strftime('%Y%m%dT%H%M%SZ')}.json"
     )
     path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -428,14 +429,14 @@ def run_sessions(
                 config,
                 model_seed,
                 prompt_file=prompt_file,
-                benchmark_version="0.4",
+                benchmark_version="0.5",
             )
         else:
             path = benchmark.run_direct_session(
                 case,
                 condition,
                 prompt_file=prompt_file,
-                benchmark_version="0.4",
+                benchmark_version="0.5",
             )
         paths.append(path)
     sessions = [json.loads(path.read_text(encoding="utf-8")) for path in paths]
@@ -554,7 +555,7 @@ def run_calibration(
         progress["api_parameters"] = api_parameters
     else:
         progress = {
-            "benchmark_version": "0.4",
+            "benchmark_version": "0.5",
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
             "mode": mode,
             "model_name": config["model_name"] if config else "direct",
@@ -624,7 +625,7 @@ def run_calibration(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Candidate question generator benchmark v0.4")
+    parser = argparse.ArgumentParser(description="Candidate question generator benchmark v0.5")
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("validate")
     subparsers.add_parser("list")
@@ -675,7 +676,7 @@ def main() -> int:
         if args.repeats < 1:
             parser.error("--repeats must be positive")
         payload = {
-            "benchmark_version": "0.4",
+            "benchmark_version": "0.5",
             "randomization_seeds": [args.seed + index for index in range(args.repeats)],
             "repeats": args.repeats,
             "conditions": list(RUN_CONDITIONS),

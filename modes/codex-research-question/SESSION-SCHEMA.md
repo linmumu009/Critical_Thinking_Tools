@@ -63,6 +63,16 @@
 
 主问题契约必须包含：最终问题、触发信号、使用者与决策、期限、边界、竞争答案、行动映射、判别性证据、反转结果、最小试探、成本风险伦理、停止条件和残余未知。
 
+## Runner sidecar
+
+正式 session 的 v2 顶层 schema 保持不变。Runner 另外维护三个 sidecar，避免破坏历史兼容：
+
+- `run-state.json`：当前阶段、checkpoint 哈希、失败与恢复记录；
+- `evidence-ledger.json`：检索式、来源纳入/排除和前三候选 collision review；
+- `completion-manifest.json`：结构/语义/账本审计结果及交付文件 SHA-256。
+
+阶段 envelope 中的 `payload` 保存完整阶段推理产物，`session_updates` 只能修改该阶段允许的正式 session 字段。Runner 会拒绝跳阶段和越权修改。新 Runner 运行 finalize 时必须通过 sidecar 审计；旧 v2 正式结果仍可只用 session validator 校验。
+
 ## 历史会话
 
 `schema_version=1.0` 的旧 JSON 来自已撤销的 Codex 自主流程。验证器会明确拒绝把它们当作共享流程的正式模式运行；文件保留只为历史追溯。

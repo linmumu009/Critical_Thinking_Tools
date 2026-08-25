@@ -144,9 +144,20 @@ class CandidateBenchmarkTests(unittest.TestCase):
         self.assertEqual(metrics["branch_critical_coverage"], [1.0, 1.0])
         self.assertEqual(metrics["both_branches_full_critical_coverage"], 1.0)
 
-    def test_schedule_contains_native_and_four_generators(self) -> None:
+    def test_full_funnel_generator_is_registered_with_shared_tools(self) -> None:
+        self.assertEqual(cb.GENERATOR_FILES["GF"], "generator-full-funnel.md")
+        prompt = (benchmark.PROMPTS_DIR / cb.GENERATOR_FILES["GF"]).read_text(
+            encoding="utf-8"
+        )
+        for required in (
+            "5W1H", "苏格拉底", "QFT", "STORM", "双向钢人", "竞争假设", "硬门槛"
+        ):
+            self.assertIn(required, prompt)
+
+
+    def test_schedule_contains_native_and_five_generators(self) -> None:
         schedule = cb.build_registered_schedule(self.pairs, 20260901, repeats=3)
-        self.assertEqual(len(schedule), 72)
+        self.assertEqual(len(schedule), 84)
         counts = {condition: 0 for condition in cb.RUN_CONDITIONS}
         for run in schedule:
             counts[run["condition"]] += 1

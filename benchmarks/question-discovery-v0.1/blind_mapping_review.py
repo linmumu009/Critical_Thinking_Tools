@@ -19,7 +19,7 @@ DEFAULT_PROGRESS = [
     ROOT / "results" / f"candidate-v0.4-seed{seed}.json" for seed in (1, 2, 3)
 ]
 DEFAULT_OUTPUT = ROOT / "blind-review-v0.4"
-GENERATOR_CONDITIONS = tuple(candidate_benchmark.GENERATOR_FILES)
+GENERATOR_CONDITIONS = ("G0", "GQ", "GS", "GB")
 REVIEW_FIELDS = (
     "mapped_evidence_id",
     "atomic_single_observation",

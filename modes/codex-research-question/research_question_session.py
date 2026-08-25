@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -545,6 +546,118 @@ def validate_session(
         validate_complete_session(session)
 
 
+def score_total(candidate: dict[str, Any]) -> int:
+    return sum(int(item["value"]) for item in candidate["scores"].values())
+
+
+def normalized_question(value: str) -> str:
+    return re.sub(r"\s+", "", value).replace("?", "？")
+
+
+def character_bigrams(value: str) -> set[str]:
+    normalized = normalized_question(value).lower()
+    return {normalized[index : index + 2] for index in range(len(normalized) - 1)}
+
+
+def question_similarity(left: str, right: str) -> float:
+    left_parts = character_bigrams(left)
+    right_parts = character_bigrams(right)
+    if not left_parts or not right_parts:
+        return float(normalized_question(left) == normalized_question(right))
+    return len(left_parts & right_parts) / len(left_parts | right_parts)
+
+
+def semantic_audit(session: dict[str, Any]) -> dict[str, Any]:
+    """Audit cross-field meaning that the structural validator cannot express."""
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+
+    def add(target: list[dict[str, str]], code: str, message: str) -> None:
+        target.append({"code": code, "message": message})
+
+    if session.get("status") != "complete":
+        add(errors, "session_not_complete", "semantic audit requires a complete session")
+        return {"passed": False, "errors": errors, "warnings": warnings, "metrics": {}}
+
+    candidates = session["candidate_questions"]
+    by_id = {item["candidate_id"]: item for item in candidates}
+    selection = session["selection"]
+    primary = by_id[selection["primary_candidate_id"]]
+    selected_ids = [selection["primary_candidate_id"], *selection["backup_candidate_ids"]]
+    contract = selection["research_question_contract"]
+
+    if normalized_question(contract["final_question"]) != normalized_question(primary["research_question"]):
+        similarity = question_similarity(
+            contract["final_question"], primary["research_question"]
+        )
+        if similarity < 0.55:
+            add(errors, "contract_question_mismatch", "the final contract question materially drifts from the selected primary question")
+        else:
+            add(
+                warnings,
+                "contract_question_rephrased",
+                f"the final contract rephrases the primary question (similarity {similarity:.2f}); review the refinement",
+            )
+
+    contract_signals = set(contract["triggering_signal_ids"])
+    if not contract_signals <= set(primary["signal_ids"]):
+        add(errors, "contract_signal_drift", "the final contract introduces triggering signals absent from the primary candidate")
+
+    eligible = [
+        item
+        for item in candidates
+        if all(item["hard_gates"].values()) and item["probe_disposition"] != "reject"
+    ]
+    top_score = max(score_total(item) for item in eligible)
+    if score_total(primary) < top_score:
+        add(
+            warnings,
+            "primary_not_top_score",
+            f"primary score {score_total(primary)} is below eligible maximum {top_score}; the rationale must explain the override",
+        )
+
+    for candidate_id in selected_ids:
+        candidate = by_id[candidate_id]
+        if not candidate["closest_prior_ids"]:
+            add(errors, "selected_without_closest_prior", f"{candidate_id} has no closest-prior reference")
+        fork = candidate["decision_fork"]
+        if normalized_question(fork["action_a"]) == normalized_question(fork["action_b"]):
+            add(errors, "nondivergent_actions", f"{candidate_id} maps answers A and B to the same action")
+
+    for index, left in enumerate(candidates):
+        for right in candidates[index + 1 :]:
+            similarity = question_similarity(left["research_question"], right["research_question"])
+            if similarity >= 0.82:
+                add(
+                    warnings,
+                    "near_duplicate_candidates",
+                    f"{left['candidate_id']} and {right['candidate_id']} have character-bigram Jaccard similarity {similarity:.2f}",
+                )
+
+    evidence_locations: dict[str, str] = {}
+    for item in session["evidence"]:
+        location = item["source_location"].strip().rstrip("/").lower()
+        if location in evidence_locations:
+            add(warnings, "duplicate_evidence_location", f"{item['evidence_id']} duplicates {evidence_locations[location]}")
+        else:
+            evidence_locations[location] = item["evidence_id"]
+        try:
+            date.fromisoformat(item["checked_date"])
+        except ValueError:
+            add(errors, "invalid_checked_date", f"{item['evidence_id']} checked_date must be ISO YYYY-MM-DD")
+
+    selected_scores = {candidate_id: score_total(by_id[candidate_id]) for candidate_id in selected_ids}
+    metrics = {
+        "candidate_count": len(candidates),
+        "evidence_count": len(session["evidence"]),
+        "eligible_candidate_count": len(eligible),
+        "selected_scores": selected_scores,
+        "top_eligible_score": top_score,
+        "unique_evidence_locations": len(evidence_locations),
+    }
+    return {"passed": not errors, "errors": errors, "warnings": warnings, "metrics": metrics}
+
+
 def next_stage_id(session: dict[str, Any]) -> str | None:
     for stage in session["stage_trace"]:
         if stage["status"] != "complete":
@@ -569,6 +682,12 @@ def main() -> int:
     validate_parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE)
     validate_parser.add_argument("--pipeline", type=Path, default=DEFAULT_PIPELINE)
     validate_parser.add_argument("--complete", action="store_true")
+    audit_parser = subparsers.add_parser("audit")
+    audit_parser.add_argument("--session", type=Path, required=True)
+    audit_parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE)
+    audit_parser.add_argument("--pipeline", type=Path, default=DEFAULT_PIPELINE)
+    audit_parser.add_argument("--strict", action="store_true")
+    audit_parser.add_argument("--output", type=Path)
     status_parser = subparsers.add_parser("status")
     status_parser.add_argument("--session", type=Path, required=True)
     status_parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE)
@@ -615,8 +734,17 @@ def main() -> int:
         session,
         profile,
         pipeline,
-        require_complete=args.complete if args.command == "validate" else False,
+        require_complete=(
+            args.complete if args.command == "validate" else args.command == "audit"
+        ),
     )
+    if args.command == "audit":
+        result = semantic_audit(session)
+        rendered = json.dumps(result, ensure_ascii=False, indent=2)
+        if args.output:
+            save_json(args.output, result)
+        print(rendered)
+        return int(not result["passed"] or (args.strict and bool(result["warnings"])))
     print(
         json.dumps(
             {

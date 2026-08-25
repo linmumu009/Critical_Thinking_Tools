@@ -41,6 +41,18 @@
 - [模式 1 API 适配提示词](prompts/mode-1-api.md)
 - [模式 2 Codex 适配提示词](prompts/mode-2-codex.md)
 
+## 无人化运行
+
+用户选定模式以后，当前 Codex 可以使用共享 [Runner](RUNNER.md) 连续执行，无需用户逐阶段确认或给候选评分：
+
+```powershell
+python modes/codex-research-question/research_question_runner.py init --mode 2 --run-id <运行名>
+python modes/codex-research-question/research_question_runner.py next --run <运行名>
+python modes/codex-research-question/research_question_runner.py status --run <运行名>
+```
+
+每阶段原子保存，失败不会推进阶段，再次调用 `next` 自动从第一个未完成阶段恢复。完成前必须同时通过结构校验、语义审计和可复现证据账本审计。Runner 只做控制与审计，不改变模式 1/2 的共享方法；模式 2 仍不会读取或调用外部 API。
+
 ## 使用方式
 
 开始一轮研究问题发现时选择：

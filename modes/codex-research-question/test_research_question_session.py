@@ -93,8 +93,8 @@ class ResearchQuestionSessionTests(unittest.TestCase):
             "backup_candidate_ids": ["Q2", "Q3"],
             "why_this_question": "It has the clearest decision fork and cheapest probe.",
             "research_question_contract": {
-                "final_question": "Does the intervention improve OOD behavior?",
-                "triggering_signal_ids": ["E01", "E02"],
+                "final_question": "Research question 1?",
+                "triggering_signal_ids": ["E01"],
                 "users_and_decision": "The research team must choose the next experiment.",
                 "decision_deadline": "Before the next training allocation.",
                 "key_concepts_and_boundaries": ["text-only models", "verifiable tasks"],
@@ -232,5 +232,35 @@ class ResearchQuestionSessionTests(unittest.TestCase):
             rqs.validate_session(legacy, self.profile, self.pipeline, True)
 
 
+    def test_semantic_audit_accepts_consistent_complete_session(self) -> None:
+        result = rqs.semantic_audit(self.complete_fixture())
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["metrics"]["selected_scores"]["Q1"], 12)
+
+    def test_semantic_audit_rejects_contract_drift(self) -> None:
+        session = self.complete_fixture()
+        session["selection"]["research_question_contract"]["final_question"] = (
+            "A different final question?"
+        )
+        result = rqs.semantic_audit(session)
+        self.assertFalse(result["passed"])
+        self.assertIn(
+            "contract_question_mismatch", {item["code"] for item in result["errors"]}
+        )
+
+    def test_semantic_audit_warns_when_primary_is_not_top_score(self) -> None:
+        session = self.complete_fixture()
+        for score in session["candidate_questions"][0]["scores"].values():
+            score["value"] = 1
+        result = rqs.semantic_audit(session)
+        self.assertTrue(result["passed"])
+        self.assertIn(
+            "primary_not_top_score", {item["code"] for item in result["warnings"]}
+        )
+
+    def test_semantic_audit_rejects_non_iso_evidence_date(self) -> None:
+        session = self.complete_fixture()
+        session["evidence"][0]["checked_date"] = "today"
 if __name__ == "__main__":
     unittest.main()
