@@ -1,0 +1,636 @@
+{
+  "schema_version": "2.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "execution": {
+    "mode_id": "2",
+    "engine": "current_codex",
+    "adapter_prompt": "prompts/mode-2-codex.md"
+  },
+  "status": "complete",
+  "created_date": "2026-08-25",
+  "profile_snapshot": {
+    "schema_version": "2.0",
+    "pipeline_id": "research_question_discovery_funnel_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 8,
+      "maximum_candidate_count": 15,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "mode_definitions": {
+      "1": {
+        "name": "外部模型 API",
+        "engine": "external_model_api",
+        "adapter_prompt": "prompts/mode-1-api.md"
+      },
+      "2": {
+        "name": "当前 Codex",
+        "engine": "current_codex",
+        "adapter_prompt": "prompts/mode-2-codex.md"
+      }
+    },
+    "process_invariants": {
+      "canonical_stages": "pipeline-stages.json",
+      "same_stage_sequence": true,
+      "same_required_tools": true,
+      "same_candidate_schema": true,
+      "same_hard_gates": true,
+      "same_scorecard": true,
+      "same_probe_rules": true,
+      "same_output_contract": true
+    },
+    "execution_constraints": {
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false,
+      "human_candidate_scoring_required": false,
+      "mode_2_external_model_api_allowed": false,
+      "candidate_mapping_audit_is_research_evidence": false
+    }
+  },
+  "input_manifest": [
+    {
+      "input_id": "I01",
+      "kind": "local_workbook",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\project\\GRPO-X1\\LLM_posttraining_research_questions_2025_2026.xlsx",
+      "role": "只读研究版图、趋势信号和重复约束；关键词映射不作为论文直接证据"
+    },
+    {
+      "input_id": "I02",
+      "kind": "user_constraint",
+      "location": "thread:01a017c2-e85c-7673-b41d-7aebe0261317",
+      "role": "研究领域、无人为候选评分、模式 2 使用当前 Codex 且不得调用外部模型 API"
+    },
+    {
+      "input_id": "I03",
+      "kind": "shared_pipeline",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\pipeline-stages.json",
+      "role": "冻结阶段 0–8、思考工具顺序、硬门槛、评分卡、廉价试探和问题契约"
+    }
+  ],
+  "stage_trace": [
+    {
+      "stage_id": "0_goal",
+      "status": "complete",
+      "output_summary": "冻结训练系统如何处理未完成 agent rollout 的决策、一周 cheap probe、1B–3B 低成本边界和停止条件。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-0冻结决策目标"],
+      "tool_trace": []
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "status": "complete",
+      "output_summary": "只读核对 5608 条文献与 42 个本地空白，并用 11 项一手实现/论文信号区分 partial-group 软件错分、长尾回收、内容依赖终止、loss reduction 和结果依赖删失。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-1现实信号", "E01-E12"],
+      "tool_trace": ["primary-source-evidence"]
+    },
+    {
+      "stage_id": "2_reframe",
+      "status": "complete",
+      "output_summary": "5W1H 将对象限定为 completion status 到 group baseline/std 的路径；六个苏格拉底问题分离 deadline utility、eventual success、软件错分、归约偏差和非随机选择。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-25w1h-与苏格拉底重构"],
+      "tool_trace": ["six-honest-serving-men", "socratic-questioning"]
+    },
+    {
+      "stage_id": "3_expand",
+      "status": "complete",
+      "output_summary": "QFT 先无评价产生 12 个问题；STORM 从统计、优化、系统、agent、评测与反方审稿六个视角补足目标定义和替代解释。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-3qft-扩展与-storm"],
+      "tool_trace": ["question-formulation-technique", "storm-costorm"]
+    },
+    {
+      "stage_id": "4_cluster",
+      "status": "complete",
+      "output_summary": "按删失机制、更新一致性、reward/advantage 估计、数据构成、长程分组和直接碰撞六簇去重，形成 10 个正式候选。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-4机制与证据聚类", "C01-C10"],
+      "tool_trace": ["mechanism-evidence-clustering"]
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "status": "complete",
+      "output_summary": "每个候选写明 A/B/未知行动；主问题完成双向钢人，并用 ACH 比较结果依赖删失、纯软件错分、目标定义、归约偏差和有限样本波动。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-5双向钢人与竞争假设"],
+      "tool_trace": ["bidirectional-steelman", "analysis-of-competing-hypotheses"]
+    },
+    {
+      "stage_id": "6_rank",
+      "status": "complete",
+      "output_summary": "10 个候选通过五项硬门槛检查后按六维 0–2 评分；C01 得 12 分，C02 与 C03 各得 11 分。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-6硬门槛与排序"],
+      "tool_trace": ["question-discovery-scorecard"]
+    },
+    {
+      "stage_id": "7_probe",
+      "status": "complete",
+      "output_summary": "前三名完成机制级碰撞与反向检索；C01 未见直接同构工作而保留，C02/C03 因相邻工作较多缩小新颖性主张。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-7前三名的廉价现实试探"],
+      "tool_trace": ["primary-source-collision-search", "consider-the-opposite"]
+    },
+    {
+      "stage_id": "8_contract",
+      "status": "complete",
+      "output_summary": "选定 C01，冻结 estimand 边界、完整 rollout oracle、四类删失机制、A/B/未知行动、短程训练门槛与停止反转条件；C02/C03 为备选。",
+      "artifact_refs": ["2026-08-25-shared-funnel-mode2-run-02.md#stage-8研究问题契约"],
+      "tool_trace": ["research-question-contract"]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_title": "LLM_posttraining_research_questions_2025_2026.xlsx",
+      "source_type": "local_landscape_workbook",
+      "source_location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\project\\GRPO-X1\\LLM_posttraining_research_questions_2025_2026.xlsx",
+      "published_date": "本地快照（未正式发表）",
+      "checked_date": "2026-08-25",
+      "observation": "工作簿含 5608 条完整记录、940 条核心问题、240 条 2026 arXiv 与 42 条综合空白；G35、G03、G34、G06、G38 与本轮最相关。",
+      "interpretation": "新问题需避开有效 batch 分解、普通 batch 冲突、复现和长程信用的换名重提，并把它们作为竞争解释。",
+      "unknown": "该工作簿是高召回版图而非系统综述，自动关键词关联不能证明论文直接提出同一问题。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_title": "Partial rollout groups silently corrupt GRPO group normalization",
+      "source_type": "primary_framework_issue",
+      "source_location": "https://github.com/areal-project/AReaL/issues/1419",
+      "published_date": "2026-06-16",
+      "checked_date": "2026-08-25",
+      "observation": "AReaL 在部分 rollout 返回 None 后保留幸存者；固定 group-size 步长会跨 prompt 混组或让尾组 advantage 爆炸，并已增加实际 group_sizes 和可选完整组策略。",
+      "interpretation": "partial groups 在真实训练框架中存在；首先必须排除身份重建 bug，随后才能研究幸存者选择本身。",
+      "unknown": "正确分组后的 survivor-only normalization 是否仍偏离完整 rollout 目标未被该 issue 回答。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_title": "RFC: Rollout sources — a unified seam for environment & agent RL",
+      "source_type": "primary_framework_rfc",
+      "source_location": "https://github.com/huggingface/trl/issues/5974",
+      "published_date": "2026-06",
+      "checked_date": "2026-08-25",
+      "observation": "TRL RFC 将 rollout 显式标记为 ok、timeout、context_overflow 或 error，并保留原始 group 结构。",
+      "interpretation": "agent RL 已需要把完成状态建模为训练数据，而不是只返回成功 response。",
+      "unknown": "不同状态应被记失败、删失、续跑还是加权，RFC 未给出 GRPO 估计结论。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_title": "APRIL: Active Partial Rollouts in Reinforcement Learning to tame long-tail generation",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2509.18521",
+      "published_date": "2025-09-23",
+      "checked_date": "2026-08-25",
+      "observation": "APRIL 过量发起 rollout、在达到目标数量时终止，并把未完成轨迹留到后续继续，避免丢弃。",
+      "interpretation": "长尾调度会选择本轮完成者；续跑/回收是可用的非加权对照干预。",
+      "unknown": "其收益主要归因吞吐，未把不回收时的选择偏差与完整 rollout oracle 分解。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_title": "Selective Rollout: Mid-Trajectory Termination for Multi-Sample Agent RL",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2605.05802",
+      "published_date": "2026-05-07",
+      "checked_date": "2026-08-25",
+      "observation": "该方法根据组内部分轨迹的编辑距离预测零方差组并提前停止，在 ALFWorld 上节省时间且改变梯度批稀释。",
+      "interpretation": "终止决策可直接依赖轨迹内容，因此 completion 不是天然随机。",
+      "unknown": "预测器错误若与潜在终局 reward 相关，会产生多大目标偏差未被隔离。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_title": "Rollout Pass-Rate Control: Steering Binary-Reward RL Toward Its Most Informative Regime",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2605.05112",
+      "published_date": "2026-05-06",
+      "checked_date": "2026-08-25",
+      "observation": "论文从 reward entropy、group survival、RLOO advantage energy 和成败对数量说明中间 pass-rate 区域最有训练信息。",
+      "interpretation": "哪些 group 和 trajectory 留下会改变有效训练信号，而不仅影响吞吐。",
+      "unknown": "系统 timeout/error 与算法性 group filtering 叠加后的偏差没有研究。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_title": "TRL GRPO Trainer documentation",
+      "source_type": "primary_framework_documentation",
+      "source_location": "https://huggingface.co/docs/trl/main/en/grpo_trainer",
+      "published_date": "持续更新文档",
+      "checked_date": "2026-08-25",
+      "observation": "TRL 暴露 grpo、bnpo、dr_grpo、dapo 等 loss_type，它们使用不同 token、response、batch 或固定长度归约。",
+      "interpretation": "loss reduction unit 是算法语义，删失效应必须在固定 reducer 后判定。",
+      "unknown": "各语义在 microbatch partition 和 partial group 下是否具有一致更新未系统验证。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_title": "SFT-then-RL Outperforms Mixed-Policy Methods for LLM Reasoning",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2604.23747",
+      "published_date": "2026-04-26",
+      "checked_date": "2026-08-25",
+      "observation": "论文发现 DeepSpeed CPU-offload 会静默丢中间 microbatches，OpenRLHF 还存在 minibatch loss 聚合错误；修复后公开方法比较被反转。",
+      "interpretation": "实现层丢样本与归约错误足以改变科研结论，C02 具有现实杠杆但与本工作高度相邻。",
+      "unknown": "论文不聚焦 GRPO 组统计，也没有分析 outcome-dependent completion。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_title": "Infinite Sampling: Efficient and Stable Grouped RL Training for Large Language Models",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2506.22950",
+      "published_date": "2025-06-28",
+      "checked_date": "2026-08-25",
+      "observation": "Infinite Sampling 将完整 group 分解为微采样轮次以降低显存并保持全长 completions。",
+      "interpretation": "执行分批与完整组统计可以分离，是 C02 的直接相邻基线。",
+      "unknown": "工作主要优化 rollout decoding，不是跨训练框架的 update-partition conformance 研究。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_title": "ΔL Normalization: Rethink Loss Aggregation in RLVR",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2509.07558",
+      "published_date": "2025-09-09",
+      "checked_date": "2026-08-25",
+      "observation": "论文把变长 response 的 policy-loss 聚合写成最小方差无偏估计，并指出多个既有 normalization 有偏或高方差。",
+      "interpretation": "长度与归约是重要竞争解释，C09 已有直接覆盖。",
+      "unknown": "它不处理轨迹未完成造成的非随机选择。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_title": "Single-stream Policy Optimization",
+      "source_type": "primary_conference_submission",
+      "source_location": "https://openreview.net/forum?id=DxSn373nRU",
+      "published_date": "2026",
+      "checked_date": "2026-08-25",
+      "observation": "SPO 将 GRPO 小组 baseline 和 std 识别为高方差来源，改用历史 baseline 与全局标准化。",
+      "interpretation": "C03 的新贡献不能只是去 std 或 global normalization，必须显式使用 verifier-noise 分解并对 oracle gradient 验证。",
+      "unknown": "全局标准化能否修复非随机删失没有结论。"
+    },
+    {
+      "evidence_id": "E12",
+      "source_title": "Hierarchy-of-Groups Policy Optimization for Long-Horizon Agentic Tasks",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://openreview.net/forum?id=T8Dev99qnz",
+      "published_date": "2026",
+      "checked_date": "2026-08-25",
+      "observation": "HGPO 指出长程 agent 的 step-wise group 在历史上下文不一致时会产生有偏 advantage，并构造层级分组。",
+      "interpretation": "C07 的上下文分组已有直接覆盖；同时支持 agentic GRPO 的可比组需要显式定义。",
+      "unknown": "论文没有处理 timeout/error 造成的 outcome-dependent survivor set。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在长轨迹 agentic GRPO 中，当 rollout 因超时、工具错误或提前终止而不能完整返回，且完成概率依赖轨迹行为与潜在成败时，只在幸存轨迹上计算组内基线和标准化会产生多大的结果依赖删失偏差；续跑/回收或删失感知估计能否恢复完整 rollout oracle 的更新方向？",
+      "signal_ids": ["E02", "E03", "E04", "E05", "E06", "E12"],
+      "closest_prior_ids": ["E02", "E04", "E05"],
+      "question_family": "agentic GRPO 的未完成轨迹与统计目标",
+      "cluster_id": "A_outcome_dependent_censoring",
+      "decision_fork": {
+        "decision": "训练系统应把 timeout/error 当普通失败或丢弃，还是保留完成状态并启用续跑或删失感知更新。",
+        "answer_a": "正确分组后，非随机未完成仍稳定改变 advantage 和更新方向，修正更接近 full oracle。",
+        "action_a": "保留所有 attempt 的状态与原始组身份，优先 resume/recycle，并评估 IPCW/AIPW 或界限估计。",
+        "answer_b": "差异只来自软件错分、目标定义或有限样本，简单 zero/drop-group 已足够。",
+        "action_b": "完成 conformance check 后使用简单语义，不引入高方差修正。",
+        "uncertain_action": "仅在高删失率、特定工具或长正确路径上启用修正并缩小论文主张。",
+        "reversal_condition": "固定身份与 reducer 后，现实删失机制下 survivor-only 与 full oracle 的梯度和短程学习无稳定差异。"
+      },
+      "evidence_path": "在完整 G-way rollout 日志上离线模拟随机、长度、reward 与 tool-state 依赖删失，比较 full、drop-one、drop-group、zero、resume、IPCW/AIPW 的 gradient cosine、符号翻转和短程训练。",
+      "cheap_probe": {
+        "input": "一批最终都完成且带 step latency、tool status、root prompt id 与终局 reward 的 rollouts。",
+        "procedure": "用虚拟 deadline 重放四类删失，固定 policy/optimizer/reducer，先做单步 oracle-gradient 比较，再决定是否训练。",
+        "possible_outcomes": ["正确分组后仍有稳定删失偏差", "差异只来自软件错分或归约", "deadline 与 eventual 两个目标给出不同正确答案"],
+        "decision_rules": {
+          "keep": "至少两类非随机删失、三个种子上稳定偏离 full oracle，且修正降低误差。",
+          "narrow": "效应只在某一状态、删失率或 estimand 下存在。",
+          "rewrite": "偏差完全由 group identity、length reduction 或 std 噪声解释。",
+          "reject": "现实删失率下梯度和短程学习无稳定差异，或近期工作已直接同构覆盖。"
+        }
+      },
+      "probe_disposition": "keep",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "直接决定 agent RL 的状态记录、调度和更新语义。"},
+        "discriminating_power": {"value": 2, "reason": "完整 oracle 与多类可控删失能区分五个竞争假设。"},
+        "reality_grounding": {"value": 2, "reason": "partial groups、显式状态、长尾回收与内容依赖终止共同支持。"},
+        "answerability": {"value": 2, "reason": "首轮可在已完成日志上离线完成，无需大规模训练。"},
+        "novelty_nonredundancy": {"value": 2, "reason": "未见直接串联非随机完成、幸存者组统计、full oracle 与修正的工作。"},
+        "cost_benefit": {"value": 2, "reason": "cheap probe 极低成本，阳性会影响所有长轨迹 grouped RL。"}
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "固定 rollout、旧策略、optimizer state 与总 token 时，仅改变同一次 GRPO update 的 microbatch 和 gradient-accumulation partition，主流实现是否产生不同参数更新；明确 reduction-unit 语义与 conformance test 能否恢复分区不变性？",
+      "signal_ids": ["E07", "E08", "E09", "E10"],
+      "closest_prior_ids": ["E08", "E09", "E10"],
+      "question_family": "GRPO 实现语义与可复现性",
+      "cluster_id": "B_update_partition_invariance",
+      "decision_fork": {
+        "decision": "microbatch/accumulation 是否仅为系统配置，还是必须作为算法超参数报告。",
+        "answer_a": "同一命名 objective 在不同 partition 下产生实质不同更新。",
+        "action_a": "发布形式化不变性条件、跨框架测试套件和 invariant reducer。",
+        "answer_b": "主流正确配置均数值等价，差异仅是已知 bug。",
+        "action_b": "贡献收缩为回归测试，不单独立项为算法论文。",
+        "uncertain_action": "只针对不满足条件的 loss_type 或框架维护 conformance suite。",
+        "reversal_condition": "所有目标在合法 partition 下 parameter delta 仅有浮点误差。"
+      },
+      "evidence_path": "冻结同一 batch，在参考实现、TRL、verl 与 OpenRLHF 中枚举 partition，比较 loss、gradient、clip fraction 与 parameter delta。",
+      "cheap_probe": {
+        "input": "一个可完整驻留的小模型 GRPO batch 及各框架同义配置。",
+        "procedure": "用 full-batch 参考梯度对照多种 microbatch/accumulation 分区，逐层定位 reduction、clip、normalizer timing。",
+        "possible_outcomes": ["跨框架存在未声明目标变化", "仅复现已知 bug", "全部数值等价"],
+        "decision_rules": {
+          "keep": "多个框架或 loss_type 存在非浮点级差异且会改变短程结论。",
+          "narrow": "差异集中于一个 reducer 或框架。",
+          "rewrite": "仅作为 C01 的实现排错层。",
+          "reject": "所有合法配置通过分区不变性测试。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "会改变框架配置、报告规范和基线可信度。"},
+        "discriminating_power": {"value": 2, "reason": "parameter delta 与 full-batch oracle 是直接判据。"},
+        "reality_grounding": {"value": 2, "reason": "近期微批丢失和聚合 bug 已反转公开结论。"},
+        "answerability": {"value": 2, "reason": "单步小模型测试即可发现或否定差异。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "与 E08-E10 很相邻，必须提升为跨框架形式化契约。"},
+        "cost_benefit": {"value": 2, "reason": "成本低且可能直接提升大量实验可信度。"}
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "当 verifier noise 占据 group reward variance 的主要部分时，利用重复评分估计并扣除测量噪声的 advantage scaler，能否比标准组内 std、仅中心化和全局标准化更接近潜在真实 reward 的 policy gradient？",
+      "signal_ids": ["E06", "E11", "E12"],
+      "closest_prior_ids": ["E11", "E12"],
+      "question_family": "噪声验证器与 advantage scaling",
+      "cluster_id": "C_noise_decomposed_normalization",
+      "decision_fork": {
+        "decision": "noisy verifier 下应保留、移除还是去噪 group std。",
+        "answer_a": "noise-debiased scaler 在跨噪声率下更接近 oracle gradient。",
+        "action_a": "按 estimated signal-to-noise ratio 自适应选择中心化或去噪缩放。",
+        "answer_b": "重复评分成本和估计误差抵消收益，no-std/global 已足够。",
+        "action_b": "采用简单规则并把预算投入提高 verifier precision。",
+        "uncertain_action": "只在高重复一致性和中等 group size 时启用。",
+        "reversal_condition": "匹配 verifier 调用预算后不优于 no-std/global normalization。"
+      },
+      "evidence_path": "在有可执行真值的数据上重复评分分解测量噪声和 response signal，并比较各 scaler 对 oracle-gradient 与短程性能的误差。",
+      "cheap_probe": {
+        "input": "固定 responses、可执行真值、可重复调用的 noisy verifier。",
+        "procedure": "重复评分估计方差分量，在固定 rollout 上比较四种 scaler 的 oracle-gradient error。",
+        "possible_outcomes": ["去噪 scaler 稳定占优", "仅在窄 SNR 区间有效", "no-std 或 global 已完全覆盖"],
+        "decision_rules": {
+          "keep": "在多个噪声率和任务上匹配调用预算后仍降低误差。",
+          "narrow": "只在可重复评分或特定噪声结构成立。",
+          "rewrite": "改为 verifier precision 配置问题。",
+          "reject": "现有简单 normalization 在所有设置下不劣。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "直接选择 noisy-reward GRPO 的 advantage 规则。"},
+        "discriminating_power": {"value": 2, "reason": "有真值时可直接测 oracle-gradient error。"},
+        "reality_grounding": {"value": 2, "reason": "GRPO std 方差和 imperfect verifier 均有直接信号。"},
+        "answerability": {"value": 2, "reason": "固定 rollout 和重复评分即可先测试。"},
+        "novelty_nonredundancy": {"value": 1, "reason": "与去 std、global normalization 和 noisy-verifier correction 相邻。"},
+        "cost_benefit": {"value": 2, "reason": "首轮便宜，可能给出可操作的 SNR 路由规则。"}
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "对 agent rollout 的 timeout、context overflow、tool error 与主动 early-stop，分别记 0 分、丢单条、丢整组或续跑会优化哪一种业务效用，能否建立状态到 estimand 的可审计映射？",
+      "signal_ids": ["E03", "E04", "E05"],
+      "closest_prior_ids": ["E03", "E04"],
+      "question_family": "失败状态的目标语义",
+      "cluster_id": "A_outcome_dependent_censoring",
+      "decision_fork": {
+        "decision": "不同未完成状态是否使用统一 reward 规则。",
+        "answer_a": "状态含义不同，统一 zero/drop 系统性优化错误目标。",
+        "action_a": "按状态和目标路由，并同时报告 deadline/eventual utility。",
+        "answer_b": "统一 timeout=0 足以表达产品目标。",
+        "action_b": "简化状态处理，只保证组身份正确。",
+        "uncertain_action": "仅对基础设施 error 续跑，对行为导致 timeout 记失败。",
+        "reversal_condition": "不同语义在目标匹配后没有稳定策略差异。"
+      },
+      "evidence_path": "同一完整日志重放多种状态语义，比较目标函数、梯度和两类效用。",
+      "cheap_probe": {
+        "input": "带状态原因和终局结果的完整日志。",
+        "procedure": "建立状态混淆表并离线比较四种处理。",
+        "possible_outcomes": ["需要状态路由", "统一语义足够", "只有基础设施错误例外"],
+        "decision_rules": {"keep": "状态路由稳定改变目标一致性。", "narrow": "只保留基础设施错误。", "rewrite": "并入 C01 的边界。", "reject": "所有状态都等价于真实失败。"}
+      },
+      "probe_disposition": "rewrite",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响 rollout 数据契约。"}, "discriminating_power": {"value": 2, "reason": "双 estimand 对照清楚。"}, "reality_grounding": {"value": 2, "reason": "框架已显式区分状态。"}, "answerability": {"value": 2, "reason": "可离线重放。"}, "novelty_nonredundancy": {"value": 1, "reason": "是 C01 的目标边界。"}, "cost_benefit": {"value": 1, "reason": "单独论文范围偏窄。"}
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "固定 rollout 数与 token 预算时，prompt batch 的难度和长度构成是否通过 group-normalized gradient conflict 改变 GRPO 的学习方向，分层组批能否提高 OOD 泛化而非只降低方差？",
+      "signal_ids": ["E01", "E06", "E07"],
+      "closest_prior_ids": ["E01", "E06"],
+      "question_family": "prompt batch 构成与梯度冲突",
+      "cluster_id": "D_batch_composition",
+      "decision_fork": {
+        "decision": "GRPO prompt 是否随机组批或按难度/长度分层。",
+        "answer_a": "混合组批导致稳定梯度冲突，分层提高有效学习。",
+        "action_a": "采用冲突感知或分层 batch composer。",
+        "answer_b": "构成效应被大 batch 平均，随机组批最稳健。",
+        "action_b": "保持随机组批，优化其他瓶颈。",
+        "uncertain_action": "仅在极端长度或难度混合时分层。",
+        "reversal_condition": "固定总样本后梯度冲突与泛化不随构成变化。"
+      },
+      "evidence_path": "离线重排同一 rollouts 的 prompt batch，测 group-level gradient cosine 与短程 OOD。",
+      "cheap_probe": {
+        "input": "按难度和长度标注的固定 rollouts。",
+        "procedure": "保持每 prompt group 不变，只重排 global batch。",
+        "possible_outcomes": ["稳定冲突", "仅方差变化", "没有影响"],
+        "decision_rules": {"keep": "冲突稳定预测短程泛化。", "narrow": "只在极端混合成立。", "rewrite": "改为 reducer 分析。", "reject": "重排无影响。"}
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响 batch composer。"}, "discriminating_power": {"value": 1, "reason": "机制与长度归约易混杂。"}, "reality_grounding": {"value": 2, "reason": "工作簿与 pass-rate 信号支持。"}, "answerability": {"value": 2, "reason": "可用固定 rollout 重排。"}, "novelty_nonredundancy": {"value": 1, "reason": "与 G03/G35 相邻。"}, "cost_benefit": {"value": 1, "reason": "需要短程训练确认。"}
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "在总 rollout 预算固定时，按 prompt 的完成率、reward variance 与有效幸存数自适应分配 group size，是否比固定 G 更稳定且不引入选择偏差？",
+      "signal_ids": ["E05", "E06"],
+      "closest_prior_ids": ["E05", "E06"],
+      "question_family": "有效 group size 与 rollout 分配",
+      "cluster_id": "C_effective_group_size",
+      "decision_fork": {
+        "decision": "每 prompt 使用固定还是自适应 group size。",
+        "answer_a": "按有效信息自适应分配更好。",
+        "action_a": "部署在线 allocator 并校正选择概率。",
+        "answer_b": "自适应引入偏差或收益不足。",
+        "action_b": "保留固定 G。",
+        "uncertain_action": "只对零方差边界调整。",
+        "reversal_condition": "固定预算下不优于近期 variance/pass-rate 方法。"
+      },
+      "evidence_path": "比较固定 G、pass-rate、variance 与 censor-aware allocation。",
+      "cheap_probe": {
+        "input": "按 prompt 的历史 rollout 统计。",
+        "procedure": "离线模拟预算分配与梯度信息量。",
+        "possible_outcomes": ["新规则占优", "现有规则足够", "选择偏差恶化"],
+        "decision_rules": {"keep": "匹配预算后稳定占优。", "narrow": "只在高删失任务成立。", "rewrite": "并入 C01。", "reject": "近期方法完全覆盖。"}
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 1, "reason": "影响 rollout allocator。"}, "discriminating_power": {"value": 2, "reason": "固定预算比较明确。"}, "reality_grounding": {"value": 2, "reason": "近期直接研究 pass-rate 和提前终止。"}, "answerability": {"value": 2, "reason": "可先离线模拟。"}, "novelty_nonredundancy": {"value": 0, "reason": "与近期自适应 rollout 工作过近。"}, "cost_benefit": {"value": 1, "reason": "需要较多在线验证。"}
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "多轮 agent 轨迹产生不同历史上下文的 step 样本时，按 root prompt、trajectory 或 context-equivalence 分组，哪一种能得到低偏差且可扩展的 group-relative advantage？",
+      "signal_ids": ["E02", "E12"],
+      "closest_prior_ids": ["E12"],
+      "question_family": "长程 agent 的可比组定义",
+      "cluster_id": "E_long_horizon_group_identity",
+      "decision_fork": {
+        "decision": "多轮 step 样本采用哪种 group key。",
+        "answer_a": "上下文等价分组显著降低偏差。",
+        "action_a": "采用层级或 context-aware grouping。",
+        "answer_b": "root prompt 分组已足够。",
+        "action_b": "保持简单轨迹级更新。",
+        "uncertain_action": "只对上下文分叉大的任务使用层级组。",
+        "reversal_condition": "HGPO 等近期方法已完整覆盖或新分组无额外收益。"
+      },
+      "evidence_path": "重放多轮轨迹并比较各 group key 的 advantage bias。",
+      "cheap_probe": {
+        "input": "带完整历史上下文的多轮轨迹。",
+        "procedure": "复现 HGPO 后只测试未覆盖的 context-equivalence 边界。",
+        "possible_outcomes": ["存在未覆盖边界", "HGPO 已覆盖", "简单分组足够"],
+        "decision_rules": {"keep": "新边界稳定且 HGPO 未覆盖。", "narrow": "只保留异步/工具分叉。", "rewrite": "并入 C01 的 group identity 控制。", "reject": "直接重复 HGPO。"}
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响多轮训练单位。"}, "discriminating_power": {"value": 1, "reason": "真实 oracle 难定义。"}, "reality_grounding": {"value": 2, "reason": "HGPO 直接显示上下文不一致偏差。"}, "answerability": {"value": 1, "reason": "需要多轮环境。"}, "novelty_nonredundancy": {"value": 0, "reason": "核心与 HGPO 直接重叠。"}, "cost_benefit": {"value": 1, "reason": "边际空间有限。"}
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "能否依据中途轨迹相似度提前终止预计零方差的 GRPO group，在保持成功率的同时减少长轨迹计算？",
+      "signal_ids": ["E05", "E06"],
+      "closest_prior_ids": ["E05"],
+      "question_family": "零方差组提前终止",
+      "cluster_id": "F_direct_collision",
+      "decision_fork": {
+        "decision": "是否部署中途终止。", "answer_a": "可节省计算且不损害效果。", "action_a": "部署 similarity gate。", "answer_b": "预测错误损害学习。", "action_b": "完整生成。", "uncertain_action": "提高阈值并仅用于明显收敛组。", "reversal_condition": "近期工作已直接回答。"
+      },
+      "evidence_path": "复现 E05。",
+      "cheap_probe": {
+        "input": "E05 全文。", "procedure": "比较问题、干预和指标。", "possible_outcomes": ["直接重复", "存在边界"],
+        "decision_rules": {"keep": "存在新机制。", "narrow": "只保留删失偏差。", "rewrite": "改为 C01。", "reject": "直接覆盖。"}
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 1, "reason": "影响终止 gate。"}, "discriminating_power": {"value": 1, "reason": "可直接测时效。"}, "reality_grounding": {"value": 2, "reason": "有直接论文。"}, "answerability": {"value": 2, "reason": "代码和环境可复现。"}, "novelty_nonredundancy": {"value": 0, "reason": "E05 直接覆盖。"}, "cost_benefit": {"value": 1, "reason": "重复价值低。"}
+      }
+    },
+    {
+      "candidate_id": "C09",
+      "research_question": "变长 response 下应按 token、sequence 还是长度自适应权重聚合 RLVR loss，才能得到最小方差无偏更新？",
+      "signal_ids": ["E07", "E10"],
+      "closest_prior_ids": ["E10"],
+      "question_family": "变长输出 loss 聚合",
+      "cluster_id": "F_direct_collision",
+      "decision_fork": {
+        "decision": "选择哪种 loss normalization。", "answer_a": "长度自适应无偏估计更好。", "action_a": "采用 ΔL。", "answer_b": "简单 reducer 足够。", "action_b": "保留现有实现。", "uncertain_action": "按长度分布路由。", "reversal_condition": "E10 已完整回答。"
+      },
+      "evidence_path": "对照 E10 的理论、实验和代码。",
+      "cheap_probe": {
+        "input": "E10 全文。", "procedure": "逐项核对 estimand 与干预。", "possible_outcomes": ["直接覆盖", "只剩删失边界"],
+        "decision_rules": {"keep": "发现未覆盖机制。", "narrow": "只研究未完成长度。", "rewrite": "并入 C01/C02。", "reject": "直接重复。"}
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响 loss reducer。"}, "discriminating_power": {"value": 2, "reason": "理论和 oracle 可比较。"}, "reality_grounding": {"value": 2, "reason": "E07/E10 直接支持。"}, "answerability": {"value": 2, "reason": "实现成本低。"}, "novelty_nonredundancy": {"value": 0, "reason": "E10 已直接覆盖。"}, "cost_benefit": {"value": 1, "reason": "不值得重复立项。"}
+      }
+    },
+    {
+      "candidate_id": "C10",
+      "research_question": "同一 GRPO 论文结论在 TRL、verl、OpenRLHF 等框架中复现时，有多少差异可由未声明的 group identity、loss reduction 和 microbatch 语义解释？",
+      "signal_ids": ["E02", "E07", "E08", "E09"],
+      "closest_prior_ids": ["E08"],
+      "question_family": "跨框架科研结论审计",
+      "cluster_id": "B_update_partition_invariance",
+      "decision_fork": {
+        "decision": "论文是否必须报告框架语义 fingerprint。", "answer_a": "语义差异反转结论。", "action_a": "发布 fingerprint 与 conformance 标准。", "answer_b": "正确配置后框架一致。", "action_b": "维持普通复现规范。", "uncertain_action": "只审计高风险 loss_type。", "reversal_condition": "差异全由已知 bug 解释。"
+      },
+      "evidence_path": "选择一个公开 recipe 跨框架做 one-step fingerprint 与短程复现。",
+      "cheap_probe": {
+        "input": "同一模型、rollout 和 objective 配置。", "procedure": "先做 C02 单步测试。", "possible_outcomes": ["结论反转", "仅已知 bug", "框架一致"],
+        "decision_rules": {"keep": "多框架存在未声明语义差异。", "narrow": "只保留一个组件。", "rewrite": "并入 C02。", "reject": "一致或完全已知。"}
+      },
+      "probe_disposition": "rewrite",
+      "hard_gates": {"source_grounded": true, "action_divergent": true, "neutral": true, "answerable": true, "ethical": true},
+      "scores": {
+        "decision_leverage": {"value": 2, "reason": "影响论文复现规范。"}, "discriminating_power": {"value": 2, "reason": "同一 batch 可直接比。"}, "reality_grounding": {"value": 2, "reason": "E08 已示范结论反转。"}, "answerability": {"value": 1, "reason": "跨框架配置成本较高。"}, "novelty_nonredundancy": {"value": 0, "reason": "与 E08 和 C02 高度重叠。"}, "cost_benefit": {"value": 2, "reason": "若发现差异影响面大。"}
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": ["C02", "C03"],
+    "why_this_question": "C01 六维满分且 cheap probe 最便宜。它把工作簿中的有效 batch/长轨迹问题推进到一个未被直接覆盖的统计机制，并明确区分软件错分、目标定义、长度归约和有限样本波动；A/B/未知都会改变 agentic GRPO 的状态记录、调度与更新策略。C02/C03 虽有高杠杆，但近期直接相邻工作更多，新颖空间更窄。",
+    "research_question_contract": {
+      "final_question": "在长轨迹 agentic GRPO 中，当 rollout 因超时、工具错误或调度器提前终止而不能完整返回，且完成概率依赖轨迹长度、行为和潜在成败时，只在幸存轨迹上计算组内基线与标准化会产生多大的结果依赖删失偏差？在固定生成预算下，显式记录 rollout 状态并采用续跑/回收或删失感知估计，能否恢复完整 rollout oracle 的更新方向并改善分布外成功率？",
+      "triggering_signal_ids": ["E02", "E03", "E04", "E05", "E06", "E12"],
+      "users_and_decision": "agentic RL、GRPO/RLVR 研究者与训练框架维护者决定未完成轨迹的数据契约、调度策略和 policy-update estimator。",
+      "decision_deadline": "一周内完成离线 oracle-gradient cheap probe；只有信号稳定才启动 50–100 step 短程训练。",
+      "key_concepts_and_boundaries": [
+        "删失仅指存在潜在终局结果但当前预算内未观察；deadline 内成功和 eventual success 是两个不同 estimand。",
+        "先保证原始 group identity 与 loss reduction 正确，不能把跨组错分当作删失机制。",
+        "完整 oracle 来自可控环境让所有 attempt 跑完，或在完整数据上离线模拟删失，不用 LLM judge 猜终局。",
+        "首轮固定 rollout、old policy、reward、optimizer 和 reducer；先测 estimator，再训练。",
+        "报告 deadline/eventual success、梯度误差、状态分布、token/秒与 OOD，而非只看 proxy reward。"
+      ],
+      "competing_answers": {
+        "a": "正确分组后，非随机删失仍系统改变 advantage 和更新方向；续跑/回收或删失感知方案更接近 full oracle。",
+        "b": "差异只来自软件错分、归约或目标定义；在目标一致时简单 timeout=0/drop-group 已足够。",
+        "unknown": "效应只在高删失率、特定工具状态、长正确路径或某种 group size 下出现。"
+      },
+      "action_mapping": {
+        "if_a": "框架保留所有 attempt 状态与原始组身份；优先 resume/recycle，并在可识别条件下评估 IPCW/AIPW 或界限估计。",
+        "if_b": "完成 group/reduction conformance 后采用简单语义，不引入高方差修正。",
+        "if_uncertain": "将结论和启用规则缩小到观察到的删失率、状态、任务与 estimand 边界。"
+      },
+      "discriminating_evidence": "在同一完整 G-way rollouts 上施加 MCAR、长度依赖、reward 依赖、tool-state 依赖和真实 deadline 五种机制，比较 full、drop-one、drop-group、zero、resume、IPCW/AIPW 的 gradient cosine、相对 L2 error、advantage-sign flip、prompt influence 及短程 OOD；同时报告 deadline 与 eventual 两种目标。",
+      "reversal_result": "若身份和 reducer 修复后，现实删失率下 survivor-only 与 full oracle 的梯度近似一致、符号翻转无系统性且短程训练跨种子无稳定差异，或近期直接工作已覆盖同一机制、oracle 与干预，则放弃主张。",
+      "minimum_probe": "生成或抽取约 500 prompts×8 条最终完整 rollouts，保存 step latency、tool status、长度、reward 和 root prompt id；预注册 5%、15%、30% 删失率与四类机制，先只做离线单步比较，至少两类非随机机制和三个种子成立后才跑 50–100 step。",
+      "cost_risk_ethics": "首轮主要是日志与单步梯度计算，可在单机小模型完成；IPCW 可能因低 completion propensity 高方差，必须截断权重并与 resume/recycle 比较；不使用个人敏感数据，不把 LLM judge 当终局真值。",
+      "stopping_condition": "cheap probe 无稳定偏差即停止；效应完全由长度/std 解释则转向 C02/C03；propensity 不可识别则不强推加权估计；短程训练方向跨种子不一致则不扩大模型。",
+      "residual_unknowns": [
+        "真实 agent 日志中的 completion propensity 能否用删失前信息充分估计。",
+        "慢而正确与循环失败在不同环境中的占比和相关方向。",
+        "IPCW/AIPW 的方差是否抵消偏差收益，resume/recycle 是否更实用。",
+        "离线 full-rollout oracle 的结果能否迁移到异步在线训练。",
+        "deadline utility 与 eventual success 的业务权重应如何由部署场景确定。"
+      ]
+    }
+  },
+  "decision_log": [
+    "2026-08-25：用户选择模式 2；使用当前 Codex，未读取 API credentials，未调用外部模型 API。",
+    "2026-08-25：完整执行共享阶段 0–8；没有要求用户为候选评分。",
+    "2026-08-25：用电子表格工具只读核对本地工作簿；确认 5608 条完整记录、940 条核心问题、240 条 2026 arXiv 和 42 个空白，并将自动关键词映射仅作重复约束。",
+    "2026-08-25：排除此前正式 v2 主问题的验证器跨角色复用，以及两个历史主问题的反馈预算分配和严格验证导致梯度多样性下降。",
+    "2026-08-25：QFT 先生成 12 个问法，STORM 使用统计、优化、系统、agent、评测和反方审稿六种视角。",
+    "2026-08-25：双向钢人后保留 H1 结果依赖删失、H2 软件错分、H3 目标定义、H4 归约偏差、H5 有限样本五个竞争假设。",
+    "2026-08-25：C08 因 Selective Rollout 直接覆盖而淘汰；C09 因 ΔL 直接覆盖而淘汰；C04 并入 C01，C10 并入 C02。",
+    "2026-08-25：最终选择 C01，C02/C03 为备选；结论限定为值得先做离线 oracle-gradient cheap probe，不声称机制已证实。"
+  ]
+}
