@@ -51,6 +51,9 @@
   "execution_constraints": {
     "live_primary_source_search_required": true,
     "claim_novelty_without_collision_search": false,
+    "selected_question_common_knowledge_review_required": true,
+    "selected_question_prior_art_review_required": true,
+    "minimum_prior_art_query_families": 3,
     "human_candidate_scoring_required": false,
     "mode_2_external_model_api_allowed": false,
     "candidate_mapping_audit_is_research_evidence": false

@@ -43,6 +43,9 @@ class ResearchQuestionRunnerTests(unittest.TestCase):
         self.assertEqual(packet["stage_id"], "0_goal")
         self.assertEqual(packet["engine"], "current_codex")
         self.assertNotIn("api_key", json.dumps(packet))
+        _, _, ledger = runner.load_run(self.run_dir)
+        self.assertEqual(ledger["ledger_version"], "1.1")
+        self.assertEqual(ledger["common_knowledge_reviews"], [])
         self.assertEqual(
             packet["output_contract"]["allowed_session_update_fields"],
             ["decision_log", "input_manifest"],
@@ -122,13 +125,18 @@ class ResearchQuestionRunnerTests(unittest.TestCase):
             "queries": [],
             "source_decisions": [],
             "collision_reviews": [],
+            "common_knowledge_reviews": [],
         }
         result = runner.ledger_audit(session, incomplete)
         self.assertFalse(result["passed"])
         self.assertIn("missing_query_log", {item["code"] for item in result["errors"]})
 
         complete = {
-            "queries": [{"query_id": "Q01"}],
+            "queries": [
+                {"query_id": "Q01", "purpose": "exact-question"},
+                {"query_id": "Q02", "purpose": "mechanism"},
+                {"query_id": "Q03", "purpose": "adjacent-terminology"},
+            ],
             "source_decisions": [
                 {
                     "evidence_id": "E01",
@@ -141,14 +149,91 @@ class ResearchQuestionRunnerTests(unittest.TestCase):
                 {
                     "candidate_id": candidate_id,
                     "nonredundant_increment": "a distinct controlled mechanism",
-                    "query_ids": ["Q01"],
+                    "query_ids": ["Q01", "Q02", "Q03"],
                     "closest_evidence_ids": ["E01"],
+                    "prior_art_verdict": "incremental",
+                    "disposition": "keep",
+                }
+                for candidate_id in ("C01", "C02", "C03")
+            ],
+            "common_knowledge_reviews": [
+                {
+                    "candidate_id": candidate_id,
+                    "basis_evidence_ids": ["E01"],
+                    "obvious_baseline": "The broad direction is already expected.",
+                    "residual_uncertainty": "The controlled boundary remains unknown.",
+                    "counterexample_or_boundary": "The effect may reverse out of domain.",
+                    "verdict": "context-dependent",
                     "disposition": "keep",
                 }
                 for candidate_id in ("C01", "C02", "C03")
             ],
         }
         self.assertTrue(runner.ledger_audit(session, complete)["passed"])
+
+        complete["queries"][2]["purpose"] = "benchmark"
+        result = runner.ledger_audit(session, complete)
+        self.assertFalse(result["passed"])
+        self.assertIn(
+            "incomplete_prior_art_search",
+            {item["code"] for item in result["errors"]},
+        )
+
+    def test_ledger_rejects_selected_common_knowledge_question(self) -> None:
+        session = {
+            "evidence": [
+                {
+                    "evidence_id": "E01",
+                    "source_location": "https://example.org/paper",
+                }
+            ],
+            "selection": {
+                "primary_candidate_id": "C01",
+                "backup_candidate_ids": [],
+            },
+        }
+        ledger = {
+            "queries": [
+                {"query_id": "Q01", "purpose": "exact-question"},
+                {"query_id": "Q02", "purpose": "mechanism"},
+                {"query_id": "Q03", "purpose": "adjacent-terminology"},
+            ],
+            "source_decisions": [
+                {
+                    "evidence_id": "E01",
+                    "query_ids": ["Q01"],
+                    "source_location": "https://example.org/paper",
+                    "disposition": "include",
+                }
+            ],
+            "collision_reviews": [
+                {
+                    "candidate_id": "C01",
+                    "nonredundant_increment": "boundary test",
+                    "query_ids": ["Q01", "Q02", "Q03"],
+                    "closest_evidence_ids": ["E01"],
+                    "prior_art_verdict": "incremental",
+                    "disposition": "keep",
+                }
+            ],
+            "common_knowledge_reviews": [
+                {
+                    "candidate_id": "C01",
+                    "basis_evidence_ids": ["E01"],
+                    "obvious_baseline": "The answer follows from the definition.",
+                    "residual_uncertainty": "No residual uncertainty remains.",
+                    "counterexample_or_boundary": "No plausible boundary was found.",
+                    "verdict": "common-knowledge",
+                    "disposition": "reject",
+                }
+            ],
+        }
+        result = runner.ledger_audit(session, ledger)
+        self.assertFalse(result["passed"])
+        self.assertIn(
+            "selected_question_is_common_or_unresolved",
+            {item["code"] for item in result["errors"]},
+        )
 
 
 if __name__ == "__main__":

@@ -167,6 +167,12 @@ def validate_profile(
         raise ValueError("neither mode may require user candidate scoring")
     if constraints.get("live_primary_source_search_required") is not True:
         raise ValueError("the shared pipeline requires current primary-source search")
+    if constraints.get("selected_question_common_knowledge_review_required") is not True:
+        raise ValueError("selected questions require a common-knowledge review")
+    if constraints.get("selected_question_prior_art_review_required") is not True:
+        raise ValueError("selected questions require a prior-art review")
+    if constraints.get("minimum_prior_art_query_families") != 3:
+        raise ValueError("prior-art review requires three query families")
     if pipeline is not None:
         validate_pipeline(pipeline)
         if invariants.get("canonical_stages") != DEFAULT_PIPELINE.name:

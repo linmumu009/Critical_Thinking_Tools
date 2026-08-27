@@ -13,8 +13,13 @@ import research_question_session as rqs
 
 ROOT = Path(__file__).resolve().parent
 RUNS_ROOT = ROOT / "runs"
-RUNNER_VERSION = "1.0"
-LEDGER_VERSION = "1.0"
+RUNNER_VERSION = "1.1"
+LEDGER_VERSION = "1.1"
+PRIOR_ART_QUERY_PURPOSES = {
+    "exact-question",
+    "mechanism",
+    "adjacent-terminology",
+}
 RUN_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
 STAGE_UPDATE_FIELDS = {
     "0_goal": {"input_manifest", "decision_log"},
@@ -130,6 +135,7 @@ def initialize_run(
         "queries": [],
         "source_decisions": [],
         "collision_reviews": [],
+        "common_knowledge_reviews": [],
     }
     save_json(paths["session"], session)
     save_json(paths["state"], state)
@@ -173,7 +179,8 @@ def build_packet(run_dir: Path) -> Path:
             "allowed_session_update_fields": sorted(STAGE_UPDATE_FIELDS[stage_id]),
             "instruction": (
                 "Write one JSON envelope. Do not mark a later stage complete. "
-                "Record search queries and collision decisions through the ledger commands."
+                "Record search queries, prior-art collisions, and common-knowledge "
+                "reviews through the ledger commands."
             ),
         },
     }
@@ -321,6 +328,7 @@ def update_ledger(run_dir: Path, kind: str, item: dict[str, Any]) -> dict[str, A
         "query": ("queries", "query_id"),
         "source": ("source_decisions", "evidence_id"),
         "collision": ("collision_reviews", "candidate_id"),
+        "common_knowledge": ("common_knowledge_reviews", "candidate_id"),
     }[kind]
     append_unique(ledger[collection], item, id_field)
     ledger["updated_at_utc"] = utc_now()
@@ -335,7 +343,22 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
     def add(target: list[dict[str, str]], code: str, message: str) -> None:
         target.append({"code": code, "message": message})
 
-    query_ids = {item["query_id"] for item in ledger["queries"]}
+    required_collections = {
+        "queries",
+        "source_decisions",
+        "collision_reviews",
+        "common_knowledge_reviews",
+    }
+    missing_collections = required_collections - set(ledger)
+    if missing_collections:
+        add(
+            errors,
+            "legacy_incomplete_ledger",
+            f"ledger lacks required collections {sorted(missing_collections)}",
+        )
+    queries = ledger.get("queries", [])
+    query_ids = {item["query_id"] for item in queries}
+    query_by_id = {item["query_id"]: item for item in queries}
     if not query_ids:
         add(
             errors,
@@ -345,7 +368,9 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
 
     evidence_by_id = {item["evidence_id"]: item for item in session["evidence"]}
     evidence_ids = set(evidence_by_id)
-    decisions = {item["evidence_id"]: item for item in ledger["source_decisions"]}
+    decisions = {
+        item["evidence_id"]: item for item in ledger.get("source_decisions", [])
+    }
     online_evidence = {
         item["evidence_id"]
         for item in session["evidence"]
@@ -383,7 +408,12 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
             *session["selection"]["backup_candidate_ids"],
         ]
         reviews = {
-            item["candidate_id"]: item for item in ledger["collision_reviews"]
+            item["candidate_id"]: item
+            for item in ledger.get("collision_reviews", [])
+        }
+        common_reviews = {
+            item["candidate_id"]: item
+            for item in ledger.get("common_knowledge_reviews", [])
         }
         for candidate_id in selected:
             review = reviews.get(candidate_id)
@@ -393,7 +423,7 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
                     "missing_collision_review",
                     f"{candidate_id} lacks a collision review",
                 )
-                continue
+                review = {}
             if not review.get("nonredundant_increment", "").strip():
                 add(
                     errors,
@@ -407,9 +437,27 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
                     "collision_unknown_query",
                     f"{candidate_id} references {sorted(unknown_queries)}",
                 )
+            purposes = {
+                query_by_id[query_id].get("purpose")
+                for query_id in review.get("query_ids", [])
+                if query_id in query_by_id
+            }
+            missing_purposes = PRIOR_ART_QUERY_PURPOSES - purposes
+            if missing_purposes:
+                add(
+                    errors,
+                    "incomplete_prior_art_search",
+                    f"{candidate_id} lacks prior-art query purposes {sorted(missing_purposes)}",
+                )
             unknown_evidence = (
                 set(review.get("closest_evidence_ids", [])) - evidence_ids
             )
+            if not review.get("closest_evidence_ids"):
+                add(
+                    errors,
+                    "missing_closest_prior",
+                    f"{candidate_id} has no closest prior-work evidence",
+                )
             if unknown_evidence:
                 add(
                     errors,
@@ -422,15 +470,77 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
                     "selected_collision_rejected",
                     f"{candidate_id} is selected but its collision review says reject",
                 )
+            if review.get("prior_art_verdict") not in {
+                "no-direct-match-found",
+                "incremental",
+            }:
+                add(
+                    errors,
+                    "selected_prior_art_unresolved",
+                    f"{candidate_id} is selected without a defensible prior-art verdict",
+                )
+
+            common_review = common_reviews.get(candidate_id)
+            if common_review is None:
+                add(
+                    errors,
+                    "missing_common_knowledge_review",
+                    f"{candidate_id} lacks a common-knowledge review",
+                )
+                continue
+            unknown_basis = (
+                set(common_review.get("basis_evidence_ids", [])) - evidence_ids
+            )
+            if unknown_basis:
+                add(
+                    errors,
+                    "common_knowledge_unknown_evidence",
+                    f"{candidate_id} references {sorted(unknown_basis)}",
+                )
+            if not common_review.get("basis_evidence_ids"):
+                add(
+                    errors,
+                    "common_knowledge_without_evidence",
+                    f"{candidate_id} has no evidence for its knowledge baseline",
+                )
+            for field in (
+                "obvious_baseline",
+                "residual_uncertainty",
+                "counterexample_or_boundary",
+            ):
+                if not str(common_review.get(field, "")).strip():
+                    add(
+                        errors,
+                        "incomplete_common_knowledge_review",
+                        f"{candidate_id} lacks {field}",
+                    )
+            if common_review.get("verdict") not in {
+                "nontrivial",
+                "context-dependent",
+            }:
+                add(
+                    errors,
+                    "selected_question_is_common_or_unresolved",
+                    f"{candidate_id} is selected without establishing a non-obvious residual question",
+                )
+            if common_review.get("disposition") == "reject":
+                add(
+                    errors,
+                    "selected_common_knowledge_rejected",
+                    f"{candidate_id} is selected but its common-knowledge review says reject",
+                )
 
     return {
         "passed": not errors,
         "errors": errors,
         "warnings": warnings,
         "metrics": {
-            "query_count": len(ledger["queries"]),
-            "source_decision_count": len(ledger["source_decisions"]),
-            "collision_review_count": len(ledger["collision_reviews"]),
+            "query_count": len(queries),
+            "source_decision_count": len(ledger.get("source_decisions", [])),
+            "collision_review_count": len(ledger.get("collision_reviews", [])),
+            "common_knowledge_review_count": len(
+                ledger.get("common_knowledge_reviews", [])
+            ),
             "online_evidence_count": len(online_evidence),
         },
     }
@@ -532,6 +642,18 @@ def main() -> int:
     query.add_argument("--text", required=True)
     query.add_argument("--provider", required=True)
     query.add_argument("--scope", required=True)
+    query.add_argument(
+        "--purpose",
+        choices=(
+            "reality-signal",
+            "exact-question",
+            "mechanism",
+            "adjacent-terminology",
+            "citation-chain",
+            "benchmark",
+        ),
+        required=True,
+    )
     query.add_argument("--result-count", type=int, required=True)
 
     source = subparsers.add_parser("log-source")
@@ -551,7 +673,28 @@ def main() -> int:
     collision.add_argument("--closest-evidence-id", action="append", required=True)
     collision.add_argument("--overlap", required=True)
     collision.add_argument("--increment", required=True)
+    collision.add_argument(
+        "--prior-art-verdict",
+        choices=("no-direct-match-found", "incremental", "covered", "uncertain"),
+        required=True,
+    )
     collision.add_argument("--disposition", choices=("keep", "narrow", "rewrite", "reject"), required=True)
+
+    common = subparsers.add_parser("log-common-knowledge")
+    common.add_argument("--run", required=True)
+    common.add_argument("--candidate-id", required=True)
+    common.add_argument("--basis-evidence-id", action="append", required=True)
+    common.add_argument("--obvious-baseline", required=True)
+    common.add_argument("--residual-uncertainty", required=True)
+    common.add_argument("--counterexample-or-boundary", required=True)
+    common.add_argument(
+        "--verdict",
+        choices=("nontrivial", "context-dependent", "common-knowledge", "uncertain"),
+        required=True,
+    )
+    common.add_argument(
+        "--disposition", choices=("keep", "narrow", "rewrite", "reject"), required=True
+    )
 
     finalize = subparsers.add_parser("finalize")
     finalize.add_argument("--run", required=True)
@@ -585,6 +728,9 @@ def main() -> int:
                     "queries": len(ledger["queries"]),
                     "sources": len(ledger["source_decisions"]),
                     "collisions": len(ledger["collision_reviews"]),
+                    "common_knowledge": len(
+                        ledger.get("common_knowledge_reviews", [])
+                    ),
                 },
             }
         )
@@ -604,6 +750,7 @@ def main() -> int:
                     "text": args.text,
                     "provider": args.provider,
                     "scope": args.scope,
+                    "purpose": args.purpose,
                     "executed_at_utc": utc_now(),
                     "result_count": args.result_count,
                 },
@@ -637,6 +784,24 @@ def main() -> int:
                     "closest_evidence_ids": list(dict.fromkeys(args.closest_evidence_id)),
                     "overlap": args.overlap,
                     "nonredundant_increment": args.increment,
+                    "prior_art_verdict": args.prior_art_verdict,
+                    "disposition": args.disposition,
+                    "checked_at_utc": utc_now(),
+                },
+            )
+        )
+    elif args.command == "log-common-knowledge":
+        print_json(
+            update_ledger(
+                run_dir,
+                "common_knowledge",
+                {
+                    "candidate_id": args.candidate_id,
+                    "basis_evidence_ids": list(dict.fromkeys(args.basis_evidence_id)),
+                    "obvious_baseline": args.obvious_baseline,
+                    "residual_uncertainty": args.residual_uncertainty,
+                    "counterexample_or_boundary": args.counterexample_or_boundary,
+                    "verdict": args.verdict,
                     "disposition": args.disposition,
                     "checked_at_utc": utc_now(),
                 },

@@ -68,10 +68,15 @@
 正式 session 的 v2 顶层 schema 保持不变。Runner 另外维护三个 sidecar，避免破坏历史兼容：
 
 - `run-state.json`：当前阶段、checkpoint 哈希、失败与恢复记录；
-- `evidence-ledger.json`：检索式、来源纳入/排除和前三候选 collision review；
+- `evidence-ledger.json`：检索式及用途、来源纳入/排除、前三候选先行研究 collision review 和常识性/非平凡性审查；
 - `completion-manifest.json`：结构/语义/账本审计结果及交付文件 SHA-256。
 
 阶段 envelope 中的 `payload` 保存完整阶段推理产物，`session_updates` 只能修改该阶段允许的正式 session 字段。Runner 会拒绝跳阶段和越权修改。新 Runner 运行 finalize 时必须通过 sidecar 审计；旧 v2 正式结果仍可只用 session validator 校验。
+
+Runner v1.1 要求每个最终入选问题额外通过两项 sidecar 门槛：
+
+- 常识审查必须记录显然基线、残余不确定性、反例或边界以及证据；只有 `nontrivial` 或 `context-dependent` 可以入选；
+- 先行研究审查必须引用三类检索（`exact-question`、`mechanism`、`adjacent-terminology`）和最接近证据；只有 `no-direct-match-found` 或有明确非冗余增量的 `incremental` 可以入选。
 
 ## 历史会话
 

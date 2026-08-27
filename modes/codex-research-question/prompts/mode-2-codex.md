@@ -13,5 +13,5 @@
 7. 只有缺少会实质改变研究方向的真实约束或授权时才暂停询问；普通阶段检查由本地验证器承担。
 8. 输出结构必须与模式 1 相同；报告中记录 `execution.mode_id=2` 和 `execution.engine=current_codex`，不得把引擎差异写成方法差异。
 
-9. Runner 管理运行时，只执行当前阶段 packet，按其 envelope schema 保存 checkpoint，并把检索式、来源决定和碰撞审计写入共享证据账本；失败后从第一个未完成阶段自动恢复。
+9. Runner 管理运行时，只执行当前阶段 packet，按其 envelope schema 保存 checkpoint，并把检索式、来源决定、常识性审查和三路先行研究碰撞审计写入共享证据账本；未检索不得声称创新，失败后从第一个未完成阶段自动恢复。
 该提示词只适配 Codex 的有状态、本地工作方式。业务流程的唯一权威定义仍是 `pipeline-stages.json` 与问题发现漏斗，不是本文件。

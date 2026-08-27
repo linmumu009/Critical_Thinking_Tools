@@ -1,6 +1,6 @@
 # 可恢复无人化 Runner 与证据账本
 
-版本：v1（2026-08-25）
+版本：v1.1（2026-08-27）
 
 `research_question_runner.py` 是模式 1、模式 2 共用的运行控制层。它不改变阶段 0–8，也不代替任何思考工具；它负责创建运行、生成当前阶段包、原子保存 checkpoint、失败记录、断点恢复、证据检索账本、语义审计和最终交付清单。
 
@@ -73,7 +73,8 @@ python modes/codex-research-question/research_question_runner.py fail `
 python modes/codex-research-question/research_question_runner.py log-query `
   --run 2026-08-25-example --id Q01 `
   --text "检索式" --provider web `
-  --scope "近 18 个月一手论文" --result-count 12
+  --scope "近 18 个月一手论文" --purpose exact-question `
+  --result-count 12
 ```
 
 每项纳入或排除决定必须关联检索式，并写明它支持什么、为何纳入或排除：
@@ -86,17 +87,31 @@ python modes/codex-research-question/research_question_runner.py log-source `
   --reason "纳入/排除理由"
 ```
 
-阶段 7 的主问题和两个备选都必须有 collision review：
+阶段 7 的主问题和两个备选都必须有先行研究 collision review。每个候选至少关联三条用途分别为 `exact-question`、`mechanism`、`adjacent-terminology` 的检索式：
 
 ```powershell
 python modes/codex-research-question/research_question_runner.py log-collision `
-  --run 2026-08-25-example --candidate-id C01 --query-id Q01 `
+  --run 2026-08-25-example --candidate-id C01 `
+  --query-id Q01 --query-id Q02 --query-id Q03 `
   --closest-evidence-id E01 --overlap "与最近工作的重叠" `
   --increment "仍未被覆盖的机制、边界或判别实验" `
+  --prior-art-verdict incremental `
   --disposition keep
 ```
 
-完整运行若缺少搜索记录、在线证据纳入决定、引用不存在的 query，或前三候选的碰撞审计，将不能 finalize。
+还必须记录常识性/非平凡性审查。`obvious-baseline` 是无需新实验即可预期的答案，`residual-uncertainty` 必须指出真正未知的效应大小、边界、机制或反常条件：
+
+```powershell
+python modes/codex-research-question/research_question_runner.py log-common-knowledge `
+  --run 2026-08-25-example --candidate-id C01 `
+  --basis-evidence-id E01 `
+  --obvious-baseline "增加高质量数据通常会改善目标任务表现" `
+  --residual-uncertainty "在等 token、跨域评测下哪种选择机制产生增益" `
+  --counterexample-or-boundary "高质量代理分数可能筛掉困难但有用的样本" `
+  --verdict context-dependent --disposition keep
+```
+
+最终入选只接受 `nontrivial` 或 `context-dependent` 的常识审查，以及 `no-direct-match-found` 或有明确增量的 `incremental` 先行研究结论。`common-knowledge`、`covered` 或 `uncertain` 必须淘汰、缩小或改写后重查。完整运行若缺少搜索记录、在线证据决定、三类先行检索或任一入选问题的两项审查，将不能 finalize。
 
 ## 两层校验
 

@@ -48,9 +48,9 @@
     },
     {
       "stage_id": "7_probe",
-      "name": "廉价现实试探",
+      "name": "非平凡性、先行研究与廉价现实试探",
       "required_tools": ["primary-source-collision-search", "consider-the-opposite"],
-      "required_output": "每个入围候选的最小试探及保留、缩小、改写、淘汰规则"
+      "required_output": "每个入围候选的常识性审查、精确问题/机制/相邻术语三路先行研究检索、最近工作碰撞、最小试探及保留、缩小、改写、淘汰规则"
     },
     {
       "stage_id": "8_contract",
