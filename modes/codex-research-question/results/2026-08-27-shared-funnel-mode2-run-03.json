@@ -1,0 +1,1164 @@
+{
+  "schema_version": "2.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "execution": {
+    "mode_id": "2",
+    "engine": "current_codex",
+    "adapter_prompt": "prompts/mode-2-codex.md"
+  },
+  "status": "complete",
+  "created_date": "2026-08-27",
+  "profile_snapshot": {
+    "schema_version": "2.0",
+    "pipeline_id": "research_question_discovery_funnel_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 8,
+      "maximum_candidate_count": 15,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "mode_definitions": {
+      "1": {
+        "name": "外部模型 API",
+        "engine": "external_model_api",
+        "adapter_prompt": "prompts/mode-1-api.md"
+      },
+      "2": {
+        "name": "当前 Codex",
+        "engine": "current_codex",
+        "adapter_prompt": "prompts/mode-2-codex.md"
+      }
+    },
+    "process_invariants": {
+      "canonical_stages": "pipeline-stages.json",
+      "same_stage_sequence": true,
+      "same_required_tools": true,
+      "same_candidate_schema": true,
+      "same_hard_gates": true,
+      "same_scorecard": true,
+      "same_probe_rules": true,
+      "same_output_contract": true
+    },
+    "execution_constraints": {
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false,
+      "selected_question_common_knowledge_review_required": true,
+      "selected_question_prior_art_review_required": true,
+      "minimum_prior_art_query_families": 3,
+      "human_candidate_scoring_required": false,
+      "mode_2_external_model_api_allowed": false,
+      "candidate_mapping_audit_is_research_evidence": false
+    }
+  },
+  "input_manifest": [
+    {
+      "input_id": "I01",
+      "kind": "user_constraint",
+      "location": "conversation://2026-08-27/mode-selection",
+      "role": "用户明确选择模式 2。"
+    },
+    {
+      "input_id": "I02",
+      "kind": "local_protocol",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\PROTOCOL.md",
+      "role": "冻结模式 1/2 共用流程、证据账本和校验边界。"
+    },
+    {
+      "input_id": "I03",
+      "kind": "local_profile",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\research-profile.json",
+      "role": "提供研究目标、范围、近 18 个月窗口、最少证据和候选数量。"
+    },
+    {
+      "input_id": "I04",
+      "kind": "local_pipeline",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\pipeline-stages.json",
+      "role": "提供阶段顺序、必用工具和每阶段输出契约。"
+    },
+    {
+      "input_id": "I05",
+      "kind": "local_adapter_prompt",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\prompts\\mode-2-codex.md",
+      "role": "约束当前 Codex 的执行机制，不改变共享方法。"
+    },
+    {
+      "input_id": "I06",
+      "kind": "local_prior_results",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results",
+      "role": "用于排除既有正式主问题和识别可复用但非研究证据的历史候选。"
+    }
+  ],
+  "stage_trace": [
+    {
+      "stage_id": "0_goal",
+      "status": "complete",
+      "output_summary": "冻结研究使用者、资源投入决策、探索目标和停止条件；本轮采用当前 Codex 引擎，避免重复既有正式主问题。",
+      "artifact_refs": [
+        "stage://0_goal"
+      ],
+      "tool_trace": []
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "status": "complete",
+      "output_summary": "核验 11 条近 18 个月一手论文：标准 RLVR 的主要增益常来自支持集内自蒸馏，零命中提示需要额外信号；提示、部分解、首错修复、熵塑形、负强化和策略选择均有效，但尚不能从单篇工作判断何种干预真正扩展能力而非传递答案。",
+      "artifact_refs": [
+        "stage://1_reality_signals",
+        "ledger://evidence-ledger.json"
+      ],
+      "tool_trace": [
+        "primary-source-evidence"
+      ]
+    },
+    {
+      "stage_id": "2_reframe",
+      "status": "complete",
+      "output_summary": "用 Six Honest Serving Men 与苏格拉底式澄清生成 12 个实质不同的重构，分别改变对象、能力定义、机制、训练时机、任务边界、干预位置、资源决策、测量层级和反事实。",
+      "artifact_refs": [
+        "stage://2_reframe"
+      ],
+      "tool_trace": [
+        "six-honest-serving-men",
+        "socratic-questioning"
+      ]
+    },
+    {
+      "stage_id": "3_expand",
+      "status": "complete",
+      "output_summary": "先用 QFT 无评价地产生 16 个问题，再用 STORM/Co-STORM 式来源视角补充后续问题；覆盖描述、测量、因果、机制、边界、比较、干预和价值八类。",
+      "artifact_refs": [
+        "stage://3_expand"
+      ],
+      "tool_trace": [
+        "question-formulation-technique",
+        "storm-costorm"
+      ]
+    },
+    {
+      "stage_id": "4_cluster",
+      "status": "complete",
+      "output_summary": "按回答所依赖的机制与证据把 16 个问题聚为 10 个候选；合并只换测量口径或措辞的问题，保留改变因果机制、边界、干预或资源行动的问题。",
+      "artifact_refs": [
+        "stage://4_cluster"
+      ],
+      "tool_trace": [
+        "mechanism-evidence-clustering"
+      ]
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "status": "complete",
+      "output_summary": "为 10 个候选写出合理 A/B/未知、不同后续行动与反转条件；对 C01 完成双向钢人，并用 ACH 区分 affinity、答案内容、成功轨迹供给、匹配伪差和教师依赖五类解释。",
+      "artifact_refs": [
+        "stage://5_decision_forks"
+      ],
+      "tool_trace": [
+        "bidirectional-steelman",
+        "analysis-of-competing-hypotheses"
+      ]
+    },
+    {
+      "stage_id": "6_rank",
+      "status": "complete",
+      "output_summary": "10 个候选先通过五项硬门槛，再按六项 0–2 评分；C01、C02、C07 排名前三并进入阶段 7。",
+      "artifact_refs": [
+        "stage://6_rank"
+      ],
+      "tool_trace": [
+        "question-discovery-scorecard"
+      ]
+    },
+    {
+      "stage_id": "7_probe",
+      "status": "complete",
+      "output_summary": "对 C01、C02、C07 完成常识性审查、精确问题/机制/相邻术语三路先行研究和 cheap reality probe；C01/C02 缩小，C07 因直接碰撞改写。",
+      "artifact_refs": [
+        "stage://7_probe",
+        "ledger://evidence-ledger.json"
+      ],
+      "tool_trace": [
+        "primary-source-collision-search",
+        "consider-the-opposite"
+      ]
+    },
+    {
+      "stage_id": "8_contract",
+      "status": "complete",
+      "output_summary": "选择 C01 为主问题，C02 与 C07 为两个备选，并把主问题固化为可在 2026-09-10 前作出投入决策的完整问题契约。",
+      "artifact_refs": [
+        "stage://8_contract",
+        "ledger://evidence-ledger.json"
+      ],
+      "tool_trace": [
+        "research-question-contract"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_title": "Adaptive Guidance Accelerates Reinforcement Learning of Reasoning Models",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2506.13923",
+      "published_date": "2025-06-16",
+      "checked_date": "2026-08-27",
+      "observation": "作者将 RLVR 进步分为把已有 pass@k 压缩到 pass@1 的自蒸馏与训练前高 k 仍未解问题上的 capability gain，并在全错问题上用自然语言指导和重要性校正提升表现。",
+      "interpretation": "评估干预时必须把能力扩展与概率重分配分开。",
+      "unknown": "指导的语义信息量与其策略亲和度各贡献多少。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_title": "The Surprising Effectiveness of Negative Reinforcement in LLM Reasoning",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2506.01347",
+      "published_date": "2025-06-02",
+      "checked_date": "2026-08-27",
+      "observation": "作者报告只用负样本强化也能改善多个模型的 pass@k，并通过梯度分析认为其把概率质量从错误生成重分配到策略既有候选，而非引入全新行为。",
+      "interpretation": "失败轨迹本身有训练价值，但不能据此声称扩展了策略支持集。",
+      "unknown": "负强化与局部修复结合时是否会互补或相互干扰。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_title": "QuestA: Expanding Reasoning Capacity in LLMs via Question Augmentation",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2507.13266",
+      "published_date": "2025-07-17",
+      "checked_date": "2026-08-27",
+      "observation": "QuestA 在训练时向问题追加部分解以降低难度，在困难数学基准上同时改善 pass@1 与 pass@k。",
+      "interpretation": "部分解可以把原本过难的问题移入可学习区。",
+      "unknown": "收益来自降低分布距离、直接泄漏解法，还是两者共同作用。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_title": "No Prompt Left Behind: Exploiting Zero-Variance Prompts in LLM Reinforcement Learning via Entropy-Guided Advantage Shaping",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2509.21880",
+      "published_date": "2025-09-26",
+      "checked_date": "2026-08-27",
+      "observation": "RL-ZVP 不丢弃全同奖励组，而用 token 熵调制直接奖励正确、惩罚错误，作者报告在六个数学基准上优于过滤零方差组的基线。",
+      "interpretation": "零方差组仍可能提供非对比学习信号。",
+      "unknown": "全错与全对组是否需要不同机制，以及此类信号能否产生训练前不可达的新解。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_title": "The Reasoning Boundary Paradox: How Reinforcement Learning Constrains Language Models",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2510.02230",
+      "published_date": "2025-10-02",
+      "checked_date": "2026-08-27",
+      "observation": "作者报告 RLVR 的负干扰和赢家通吃现象：高初始概率正确解被过度强化，而其他解概率下降，pass@k 可能退化。",
+      "interpretation": "只优化 pass@1 可能收缩推理边界。",
+      "unknown": "外部修复能否扩展低支持能力而不牺牲原有多样性。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_title": "Don't Tell the Answer, Truly Guide the Reasoning During RL Rollouts",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2510.09388",
+      "published_date": "2025-10-10",
+      "checked_date": "2026-08-27",
+      "observation": "HINT 把外部指导与当前策略的兼容性表述为训练 affinity，并用启发式提示而非直接答案干预困难 rollout。",
+      "interpretation": "指导的可吸收性是独立于内容正确性的机制变量。",
+      "unknown": "affinity 能否在匹配指导信息量后预测真正 OOD 能力增益。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_title": "Beyond Variance: Prompt-Efficient RLVR via Rare-Event Amplification and Bidirectional Pairing",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2602.03452",
+      "published_date": "2026-02-03",
+      "checked_date": "2026-08-27",
+      "observation": "作者用一个低成功但可解提示和一个高成功但脆弱提示配对，报告比只按训练准确率方差选择提示有更好迁移。",
+      "interpretation": "当前成功率或方差不足以刻画训练价值。",
+      "unknown": "该配对原则在零命中提示需要外部修复时如何扩展。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_title": "Actor-Curator: Co-adaptive Curriculum Learning via Policy-Improvement Bandits for RL Post-Training",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2602.20532",
+      "published_date": "2026-02-24",
+      "checked_date": "2026-08-27",
+      "observation": "Actor-Curator 以非平稳 bandit 直接优化训练问题对策略性能的预期改善，并报告对均匀与课程基线的效率优势。",
+      "interpretation": "问题选择可以以真实学习进展而非静态难度为目标。",
+      "unknown": "在需要付费外部修复的零命中池中，是否能用更便宜的代理预测跨问题改善。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_title": "Near-Future Policy Optimization",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2604.20733",
+      "published_date": "2026-04-22",
+      "checked_date": "2026-08-27",
+      "observation": "NPO 将外部轨迹的价值表述为需要同时足够强和足够接近当前策略，并用同一训练运行的较后检查点提供辅助轨迹。",
+      "interpretation": "指导强度和策略距离之间存在可测权衡。",
+      "unknown": "该权衡能否解释自然语言提示、部分解和首错修复之间的差异。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_title": "LatentRevise: Learning from Zero-Hit Reasoning",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2606.29938",
+      "published_date": "2026-06-29",
+      "checked_date": "2026-08-27",
+      "observation": "LatentRevise 使用失败前缀与金答案锚点优化潜在前缀，产生原始采样未命中的正确延续，并把这些轨迹用于 SFT 与 RLVR。",
+      "interpretation": "零命中失败轨迹可被修订为训练桥梁。",
+      "unknown": "潜在修订相对可解释局部修复的增益是否来自更好的首错定位、更多答案信息或更合适的策略距离。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_title": "InT: Self-Proposed Interventions Enable Credit Assignment in LLM Reasoning",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2601.14209",
+      "published_date": "2026-01-20",
+      "checked_date": "2026-08-27",
+      "observation": "InT 在模型自身失败轨迹上定位首个错误并提出短的单步干预，再用到错误处的前缀与干预做 SFT，作者报告后续 RL 初始化明显改善。",
+      "interpretation": "局部、能力匹配且错误归因明确的修复可能比完整教师轨迹更可吸收。",
+      "unknown": "若匹配教师 token、成功轨迹数和训练 FLOP，首错局部化本身是否仍有因果优势。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在同一批固定 k 零命中的 RLVR 数学失败轨迹上，若保持教师修复内容、修复后成功轨迹集合与训练 FLOP 相同，仅把等信息修复放在首个经干预验证的因果分叉、序列开头或匹配的非因果位置，修复位置是否会通过降低 importance-ratio 方差提高移除指导后的 OOD 净 capability gain？",
+      "signal_ids": [
+        "E01",
+        "E03",
+        "E06",
+        "E10",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E06",
+        "E10",
+        "E11"
+      ],
+      "question_family": "因果/机制",
+      "cluster_id": "K01",
+      "decision_fork": {
+        "decision": "是否开发经干预验证的因果分叉定位与局部支持桥接。",
+        "answer_a": "等信息、等成功集后，因果位置仍降低更新方差并提高无提示 OOD 净增益。",
+        "action_a": "扩展多种子训练，开发因果分叉定位与 affinity 路由。",
+        "answer_b": "位置效应消失、反转或只改善有指导表现。",
+        "action_b": "停止位置系统，选择最便宜的指导内容生成方式。",
+        "uncertain_action": "扩大位置反事实样本，不跑完整 RL。",
+        "reversal_condition": "两个技能簇不复现，importance-ratio 中介不成立，或 pass@k/已会题回归越线。"
+      },
+      "evidence_path": "同一失败轨迹构造等信息位置反事实；固定修复后成功集合与 FLOP，比较一步更新方差、oracle-gradient cosine、无提示 held-out 成功与高 k 回归。",
+      "cheap_probe": {
+        "input": "两个数学技能簇各 8 个固定 k zero-hit 提示；每题保留同一失败 rollout、一个教师验证的因果分叉和一段等信息修复。",
+        "procedure": "对修复内容不变的因果位置、序列开头、匹配非因果位置和无指导四臂做冻结单步更新；匹配成功轨迹集合与 token/FLOP，检查构造可行性、importance-ratio 方差、梯度余弦和移除指导后的小型 held-out。",
+        "possible_outcomes": [
+          "因果位置在等匹配后仍稳定占优",
+          "各位置差异被成功集合或信息量解释",
+          "位置效应跨技能/种子不稳定或有高 k 回归"
+        ],
+        "decision_rules": {
+          "keep": "两个技能簇方向一致，且局部位置改善方差/梯度并无明显高 k 回归。",
+          "narrow": "只在可高置信定位或特定技能成立，缩到该边界。",
+          "rewrite": "若内容而非位置解释效果，改为修复信息的最小充分内容。",
+          "reject": "位置差异在匹配后消失/反转或构造无法可靠定位。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "决定局部位置系统还是通用指导。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "等内容位置反事实隔离因果杠杆。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "五条直接一手论文触发。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "16 题冻结一步更新可先试。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "增量缩到等信息、等成功集的位置效应和中介。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "失败可在完整训练前淘汰。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "在固定外部修复算力与固定修复算子下，用小型跨技能 holdout 的一步影响估计选择要修复的 zero-hit 提示，是否比当前成功率、reward variance 或 affinity 排序产生更低的 oracle selection regret？",
+      "signal_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "closest_prior_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "question_family": "比较/价值",
+      "cluster_id": "K02",
+      "decision_fork": {
+        "decision": "是否开发修复 acquisition，或使用简单排序。",
+        "answer_a": "跨技能一步影响稳定降低 oracle regret。",
+        "action_a": "开发低预算 acquisition 并按迁移价值分配修复。",
+        "answer_b": "简单成功率/方差/affinity 持平或更稳。",
+        "action_b": "采用简单排序并停止复杂估计。",
+        "uncertain_action": "仅在一个技能簇内继续离线回放。",
+        "reversal_condition": "跨种子/跨技能 regret 不降，或估计成本超过节省。"
+      },
+      "evidence_path": "固定修复算子与预算，比较一步跨技能影响、成功率、reward variance、affinity 的 top-m 选择和事后 oracle regret。",
+      "cheap_probe": {
+        "input": "三个数学技能簇各 8 个 zero-hit 提示，固定一种局部修复算子；每簇另留 4 个小型 holdout。",
+        "procedure": "每个候选修复只做一次冻结一步更新，估计对跨技能 holdout 的影响；按四种代理各选 8 个修复，离线计算事后 held-out 改善和 oracle selection regret，不训练 acquisition 网络。",
+        "possible_outcomes": [
+          "一步跨技能影响显著降低 regret",
+          "简单 affinity/成功率同样或更好",
+          "所有代理跨技能不稳定"
+        ],
+        "decision_rules": {
+          "keep": "跨技能影响在留一技能和种子上稳定优于简单代理。",
+          "narrow": "只在同技能或某类修复有效，限定使用边界。",
+          "rewrite": "若 affinity 最稳，改为 affinity 校准与预算分配。",
+          "reject": "不优于随机/简单代理或计算成本失去优势。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "直接分配修复预算。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "固定算子和 oracle regret 区分选择目标。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "prompt selection、curator 与 zero-hit 修复共同触发。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "需技能分层和多个一步更新。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "增量缩到有成本外部修复与跨技能 regret。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "无需先训练复杂 curator。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "指导前缀的当前策略似然、修复后成功率、首错位置和一步梯度余弦中，哪一项或哪种组合最能预测移除指导后的净 capability gain 与 pass@k 保持？",
+      "signal_ids": [
+        "E01",
+        "E06",
+        "E09"
+      ],
+      "closest_prior_ids": [
+        "E06",
+        "E09"
+      ],
+      "question_family": "测量",
+      "cluster_id": "K03",
+      "decision_fork": {
+        "decision": "是否用短程代理筛选和早停。",
+        "answer_a": "代理可跨技能预测长期排序。",
+        "action_a": "用于早停。",
+        "answer_b": "只能预测即时成功。",
+        "action_b": "保留完整短程训练。",
+        "uncertain_action": "仅作护栏。",
+        "reversal_condition": "跨技能相关不稳。"
+      },
+      "evidence_path": "短程特征与冻结结果配对。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "未来新证据。",
+          "narrow": "限定代理。",
+          "rewrite": "改为校准。",
+          "reject": "无预测力。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "早停。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "非因果。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "直接。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可配对。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "Affinity 已提出。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "节省训练。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "把 zero-hit 提示先分为有限采样、奖励误判、局部可修和技能缺失，再分别路由到追加采样、复评、负强化、局部修复或完整指导，是否在等预算下优于单一指导策略？",
+      "signal_ids": [
+        "E02",
+        "E04",
+        "E06",
+        "E10",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E04",
+        "E06",
+        "E10"
+      ],
+      "question_family": "干预/描述",
+      "cluster_id": "K04",
+      "decision_fork": {
+        "decision": "是否建设原因路由。",
+        "answer_a": "类别可识别且动作异质。",
+        "action_a": "建设路由器。",
+        "answer_b": "类别不稳。",
+        "action_b": "用单策略。",
+        "uncertain_action": "缩成二分类。",
+        "reversal_condition": "不优于单策略。"
+      },
+      "evidence_path": "原因标签与多动作预算。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "新证据。",
+          "narrow": "二分类。",
+          "rewrite": "简化路由。",
+          "reject": "无异质效应。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "路由。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "处理效应。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "多方法。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "标签复杂。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "邻近拥挤。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "成本高。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "外部指导在 zero-hit 连续出现、学习平台期或 pass@k 回归时触发，并按 affinity 逐步撤除，哪种时间路径最能扩大无提示能力且最少产生教师依赖？",
+      "signal_ids": [
+        "E01",
+        "E05",
+        "E06",
+        "E09"
+      ],
+      "closest_prior_ids": [
+        "E01",
+        "E06",
+        "E09"
+      ],
+      "question_family": "因果/干预",
+      "cluster_id": "K05",
+      "decision_fork": {
+        "decision": "是否做自适应课程。",
+        "answer_a": "延迟触发退火更好。",
+        "action_a": "实现状态机。",
+        "answer_b": "差异小。",
+        "action_b": "固定时序。",
+        "uncertain_action": "单因素。",
+        "reversal_condition": "无净增益。"
+      },
+      "evidence_path": "多臂训练。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "新证据。",
+          "narrow": "单因素。",
+          "rewrite": "改内容。",
+          "reject": "无时序效应。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "课程。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "交互多。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "来源足。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "多臂。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻已有。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可缩小。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "在等更新 token 下，对同一 zero-hit 失败池联合使用负样本强化和首错局部修复，是否比两者单独使用带来更高净新增可解且不降低 pass@k 多样性？",
+      "signal_ids": [
+        "E02",
+        "E05",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E02",
+        "E11"
+      ],
+      "question_family": "机制/比较",
+      "cluster_id": "K06",
+      "decision_fork": {
+        "decision": "是否双通道。",
+        "answer_a": "正交互。",
+        "action_a": "联合。",
+        "answer_b": "重复冲突。",
+        "action_b": "二选一。",
+        "uncertain_action": "梯度分析。",
+        "reversal_condition": "交互非正。"
+      },
+      "evidence_path": "2×2 因子实验。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "正交互。",
+          "narrow": "限定支持状态。",
+          "rewrite": "改路由。",
+          "reject": "冲突。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "组合。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "2×2。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "两类来源。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "简单。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "增量窄。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可先淘汰。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "在长而可自纠错的推理或工具轨迹中，当首错定位噪声与错误—恢复交替频率可控时，单点首错干预相对 error-propagation-aware 多点修复会在什么轨迹长度×定位噪声×自纠错区域发生收益反转，并能否用更新前定位置信度可靠路由？",
+      "signal_ids": [
+        "E10",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E10",
+        "E11"
+      ],
+      "question_family": "边界/反例",
+      "cluster_id": "K07",
+      "decision_fork": {
+        "decision": "在长程 agentic 轨迹用单点还是多点修复。",
+        "answer_a": "存在可观测 crossover，置信度可路由。",
+        "action_a": "阈值内单点、阈值外多点修复。",
+        "answer_b": "无稳健边界或置信度不能预测。",
+        "action_b": "不建设统一路由，限定单点修复到短程高置信任务。",
+        "uncertain_action": "只在数学长 CoT 继续，不外推工具任务。",
+        "reversal_condition": "crossover 跨模型/数据不复现或多点标注成本消除收益。"
+      },
+      "evidence_path": "可控错误传播/错误终止的长轨迹，注入定位噪声；比较单点和多点修复的 continuation success、梯度与无提示短程训练。",
+      "cheap_probe": {
+        "input": "24 条由可执行检查器或人工金步骤标注的长轨迹，分三档长度、三档定位噪声，并含错误后自纠错案例。",
+        "procedure": "从同一轨迹构造单点首错与多点 error-propagation-aware 修复；先比较无训练 continuation success、修复 token/FLOP 和定位置信度，再做一次冻结更新，拟合方向性 crossover。",
+        "possible_outcomes": [
+          "出现稳定 crossover 且置信度可路由",
+          "多点始终优于或成本抵消收益",
+          "边界高度数据依赖、无法路由"
+        ],
+        "decision_rules": {
+          "keep": "crossover 在两类轨迹复现且置信度排序有效。",
+          "narrow": "只在数学长 CoT 或特定错误传播模式成立。",
+          "rewrite": "若不存在 crossover，改为定位置信度校准或多点标注成本问题。",
+          "reject": "边界不复现且无可用路由信号。"
+        }
+      },
+      "probe_disposition": "rewrite",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "决定长程任务的修复策略。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "可控噪声与自纠错识别 crossover。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "首错干预和失败前缀修订触发；相邻 PRM 工作构成直接反例。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "24 条可控轨迹可先试。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "从宽泛失效改写为单点—多点干预 crossover 与路由。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "金步骤与多点标注成本较高。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "指导强度的最优点是否由训练前策略支持而非参数规模本身决定，并在 pass@k 从零到非零的边界附近出现可复现相变？",
+      "signal_ids": [
+        "E01",
+        "E03",
+        "E06",
+        "E09"
+      ],
+      "closest_prior_ids": [
+        "E01",
+        "E09"
+      ],
+      "question_family": "边界/测量",
+      "cluster_id": "K08",
+      "decision_fork": {
+        "decision": "按支持或规模。",
+        "answer_a": "支持更好。",
+        "action_a": "按支持路由。",
+        "answer_b": "规模更好。",
+        "action_b": "逐模型调参。",
+        "uncertain_action": "同模型内用。",
+        "reversal_condition": "外推差。"
+      },
+      "evidence_path": "多规模扫描。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "新证据。",
+          "narrow": "同模型。",
+          "rewrite": "连续曲线。",
+          "reject": "无规律。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "调参。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "相变难。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "来源足。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "多规模。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "未直接覆盖。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可离线。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C09",
+      "research_question": "在请求昂贵教师修复前，用追加采样、解码扰动和独立验证能否可靠区分有限采样 zero-hit、奖励误判与真实技能缺失，并减少不必要指导而不漏掉高价值边界题？",
+      "signal_ids": [
+        "E04",
+        "E07",
+        "E10"
+      ],
+      "closest_prior_ids": [
+        "E04",
+        "E07"
+      ],
+      "question_family": "描述/价值",
+      "cluster_id": "K09",
+      "decision_fork": {
+        "decision": "是否诊断门。",
+        "answer_a": "节省教师。",
+        "action_a": "先诊断。",
+        "answer_b": "成本/漏诊高。",
+        "action_b": "直接修复。",
+        "uncertain_action": "只复评。",
+        "reversal_condition": "节省不足。"
+      },
+      "evidence_path": "追加采样复评。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "节省。",
+          "narrow": "只复评。",
+          "rewrite": "成本模型。",
+          "reject": "漏诊高。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "调用门。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "定义依赖预算。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "直接。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "采样即可。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "邻近密集。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "诊断有成本。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C10",
+      "research_question": "对不同 zero-hit 指导方案，8–16 个提示的一步梯度与短程 leave-one-skill-out probe 能否稳定预测 50–100 步训练的净 capability gain 排序，从而替代大部分完整试跑？",
+      "signal_ids": [
+        "E01",
+        "E06",
+        "E08",
+        "E09"
+      ],
+      "closest_prior_ids": [
+        "E08",
+        "E09"
+      ],
+      "question_family": "测量/价值",
+      "cluster_id": "K10",
+      "decision_fork": {
+        "decision": "是否 probe 淘汰。",
+        "answer_a": "排序稳定。",
+        "action_a": "只训前两名。",
+        "answer_b": "排序翻转。",
+        "action_b": "保留矩阵。",
+        "uncertain_action": "只排错误方向。",
+        "reversal_condition": "错杀最佳。"
+      },
+      "evidence_path": "probe 与短程训练配对。",
+      "cheap_probe": {
+        "input": "未进入前三。",
+        "procedure": "阶段 7 不执行。",
+        "possible_outcomes": [
+          "未来复查",
+          "维持非入选"
+        ],
+        "decision_rules": {
+          "keep": "稳定。",
+          "narrow": "只负筛。",
+          "rewrite": "安全护栏。",
+          "reject": "错杀。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "淘汰训练臂。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "非机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "直接。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可配对。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "学习进展已有。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "节省大。"
+        }
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": [
+      "C02",
+      "C07"
+    ],
+    "why_this_question": "C01 直接决定是否值得投入开发因果分叉定位与局部修复系统；它把现有提示、局部修复和自干预工作的混杂因素压缩为等语义、等成功集、等 FLOP 的位置反事实，既有最强判别力，也能用 16 个提示的一步更新在完整训练前廉价证伪。C02 与 C07 分别保留预算选择和长轨迹边界两条不同决策分叉。",
+    "research_question_contract": {
+      "final_question": "在同一批固定 k 零命中的 RLVR 数学失败轨迹上，若保持教师修复内容、修复后成功轨迹集合与训练 FLOP 相同，仅把等信息修复放在首个经干预验证的因果分叉、序列开头或匹配的非因果位置，修复位置是否会通过降低 importance-ratio 方差提高移除指导后的 OOD 净 capability gain？",
+      "triggering_signal_ids": [
+        "E01",
+        "E03",
+        "E06",
+        "E10",
+        "E11"
+      ],
+      "users_and_decision": "面向负责 LLM 后训练与 RLVR 的研究负责人；在 2026-09-10 前决定是否投入 1–2 个工程周和小模型 GPU 预算开发因果分叉定位、局部修复生成与 affinity 路由。",
+      "decision_deadline": "2026-09-10",
+      "key_concepts_and_boundaries": [
+        "对象限定为数学 RLVR 中按预注册 k 次采样仍为 zero-hit 的同一批失败提示与 rollout；zero-hit 是固定采样预算下的观测状态，不等同于不可学习。",
+        "因果分叉必须由对候选步骤的局部干预验证，而非仅由事后错误分类器标记；对照为序列开头、长度和策略似然匹配的非因果位置以及无指导臂。",
+        "各有指导臂使用语义等价的教师修复内容，并匹配修复后成功轨迹集合、更新 token 与训练 FLOP，避免把成功供给或信息量当作位置效应。",
+        "主要结果是移除所有指导后的留出技能 OOD 净 capability gain；同时报告 pass@1、固定高 k 的已会题回归、importance-ratio 方差和 oracle-gradient cosine。",
+        "首轮结论只适用于小模型、数学任务与短程冻结更新；不得直接外推到长程工具轨迹、多模型规模或完整训练。"
+      ],
+      "competing_answers": {
+        "a": "在等信息、等成功集与等 FLOP 后，因果分叉位置仍稳定降低 importance-ratio 方差、提高 oracle-gradient 对齐，并改善移除指导后的留出技能净增益。",
+        "b": "匹配后位置优势消失、反转，或只提高有指导成功率而不增加独立能力；观察到的收益主要来自信息内容、成功轨迹供给或教师依赖。",
+        "unknown": "效应只在部分技能或高置信定位区成立，或方差中介方向正确但样本不足以判定净能力收益。"
+      },
+      "action_mapping": {
+        "if_a": "进入多种子短程训练，开发因果分叉定位与基于策略支持度的局部修复路由，并保留高 k 回归护栏。",
+        "if_b": "停止建设位置专用系统，转向最便宜且可控的修复内容生成与成功轨迹供给方案。",
+        "if_uncertain": "不跑完整 RL；增加位置反事实样本或把范围收窄到可高置信定位的技能簇，先复核识别与统计功效。"
+      },
+      "discriminating_evidence": "在预注册的两个数学技能簇上，从同一失败 rollout 构造因果分叉、序列开头、匹配非因果位置和无指导四臂；在修复语义、成功轨迹集合、token 与 FLOP 匹配后，比较冻结单步更新的 importance-ratio 方差、oracle-gradient cosine，以及移除指导后的留出题成功变化。只有位置操纵在两个技能簇方向一致，且中介指标与净能力结果共同指向同一解释，才区分答案 A 与 B。",
+      "reversal_result": "若两个技能簇中位置优势均不复现，importance-ratio 方差或梯度对齐不支持中介，或固定高 k 的已会题回归越过预注册护栏，则撤销对因果位置机制的支持并采用答案 B 的行动；若只在高置信定位区成立，则改判为 unknown 并缩窄问题。",
+      "minimum_probe": "两个数学技能簇各 8 个固定 k zero-hit 提示。每题保留同一失败 rollout、一个经干预验证的因果分叉和一段语义固定的教师修复；对四臂各做冻结单步更新，匹配成功轨迹集合与 token/FLOP，检查构造可行性、importance-ratio 方差、梯度余弦、无指导小型 held-out 与高 k 回归。",
+      "cost_risk_ethics": "预计 2–3 个研究日完成构造和冻结更新，使用小模型 GPU，低于完整 RL 试跑成本。主要风险是因果分叉标注误差、教师修复并非真正等信息、成功集合匹配造成选择偏差和 16 题功效不足；需保存盲化标注、匹配日志与逐题结果。仅使用许可数据与合规模型，不处理个人敏感数据，不把失败轨迹用于部署期自动决策。",
+      "stopping_condition": "若 16 题探针无法构造至少 12 组通过语义、成功集合和 FLOP 匹配的反事实，立即停止；若两技能簇方向不一致、位置效应小于预注册最小有意义差异、95% 区间跨越该阈值且中介不成立，或高 k 回归越线，则不进入完整训练。只有两个技能簇方向一致、无明显回归且至少一个中介指标支持时，才批准下一阶段多种子实验。",
+      "residual_unknowns": [
+        "16 题冻结一步结果能否预测 50–100 步乃至完整 RL 训练的排序。",
+        "干预验证的因果分叉定位在不同数学技能、模型规模和随机种子上的误差率。",
+        "语义等价修复是否仍携带难以度量的路径暗示或教师风格信号。",
+        "importance-ratio 方差是因果中介、伴随指标，还是由未控制的策略支持度共同驱动。",
+        "该边界是否能迁移到长程可自纠错推理或工具轨迹；本契约不作此项外推。"
+      ]
+    }
+  },
+  "decision_log": [
+    "2026-08-27：用户选择模式 2；执行引擎固定为 current_codex，不调用外部模型 API。",
+    "2026-08-27：采用 research-profile.json 的默认业务目标，不因缺少额外偏好而暂停。",
+    "2026-08-27：研究决策设为是否投入 1–2 个工程周的小模型最小实验；未过先行研究与 cheap probe 不进入大规模训练。",
+    "2026-08-27：阶段 1 记录 4 组检索式和 11 条在线一手证据；所有来源日期均在 18 个月窗口内。",
+    "2026-08-27：把宽泛的零方差利用、提示增强和首错修复视为已有工作，不把它们直接包装成新问题。",
+    "2026-08-27：将真正未知暂定为指导粒度、策略亲和度、答案信息泄漏和跨问题迁移之间的因果分解。",
+    "2026-08-27：阶段 2 生成 12 个 5W1H/层级重构；暂不评价或排序。",
+    "2026-08-27：把 zero-hit 明确定义为固定 k 与解码预算下的观测状态，而非绝对能力判断。",
+    "2026-08-27：把 capability expansion 与 pass@1 改善分开，为后续候选和 cheap probe 固定测量口径。",
+    "2026-08-27：阶段 3 在不评价条件下生成 16 个 QFT 问题，八类问题各 2 个。",
+    "2026-08-27：STORM/Co-STORM 扩展使用 5 个有来源视角；单模型角色表演不计为独立来源。",
+    "2026-08-27：筛选和去重留待阶段 4，当前未删除任何候选。",
+    "2026-08-27：阶段 4 从 16 个问题形成 10 个机制/证据候选簇，数量满足 8–15 约束。",
+    "2026-08-27：P04/P07/P11 合并进 C01；P12/P15 合并进 C02；P01/P16 合并进 C10。",
+    "2026-08-27：本阶段只完成聚类；决策分叉、硬门槛、评分与 probe 字段留待阶段 5–7 实质填写。",
+    "2026-08-27：阶段 5 为 10 个候选固定 A/B/未知行动和反转条件；没有 A/B 同行动候选。",
+    "2026-08-27：C01 完成双向钢人与五假设 ACH；匹配伪差和教师依赖被列为可淘汰解释。",
+    "2026-08-27：本阶段不新增候选，不评分。",
+    "2026-08-27：阶段 6 先检查五项硬门槛，10 个候选全部通过。",
+    "2026-08-27：只对过门候选按六项 0–2 评分；不把相对等级伪装成正式 VOI。",
+    "2026-08-27：C01、C02、C07 排名前三并进入阶段 7；不新增候选。",
+    "2026-08-27：阶段 7 为 C01/C02/C07 各执行精确问题、机制、相邻术语三路检索，并记录 ledger collision。",
+    "2026-08-27：C01 缩小为等信息、等成功集的修复位置反事实；C02 缩小为固定修复算子的跨技能 oracle regret。",
+    "2026-08-27：C07 与 Beyond the First Error 直接碰撞后改写为单点—多点修复 crossover 与路由边界。",
+    "2026-08-27：三个候选均完成常识性审查和可执行性 dry-run；不声称 cheap probe 已提供模型效果证据。",
+    "2026-08-27：阶段 8 选择总分 12 且通过五项硬门槛的 C01 为主问题，C02 与 C07 为两个方法和决策均不同的备选。",
+    "2026-08-27：最终问题逐字沿用阶段 7 的碰撞后窄化版本；契约信号仅引用 C01 已绑定的 E01/E03/E06/E10/E11。",
+    "2026-08-27：投入门槛限定为先通过 16 题冻结单步探针；来源检索、常识审查和设计 dry-run 不被表述为实证效果。"
+  ]
+}

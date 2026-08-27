@@ -1,0 +1,357 @@
+{
+  "ledger_version": "1.1",
+  "run_id": "2026-08-27-mode2-run-03",
+  "created_at_utc": "2026-08-27T02:59:22.040401+00:00",
+  "updated_at_utc": "2026-08-27T03:26:33.209293+00:00",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "text": "site:arxiv.org/abs 2025 RLVR data selection learnability prompt difficulty reasoning",
+      "provider": "web",
+      "scope": "2025-02-27 至 2026-08-27，一手论文",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-27T03:04:47.204063+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q02",
+      "text": "site:arxiv.org/abs 2025 RLVR incorrect rollouts repair prefix correction hard prompts reasoning",
+      "provider": "web",
+      "scope": "2025-02-27 至 2026-08-27，一手论文",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-27T03:04:50.664189+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q03",
+      "text": "site:arxiv.org/abs 2026 reasoning reinforcement learning prompt selection transfer gradient influence",
+      "provider": "web",
+      "scope": "2025-02-27 至 2026-08-27，一手论文",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-27T03:04:53.909416+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q04",
+      "text": "site:arxiv.org/abs 2026 zero-hit prompts teacher correction budget RLVR transfer",
+      "provider": "web",
+      "scope": "2025-02-27 至 2026-08-27，一手论文",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-27T03:04:57.192724+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q11",
+      "text": "first-error correction affinity matched information zero-hit RLVR",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-27T03:24:53.576096+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q12",
+      "text": "policy affinity hint partial solution first error intervention training RLVR",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-27T03:24:56.818434+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q13",
+      "text": "teacher information leakage matched trajectory guidance causal disentangle reinforcement learning reasoning",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-27T03:25:01.464647+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q14",
+      "text": "zero-hit prompt repair acquisition teacher budget RLVR",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-27T03:25:05.147346+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q15",
+      "text": "policy improvement bandit select teacher corrections LLM post-training",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-27T03:25:09.530435+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q16",
+      "text": "active learning expected transfer influence data acquisition synthetic reasoning correction LLM",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-27T03:25:12.883505+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q17",
+      "text": "first error correction long trajectory self-correction RLVR boundary",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-27T03:25:17.112741+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q18",
+      "text": "error localization noise reasoning trajectory correction credit assignment LLM",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-27T03:25:20.490009+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q19",
+      "text": "process reward model error propagation error cessation reflective reasoning long chain of thought",
+      "provider": "web",
+      "scope": "近 18 个月一手论文优先，补查直接相邻术语",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-27T03:25:23.876979+00:00",
+      "result_count": 10
+    }
+  ],
+  "source_decisions": [
+    {
+      "evidence_id": "E01",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2506.13923",
+      "source_type": "primary_preprint",
+      "claim_supported": "Guide 在全错问题上注入自然语言提示并做重要性校正，提高 pass@k 与跨数学基准表现。",
+      "reason": "纳入：直接观察零命中提示、指导轨迹与能力增益。",
+      "checked_at_utc": "2026-08-27T03:05:29.962978+00:00"
+    },
+    {
+      "evidence_id": "E02",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2506.01347",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "仅负样本强化可提升整个 pass@k 区间，但机制是重分配既有策略质量而非引入全新行为。",
+      "reason": "纳入：给出支持集内重分配与能力扩展的机制边界。",
+      "checked_at_utc": "2026-08-27T03:05:33.207025+00:00"
+    },
+    {
+      "evidence_id": "E03",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2507.13266",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "QuestA 以部分解增强问题，在困难数学题上同时改善 pass@1 与 pass@k。",
+      "reason": "纳入：直接研究部分解决方案作为外部指导。",
+      "checked_at_utc": "2026-08-27T03:05:36.525854+00:00"
+    },
+    {
+      "evidence_id": "E04",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2509.21880",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "RL-ZVP 从全同奖赏提示提取熵调制学习信号，优于丢弃零方差组的基线。",
+      "reason": "纳入：表明零方差不等同于完全无信息。",
+      "checked_at_utc": "2026-08-27T03:05:39.564520+00:00"
+    },
+    {
+      "evidence_id": "E05",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2510.02230",
+      "source_type": "primary_preprint",
+      "claim_supported": "标准 RLVR 会出现负干扰与赢家通吃，对初始高概率正确解过度强化并压低其他解。",
+      "reason": "纳入：现实风险是能力边界收缩而非只看 pass@1。",
+      "checked_at_utc": "2026-08-27T03:05:43.989606+00:00"
+    },
+    {
+      "evidence_id": "E06",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2510.09388",
+      "source_type": "primary_preprint",
+      "claim_supported": "HINT 将外部指导与当前策略的训练亲和度作为稳定性问题，并使用启发式提示避免直接答案。",
+      "reason": "纳入：提出指导质量与策略距离的关键机制。",
+      "checked_at_utc": "2026-08-27T03:05:47.152317+00:00"
+    },
+    {
+      "evidence_id": "E07",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2602.03452",
+      "source_type": "primary_preprint",
+      "claim_supported": "正负提示配对和稀有事件放大优于只按奖励方差选择提示，并改善迁移。",
+      "reason": "纳入：显示提示价值不由单一成功率或方差充分决定。",
+      "checked_at_utc": "2026-08-27T03:05:51.416765+00:00"
+    },
+    {
+      "evidence_id": "E08",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2602.20532",
+      "source_type": "primary_preprint",
+      "claim_supported": "Actor-Curator 直接以预期策略性能改善训练动态问题选择器，并报告稳定性和效率增益。",
+      "reason": "纳入：提供基于学习进展的选择基线。",
+      "checked_at_utc": "2026-08-27T03:05:54.758699+00:00"
+    },
+    {
+      "evidence_id": "E09",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2604.20733",
+      "source_type": "primary_preprint",
+      "claim_supported": "NPO 认为外部轨迹需要同时足够强且足够接近当前策略，并使用近未来检查点平衡质量和方差。",
+      "reason": "纳入：支持指导强度与策略距离存在权衡。",
+      "checked_at_utc": "2026-08-27T03:05:58.121398+00:00"
+    },
+    {
+      "evidence_id": "E10",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2606.29938",
+      "source_type": "primary_preprint",
+      "claim_supported": "LatentRevise 用失败前缀和金答案锚点做潜在修订，在零命中问题上产生原采样未发现的正确轨迹。",
+      "reason": "纳入：最新零命中修复方法，限定候选的新颖边界。",
+      "checked_at_utc": "2026-08-27T03:06:01.939931+00:00"
+    },
+    {
+      "evidence_id": "E11",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2601.14209",
+      "source_type": "primary_preprint",
+      "claim_supported": "InT 在模型自身失败轨迹上定位首个错误并生成单步干预，用于 SFT 初始化和后续 RL。",
+      "reason": "纳入：直接研究错误定位和最小修复。",
+      "checked_at_utc": "2026-08-27T03:06:05.484845+00:00"
+    }
+  ],
+  "collision_reviews": [
+    {
+      "candidate_id": "C01",
+      "query_ids": [
+        "Q11",
+        "Q12",
+        "Q13"
+      ],
+      "closest_evidence_ids": [
+        "E03",
+        "E06",
+        "E10",
+        "E11"
+      ],
+      "overlap": "QuestA、HINT、LatentRevise 与 InT 已分别研究部分解、affinity、潜在修订和首错干预；新增检索还发现自适应提示强度工作。",
+      "nonredundant_increment": "在同一失败 rollout 上固定修复后成功集合与教师语义信息，只移动等信息修复的位置，并检验 importance-ratio 方差到无提示 OOD 净增益的中介；这不是再提出一种提示。",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-08-27T03:26:12.190838+00:00"
+    },
+    {
+      "candidate_id": "C02",
+      "query_ids": [
+        "Q14",
+        "Q15",
+        "Q16"
+      ],
+      "closest_evidence_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "overlap": "Actor-Curator 已以预期 policy improvement 选择训练问题，稀有事件配对和最新 prompt scaffolding 也已做提示选择或改写，LatentRevise 已修复 zero-hit。",
+      "nonredundant_increment": "把 acquisition 动作限定为有成本的外部修复，并以跨技能 held-out 净增益和 oracle 选择后悔为目标；比较即时救活率、affinity 与跨技能价值。",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-08-27T03:26:15.650987+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "query_ids": [
+        "Q17",
+        "Q18",
+        "Q19"
+      ],
+      "closest_evidence_ids": [
+        "E10",
+        "E11"
+      ],
+      "overlap": "InT 已用首错单步干预，LatentRevise 已修失败前缀；三路检索发现 Beyond the First Error 已证明长 CoT 中错误与恢复可交替，直接否定简单首错以后全错假设。",
+      "nonredundant_increment": "不再询问首错修复是否普遍有效，而估计在可控定位噪声、自纠错频率与轨迹长度下，单点干预相对多点 error-propagation-aware 修复的反转边界及可路由置信度。",
+      "prior_art_verdict": "incremental",
+      "disposition": "rewrite",
+      "checked_at_utc": "2026-08-27T03:26:20.412148+00:00"
+    }
+  ],
+  "common_knowledge_reviews": [
+    {
+      "candidate_id": "C01",
+      "basis_evidence_ids": [
+        "E06",
+        "E11"
+      ],
+      "obvious_baseline": "与当前策略更接近且更局部的指导通常更容易优化，并可能少泄漏答案。",
+      "residual_uncertainty": "等语义信息、等成功轨迹和等 FLOP 后，仅改变修复位置是否仍改变 importance-ratio 方差、无提示净 capability gain 与跨技能迁移。",
+      "counterexample_or_boundary": "全局启发可能因不锁定错误步骤而促进独立探索；首错定位噪声或教师选择偏差也可能让局部修复更差。",
+      "verdict": "context-dependent",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-08-27T03:26:24.083176+00:00"
+    },
+    {
+      "candidate_id": "C02",
+      "basis_evidence_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "obvious_baseline": "有限标注或教师预算应优先投入预计最能改善模型的数据，而不是均匀分配。",
+      "residual_uncertainty": "零命中外部修复中，哪种便宜代理能预测跨技能迁移而不是只预测当前问题被救活；复杂 acquisition 是否降低 oracle 选择后悔。",
+      "counterexample_or_boundary": "跨技能 influence 估计可能噪声过大、偏好通用但浅层技能，简单 affinity 或成功率可能更稳且成本更低。",
+      "verdict": "nontrivial",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-08-27T03:26:29.333870+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "basis_evidence_ids": [
+        "E10",
+        "E11"
+      ],
+      "obvious_baseline": "轨迹越长、首错定位越不准，单点修复的平均收益通常应下降。",
+      "residual_uncertainty": "自纠错会使错误和正确步骤交替，单点与多点修复的相对收益可能非单调；真正未知的是可复现的反转边界和可在更新前观测的路由置信度。",
+      "counterexample_or_boundary": "长轨迹若首错是唯一因果瓶颈，单点修复仍可能优于昂贵多点修复；短轨迹若定位偏差系统性强也可能更早失效。",
+      "verdict": "context-dependent",
+      "disposition": "rewrite",
+      "checked_at_utc": "2026-08-27T03:26:33.206779+00:00"
+    }
+  ]
+}
