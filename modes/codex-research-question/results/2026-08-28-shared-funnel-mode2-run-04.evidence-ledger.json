@@ -1,0 +1,369 @@
+{
+  "ledger_version": "1.1",
+  "run_id": "2026-08-28-mode2-run-04",
+  "created_at_utc": "2026-08-28T01:56:00.687421+00:00",
+  "updated_at_utc": "2026-08-28T02:24:03.991248+00:00",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "text": "2025 2026 RLVR data selection curriculum diversity influence difficulty prompt distribution",
+      "provider": "openai-web-search",
+      "scope": "primary sources; 2025-02-28..2026-08-28; math/code RLVR",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-28T01:58:35.021776+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q02",
+      "text": "2025 2026 RLVR semantic duplicate paraphrase prompt cluster weighting",
+      "provider": "openai-web-search",
+      "scope": "primary sources; 2025-02-28..2026-08-28; semantic-equivalent problem variants",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-28T01:58:47.938479+00:00",
+      "result_count": 7
+    },
+    {
+      "query_id": "Q03",
+      "text": "2025 2026 synthetic math reasoning data coverage diversity deduplication OOD generalization",
+      "provider": "openai-web-search",
+      "scope": "primary sources; 2025-02-28..2026-08-28; synthetic reasoning data",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-28T01:59:00.220913+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q04",
+      "text": "2025 2026 RLVR weak supervision saturation memorization support diversity generalization",
+      "provider": "openai-web-search",
+      "scope": "primary sources; 2025-02-28..2026-08-28; reasoning generalization diagnostics",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-08-28T01:59:22.893571+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q05",
+      "text": "RLVR semantic equivalent paraphrase multiplicity family normalized prompt sampling",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-28T02:22:35.787458+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q06",
+      "text": "reinforcement learning verifiable rewards semantic clusters data weighting duplicate prompts",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-28T02:22:39.574306+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q07",
+      "text": "language model training dataset duplication group reweighting semantic clusters invariance",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-28T02:22:43.237841+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q08",
+      "text": "RLVR family held-out template held-out synthetic math validation leakage",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-28T02:22:47.054346+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q09",
+      "text": "synthetic math template leakage group split generalization language models reasoning",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-28T02:22:50.619075+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q10",
+      "text": "reinforcement learning verifiable rewards memorization reward saturation validation split",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-28T02:22:54.181645+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q11",
+      "text": "RLVR semantic cluster balanced sampling gradient heterogeneity misclustering",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-08-28T02:22:57.878858+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q12",
+      "text": "group reweighting cluster error label noise language model training sampling",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-08-28T02:23:01.574230+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q13",
+      "text": "cluster-balanced curriculum gradient heterogeneity threshold data selection LLM",
+      "provider": "web-search",
+      "scope": "arXiv and primary literature",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-08-28T02:23:05.803419+00:00",
+      "result_count": 10
+    }
+  ],
+  "source_decisions": [
+    {
+      "evidence_id": "E01",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2509.01321",
+      "source_type": "primary_preprint",
+      "claim_supported": "DEPO 按多样性、影响和适当难度离线选样，并按可探索性在线裁剪；样本选择显著影响 RLVR 效率与结果。",
+      "reason": "直接提供 prompt 级数据选择的现实基线与未知边界。",
+      "checked_at_utc": "2026-08-28T02:00:38.635609+00:00"
+    },
+    {
+      "evidence_id": "E02",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2605.01823",
+      "source_type": "primary_preprint",
+      "claim_supported": "SGAC 发现输出分歧比 reward variance 更能预测后续推理增益，并据此学习课程选择器。",
+      "reason": "说明常用 prompt 级方差代理可能误导训练价值判断。",
+      "checked_at_utc": "2026-08-28T02:00:43.723340+00:00"
+    },
+    {
+      "evidence_id": "E03",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2606.28707",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "BV-Blend 用语义簇历史矩与 prompt-local 统计混合 advantage，缓解零方差组和小组统计不稳。",
+      "reason": "证明语义簇是可操作的训练统计单位，但未回答簇大小造成的隐式权重。",
+      "checked_at_utc": "2026-08-28T02:00:50.460447+00:00"
+    },
+    {
+      "evidence_id": "E04",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2025.ijcnlp-long.23/",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "十二类语义保持的数学问题改写可显著改变模型正确率，且不同类型和数量的收益非单调。",
+      "reason": "说明同一潜在问题的表面变体并非等难独立样本。",
+      "checked_at_utc": "2026-08-28T02:00:54.338624+00:00"
+    },
+    {
+      "evidence_id": "E05",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2508.16514",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "FLAMES 的统一合成数据消融显示，固定生成预算下保留更高问题覆盖度比只保留可靠解更重要。",
+      "reason": "直接形成覆盖度与质量过滤之间的张力。",
+      "checked_at_utc": "2026-08-28T02:00:58.251326+00:00"
+    },
+    {
+      "evidence_id": "E06",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2506.06499",
+      "source_type": "primary_preprint",
+      "claim_supported": "SPARQ 发现按困难度过滤更利于域内表现，而多样性过滤更利于 OOD 泛化。",
+      "reason": "支持把覆盖/多样性与表面样本数区分。",
+      "checked_at_utc": "2026-08-28T02:01:01.989570+00:00"
+    },
+    {
+      "evidence_id": "E07",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2025.acl-long.417/",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "Self-Error-Instruct 先从坏例聚类错误类型，再按类型合成可泛化的定向训练数据，而非逐例外推。",
+      "reason": "提供从单题单位上移到错误机制簇的相邻设计。",
+      "checked_at_utc": "2026-08-28T02:01:07.779888+00:00"
+    },
+    {
+      "evidence_id": "E08",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2604.18574",
+      "source_type": "primary_preprint",
+      "claim_supported": "弱监督 RLVR 的泛化与训练奖励饱和动态相关；快速饱和更像记忆，训练前推理忠实度比输出多样性更能预测泛化。",
+      "reason": "说明训练曲线和表面多样性可能不是独立能力增益的可靠代理。",
+      "checked_at_utc": "2026-08-28T02:01:12.589794+00:00"
+    },
+    {
+      "evidence_id": "E09",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2507.14843",
+      "source_type": "primary_preprint",
+      "claim_supported": "The Invisible Leash 报告 RLVR 往往提高 pass@1 同时收缩经验支持，token 级熵上升也可伴随答案级多样性下降。",
+      "reason": "要求候选同时保护 OOD 与高 k/支持度，而非只看平均正确率。",
+      "checked_at_utc": "2026-08-28T02:01:17.865103+00:00"
+    },
+    {
+      "evidence_id": "E10",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2605.28022",
+      "source_type": "primary_preprint",
+      "claim_supported": "代码 RLVR 中，正确性目标会产生实现级冗余；直接惩罚近重复实现可改善有限预算可执行表现。",
+      "reason": "证明输出侧的相关副本具有训练与评测后果，构成输入侧语义副本问题的相邻证据。",
+      "checked_at_utc": "2026-08-28T02:01:22.085201+00:00"
+    },
+    {
+      "evidence_id": "E11",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2608.20362",
+      "source_type": "primary_preprint",
+      "claim_supported": "多语言 RLVR 中，等价数学答案因语言和接口格式产生系统不同的 verifier 假阴性与选择瓶颈。",
+      "reason": "说明表面变体不仅改变策略难度，也可能改变奖励噪声。",
+      "checked_at_utc": "2026-08-28T02:01:25.843467+00:00"
+    },
+    {
+      "evidence_id": "E12",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2507.10532",
+      "source_type": "primary_conference_paper",
+      "claim_supported": "受污染基准可把记忆误判为 RL 推理增益；在无泄漏随机算术上，只有准确奖励稳定越过基模边界。",
+      "reason": "要求最终探针使用新生成、按潜在问题家族隔离的评测。",
+      "checked_at_utc": "2026-08-28T02:01:30.701833+00:00"
+    }
+  ],
+  "collision_reviews": [
+    {
+      "candidate_id": "C01",
+      "query_ids": [
+        "Q05",
+        "Q06",
+        "Q07"
+      ],
+      "closest_evidence_ids": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "overlap": "既有工作研究 prompt 难度权重、语义簇统计、去重/软去重、覆盖和表述变化；它们支持训练单位与频率可能重要。",
+      "nonredundant_increment": "在 RLVR 中随机操纵经验证语义等价的 prompt 变体倍率，在固定全局预算下同时测族级更新偏移与 family-heldout OOD，并检验 family-normalized 是否恢复对倍率的不变性。",
+      "prior_art_verdict": "no-direct-match-found",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:23:43.563854+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "query_ids": [
+        "Q08",
+        "Q09",
+        "Q10"
+      ],
+      "closest_evidence_ids": [
+        "E08",
+        "E12"
+      ],
+      "overlap": "既有工作分别讨论弱监督下 reward saturation、推理记忆与数据污染，也常建议无泄漏或 OOD 评测。",
+      "nonredundant_increment": "比较 prompt-random、潜在问题族留出和生成模板留出的整段短程 RLVR 曲线，识别它们何时导致方法排名反转，并测试是否早于奖励饱和预警最终无泄漏 OOD 失败。",
+      "prior_art_verdict": "incremental",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:23:52.163564+00:00"
+    },
+    {
+      "candidate_id": "C09",
+      "query_ids": [
+        "Q11",
+        "Q12",
+        "Q13"
+      ],
+      "closest_evidence_ids": [
+        "E03",
+        "E04",
+        "E11"
+      ],
+      "overlap": "既有工作利用语义簇或梯度簇做数据选择，并显示表述与 verifier 条件可在簇内形成异质性；一般重权研究也承认噪声和验证质量会影响结果。",
+      "nonredundant_increment": "人工连续操纵族内梯度异质、拆分/合并误差与 verifier 条件差异，定位 family-normalized 相对 prompt-uniform 的收益 crossover，并检验更新前指标能否安全路由。",
+      "prior_art_verdict": "no-direct-match-found",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:23:59.445017+00:00"
+    }
+  ],
+  "common_knowledge_reviews": [
+    {
+      "candidate_id": "C01",
+      "basis_evidence_ids": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "obvious_baseline": "完全重复样本会改变经验分布，去重或降权可能有益。",
+      "residual_uncertainty": "经验证语义等价但表述不同的 prompt 不是精确重复；RLVR 的在线成功率、组内优势与探索可能抵消或放大其隐式权重，效应方向和 family-normalized 的恢复能力未知。",
+      "counterexample_or_boundary": "表述变体可能增加真实鲁棒性或探索性；若族内梯度异质或族标签错误，按族归一化反而可能错权。",
+      "verdict": "nontrivial",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:23:47.735409+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "basis_evidence_ids": [
+        "E08",
+        "E12"
+      ],
+      "obvious_baseline": "训练评测泄漏会高估泛化，按相关组而非随机样本切分通常更严格。",
+      "residual_uncertainty": "在短程 RLVR 方法选择中，族/模板留出是否能稳定更早预测最终无泄漏 OOD 排名，以及触发条件和提前量，并非由一般原则给出。",
+      "counterexample_or_boundary": "严格族留出可能因样本小或分布过远而高方差；随机留出在低重复、独立生成数据上可能已经足够。",
+      "verdict": "context-dependent",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:23:55.821016+00:00"
+    },
+    {
+      "candidate_id": "C09",
+      "basis_evidence_ids": [
+        "E03",
+        "E04",
+        "E11"
+      ],
+      "obvious_baseline": "错误聚类和条件噪声可能损害基于组的重权，异质度越高风险通常越大。",
+      "residual_uncertainty": "风险何时超过去偏收益、是否存在可在更新前估计且跨任务可迁移的阈值，以及安全回退规则仍未知。",
+      "counterexample_or_boundary": "若族内异质恰是高价值难度或探索信号，prompt-uniform 的额外权重可能有益；若金标准族极纯，则路由守卫可能没有增量。",
+      "verdict": "nontrivial",
+      "disposition": "keep",
+      "checked_at_utc": "2026-08-28T02:24:03.990277+00:00"
+    }
+  ]
+}

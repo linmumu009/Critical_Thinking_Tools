@@ -1,0 +1,87 @@
+{
+  "manifest_version": "1.0",
+  "run_id": "2026-08-28-mode2-run-04",
+  "mode": "2",
+  "engine": "current_codex",
+  "completed_at_utc": "2026-08-28T02:34:09.742723+00:00",
+  "audit": {
+    "run_id": "2026-08-28-mode2-run-04",
+    "passed": true,
+    "structural_error": null,
+    "semantic_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "candidate_count": 10,
+        "evidence_count": 12,
+        "eligible_candidate_count": 3,
+        "selected_scores": {
+          "C01": 12,
+          "C07": 11,
+          "C09": 11
+        },
+        "top_eligible_score": 12,
+        "unique_evidence_locations": 12
+      }
+    },
+    "evidence_ledger_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "query_count": 13,
+        "source_decision_count": 12,
+        "collision_review_count": 3,
+        "common_knowledge_review_count": 3,
+        "online_evidence_count": 12
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\session.json",
+      "sha256": "a17eb5077789949733f3bb2d8353663eab18fb7d7908af98fdef69026a0452ba"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\evidence-ledger.json",
+      "sha256": "0105b0a09ad925cb295320d2eca427dc10a6342e1b9f89de24cceb100efaf806"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\0_goal.json",
+      "sha256": "d9b8d5978ef27c8a5df961ab2fd7e80ccb6088d360d6ae9fd9c44830761a1b03"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\1_reality_signals.json",
+      "sha256": "4f85b3acf78c2943bae1596bb2ce83b0d27941790aa71901e7ae82c0f81cdefa"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\2_reframe.json",
+      "sha256": "fe5f36c793ec6c50f24da881293d206b1b8757df1a2905f46427ec7aef770b2a"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\3_expand.json",
+      "sha256": "72fd0b9f118d143fbe3c1e938a0004f49c1d9b785fa20288252bc30a27052b26"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\4_cluster.json",
+      "sha256": "ee58ee44c0e8329e48a514a05d6404a5784f92eed14503f006a1dc188606c387"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\5_decision_forks.json",
+      "sha256": "c09db278b4afbf5c6738938d79d114660711dcdb8b03590d645e5207286a1e65"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\6_rank.json",
+      "sha256": "dc4a444c7e3194291c4eef4f6b8485d5276283124f64f0089572d8390732e256"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\7_probe.json",
+      "sha256": "54c5c5afd1302b57e32ace9bf240f6e33ee235192ee7157db041e1b37b4c4c8c"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-08-28-mode2-run-04\\stages\\8_contract.json",
+      "sha256": "d3a3d3352f5e3be21f0d06d07b22217e8cde51d857a55ccea15a27582748e386"
+    }
+  ]
+}

@@ -16,6 +16,10 @@
 
 对应的 [v2 结构化会话](2026-08-27-shared-funnel-mode2-run-03.json)、[证据账本](2026-08-27-shared-funnel-mode2-run-03.evidence-ledger.json)和[运行清单](2026-08-27-shared-funnel-mode2-run-03.run-manifest.json)已通过结构、语义与账本完整审计。该结果只批准 16 题冻结单步最小探针，不表示模型效果或新颖性已经得到实验证实。
 
+- [模式 2 正式运行 04：语义等价 Prompt 倍率的不变性](2026-08-28-shared-funnel-mode2-run-04.md)：当前 Codex 通过可恢复 Runner 完整执行共享阶段 0–8；从 12 项一手来源和 10 个正式候选中，选择“随机扩增部分潜在数学问题族的等价 prompt 数是否造成 RLVR 族级更新与 OOD 偏移，以及 family-normalized 能否恢复倍率不变性”为主问题。
+
+对应的 [v2 结构化会话](2026-08-28-shared-funnel-mode2-run-04.json)、[证据账本](2026-08-28-shared-funnel-mode2-run-04.evidence-ledger.json)和[运行清单](2026-08-28-shared-funnel-mode2-run-04.run-manifest.json)已通过结构、语义与账本完整审计。该结果只批准 24–32 个金标准问题族的缓存 rollout/短程更新最小探针，不表示模型效果或新颖性已经得到实验证实。
+
 ## 历史候选材料，不是正式模式 2 结果
 
 以下两轮使用了后来撤销的 Codex 自主六阶段流程。它们提出的问题和文献记录可以继续参考，但没有执行与模式 1 相同的 QFT、STORM、聚类去重、决策分叉、评分卡和廉价现实试探，因此不能声称“经过模式 2”：

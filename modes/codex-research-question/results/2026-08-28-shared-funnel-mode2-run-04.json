@@ -1,0 +1,1195 @@
+{
+  "schema_version": "2.0",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "execution": {
+    "mode_id": "2",
+    "engine": "current_codex",
+    "adapter_prompt": "prompts/mode-2-codex.md"
+  },
+  "status": "complete",
+  "created_date": "2026-08-28",
+  "profile_snapshot": {
+    "schema_version": "2.0",
+    "pipeline_id": "research_question_discovery_funnel_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 8,
+      "maximum_candidate_count": 15,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "mode_definitions": {
+      "1": {
+        "name": "外部模型 API",
+        "engine": "external_model_api",
+        "adapter_prompt": "prompts/mode-1-api.md"
+      },
+      "2": {
+        "name": "当前 Codex",
+        "engine": "current_codex",
+        "adapter_prompt": "prompts/mode-2-codex.md"
+      }
+    },
+    "process_invariants": {
+      "canonical_stages": "pipeline-stages.json",
+      "same_stage_sequence": true,
+      "same_required_tools": true,
+      "same_candidate_schema": true,
+      "same_hard_gates": true,
+      "same_scorecard": true,
+      "same_probe_rules": true,
+      "same_output_contract": true
+    },
+    "execution_constraints": {
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false,
+      "selected_question_common_knowledge_review_required": true,
+      "selected_question_prior_art_review_required": true,
+      "minimum_prior_art_query_families": 3,
+      "human_candidate_scoring_required": false,
+      "mode_2_external_model_api_allowed": false,
+      "candidate_mapping_audit_is_research_evidence": false
+    }
+  },
+  "input_manifest": [
+    {
+      "input_id": "I01",
+      "kind": "user_constraint",
+      "location": "conversation://2026-08-28/another-mode-2-run",
+      "role": "用户要求在上一轮模式 2 基础上再执行一个独立正式运行。"
+    },
+    {
+      "input_id": "I02",
+      "kind": "local_protocol",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\PROTOCOL.md",
+      "role": "冻结模式 1/2 共用流程、证据账本、非平凡性与先行研究审查边界。"
+    },
+    {
+      "input_id": "I03",
+      "kind": "local_profile",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\research-profile.json",
+      "role": "提供研究领域、近 18 个月窗口、最少证据和候选数量。"
+    },
+    {
+      "input_id": "I04",
+      "kind": "local_pipeline",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\pipeline-stages.json",
+      "role": "提供九阶段顺序、必用工具和每阶段输出契约。"
+    },
+    {
+      "input_id": "I05",
+      "kind": "local_adapter_prompt",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\prompts\\mode-2-codex.md",
+      "role": "约束当前 Codex 的执行机制而不改变共享方法。"
+    },
+    {
+      "input_id": "I06",
+      "kind": "local_prior_results",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results",
+      "role": "用于排除前三次正式入选问题；历史结果只作边界材料，不替代本轮一手证据。"
+    }
+  ],
+  "stage_trace": [
+    {
+      "stage_id": "0_goal",
+      "status": "complete",
+      "output_summary": "冻结第四次正式模式 2 运行的研究使用者、两周内资源投入决策、探索目标、停止条件与既有问题排除清单。",
+      "artifact_refs": [
+        "stage://0_goal"
+      ],
+      "tool_trace": []
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "status": "complete",
+      "output_summary": "纳入 12 项近 18 个月一手来源，识别 prompt 级选择与潜在问题族、表面表述与奖励噪声、域内难度与 OOD 覆盖、训练奖励与真实泛化之间的四组现实张力。",
+      "artifact_refs": [
+        "stage://1_reality_signals",
+        "ledger://evidence-ledger.json"
+      ],
+      "tool_trace": [
+        "primary-source-evidence"
+      ]
+    },
+    {
+      "stage_id": "2_reframe",
+      "status": "complete",
+      "output_summary": "用 Six Honest Serving Men 和苏格拉底追问形成 12 个实质不同的重构，分别改变训练单位、对象、时点、边界、机制、estimand 和反事实。",
+      "artifact_refs": [
+        "stage://2_reframe"
+      ],
+      "tool_trace": [
+        "six-honest-serving-men",
+        "socratic-questioning"
+      ]
+    },
+    {
+      "stage_id": "3_expand",
+      "status": "complete",
+      "output_summary": "先用 QFT 无评价生成 16 个问题并完成开放—封闭转换，再以六个有来源 STORM 视角补充后续问题；八类问题家族各覆盖两个。",
+      "artifact_refs": [
+        "stage://3_expand",
+        "evidence://E01-E12"
+      ],
+      "tool_trace": [
+        "question-formulation-technique",
+        "storm-costorm"
+      ]
+    },
+    {
+      "stage_id": "4_cluster",
+      "status": "complete",
+      "output_summary": "按回答依赖的机制与证据把 16 个原始问题及有来源后续问题聚为 10 个正式候选；仅合并共享同一识别实验的问法。",
+      "artifact_refs": [
+        "stage://4_cluster"
+      ],
+      "tool_trace": [
+        "mechanism-evidence-clustering"
+      ]
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "status": "complete",
+      "output_summary": "为 10 个正式候选冻结可区分的正反答案、对应研发动作、不确定时的保守动作与结论反转条件；对 C01 做双向钢人与竞争假设矩阵，确认问题不是把直觉包装成结论。",
+      "artifact_refs": [
+        "stage://5_decision_forks"
+      ],
+      "tool_trace": [
+        "bidirectional-steelman",
+        "analysis-of-competing-hypotheses"
+      ]
+    },
+    {
+      "stage_id": "6_rank",
+      "status": "complete",
+      "output_summary": "全部 10 个候选通过来源、分叉、中立、可回答与伦理硬门槛；按共享六维 0–2 分量表逐项评分，C01 以 12 分居首，C07 与 C09 各 11 分进入低成本现实探针。",
+      "artifact_refs": [
+        "stage://6_rank"
+      ],
+      "tool_trace": [
+        "question-discovery-scorecard"
+      ]
+    },
+    {
+      "stage_id": "7_probe",
+      "status": "complete",
+      "output_summary": "对前三名分别完成常识性审查、精确问题/机制/相邻术语三路一手文献检索和最低成本可用性试探：C01 保留，C07 缩小为‘何时提前预警排名反转’，C09 缩小为‘可迁移更新前路由边界’；其余七项依前三上限淘汰。",
+      "artifact_refs": [
+        "stage://7_probe",
+        "ledger://queries/Q05-Q13",
+        "ledger://collisions/C01,C07,C09",
+        "ledger://common-knowledge/C01,C07,C09"
+      ],
+      "tool_trace": [
+        "primary-source-collision-search",
+        "consider-the-opposite"
+      ]
+    },
+    {
+      "stage_id": "8_contract",
+      "status": "complete",
+      "output_summary": "交付一个主问题 C01、两个互补备选 C07/C09 和完整研究问题契约；主问题以等价变体倍率随机操纵识别 RLVR 的隐式族级重权，并以 family-normalized 是否恢复不变性作为判别性干预。",
+      "artifact_refs": [
+        "stage://8_contract",
+        "candidate://C01",
+        "candidate://C07",
+        "candidate://C09"
+      ],
+      "tool_trace": [
+        "research-question-contract"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_title": "Towards High Data Efficiency in Reinforcement Learning with Verifiable Reward",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2509.01321",
+      "published_date": "2025-09-01",
+      "checked_date": "2026-08-28",
+      "observation": "DEPO 按多样性、影响和适当难度离线选样，并以样本可探索性在线裁剪；作者报告用部分训练数据保持或改善 RLVR 表现。",
+      "interpretation": "prompt 的训练价值异质，均匀抽样不是无害基线。",
+      "unknown": "选择单位若含大量同一潜在问题的变体，当前指标是否重复计算同一学习机会。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_title": "Selector-Guided Autonomous Curriculum for One-Shot Reinforcement Learning from Verifiable Rewards",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2605.01823",
+      "published_date": "2026-05-03",
+      "checked_date": "2026-08-28",
+      "observation": "SGAC 用成功率、reward variance、输出分歧和语义难度训练选择器，并报告输出分歧比 reward variance 更能预测后续增益。",
+      "interpretation": "常用的 prompt-local reward variance 可能误判迁移价值。",
+      "unknown": "输出分歧是否仍会被语义近重复和表述敏感度系统放大。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_title": "BV-Blend: Uncertainty-Weighted Historical Baselines for Stable Critic-Free RL with Verifiable Rewards",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2606.28707",
+      "published_date": "2026-06-27",
+      "checked_date": "2026-08-28",
+      "observation": "BV-Blend 以语义簇条件的历史均值和方差混合 prompt-local 统计，在零方差与小组不稳定场景改善 critic-free RLVR。",
+      "interpretation": "语义簇可以成为 advantage 估计的可操作统计单位。",
+      "unknown": "它没有隔离语义簇的成员数量本身是否改变数据权重和更新方向。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_title": "An Analysis of the Impact of Problem Paraphrasing on LLM-Based Mathematical Problem Solving",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://aclanthology.org/2025.ijcnlp-long.23/",
+      "published_date": "2025-12-20",
+      "checked_date": "2026-08-28",
+      "observation": "作者构造十二类语义保持数学改写，发现改写类型、组合和数量可显著且非单调地改变多个模型的正确率。",
+      "interpretation": "表面不同但语义等价的 prompt 既不等难，也不应自动视为独立覆盖。",
+      "unknown": "这些变体作为多行训练样本时会增加鲁棒性，还是仅把一个潜在问题族重复加权。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_title": "FLAMES: Improving LLM Math Reasoning via a Fine-Grained Analysis of the Data Synthesis Pipeline",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2508.16514",
+      "published_date": "2025-08-22",
+      "checked_date": "2026-08-28",
+      "observation": "FLAMES 在统一设置中比较十种数学数据合成策略，报告固定生成预算下保持更高问题覆盖度比只保留可靠解更重要。",
+      "interpretation": "数据管线需要区分覆盖度与标签/解质量。",
+      "unknown": "论文中的问题覆盖是表面样本覆盖、概念覆盖还是独立潜在问题覆盖。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_title": "Synthetic Problem Generation for Reasoning via Quality-Diversity Algorithms",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2506.06499",
+      "published_date": "2025-06-06",
+      "checked_date": "2026-08-28",
+      "observation": "SPARQ 从种子数据生成大规模数学题，消融显示困难度过滤更利于域内表现，而多样性过滤更利于 OOD 泛化。",
+      "interpretation": "训练数据的质量—多样性权衡随目标 estimand 改变。",
+      "unknown": "近重复变体在多样性指标中被计为多少有效覆盖，以及该计数是否预测 OOD。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_title": "Self-Error-Instruct: Generalizing from Errors for LLMs Mathematical Reasoning",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://aclanthology.org/2025.acl-long.417/",
+      "published_date": "2025-07-27",
+      "checked_date": "2026-08-28",
+      "observation": "Self-Error-Instruct 把坏例的错误关键词聚类为错误类型，再围绕类型合成定向训练数据，而不是逐个失败案例外推。",
+      "interpretation": "错误机制簇可能比单个 prompt 更接近可泛化的训练单位。",
+      "unknown": "类型簇大小与每簇合成数量应如何定权，才能避免热点错误被重复过采样。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_title": "When Can LLMs Learn to Reason with Weak Supervision?",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2604.18574",
+      "published_date": "2026-04-20",
+      "checked_date": "2026-08-28",
+      "observation": "作者在稀缺数据、噪声奖励和代理奖励下发现，能泛化的模型有较长的奖励预饱和期，而快速饱和更像记忆；训练前推理忠实度比输出多样性更有预测力。",
+      "interpretation": "训练 reward 和表面输出多样性都可能给出虚假的泛化信号。",
+      "unknown": "语义族重复是否会缩短或拉长表面预饱和期，从而误导早停和课程选择。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_title": "The Invisible Leash: Why RLVR May or May Not Escape Its Origin",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2507.14843",
+      "published_date": "2025-07-20",
+      "checked_date": "2026-08-28",
+      "observation": "作者报告常见 RLVR 可提高 pass@1 却收缩经验支持；token 级熵上升还能与答案级熵下降同时出现。",
+      "interpretation": "平均正确率和 token 熵不足以代表新能力或解法覆盖。",
+      "unknown": "数据族权重是否是支持收缩的独立驱动因素，还是只反映策略初始化。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_title": "Beyond pass@k: Redundancy-Aware RLVR for Multi-Sample Code Generation",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2605.28022",
+      "published_date": "2026-05-27",
+      "checked_date": "2026-08-28",
+      "observation": "代码 RLVR 的正确性目标会使采样实现趋同；基于实现相似度的反冗余奖励改善有限预算可执行表现。",
+      "interpretation": "相关副本的数量会影响训练目标和 repeated-sampling 评测。",
+      "unknown": "输入侧的语义问题副本是否通过隐式数据权重产生对偶效应。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_title": "Multilingual Verifier Bias in RLVR: Benchmark, Rollout Diagnosis, and the Cross-Lingual Selection Bottleneck",
+      "source_type": "primary_preprint",
+      "source_location": "https://arxiv.org/abs/2608.20362",
+      "published_date": "2026-06-17",
+      "checked_date": "2026-08-28",
+      "observation": "在多语言数学 RLVR 中，exact-match 接口把语言和格式差异变成显著不同的 verifier 假阴性率，并形成跨语言选择瓶颈。",
+      "interpretation": "等价问题/答案变体可同时改变策略难度与奖励测量误差。",
+      "unknown": "在单语言合成改写中，格式与表述条件的 verifier error 是否也会扭曲族权重。"
+    },
+    {
+      "evidence_id": "E12",
+      "source_title": "Reasoning or Memorization? Unreliable Results of Reinforcement Learning Due to Data Contamination",
+      "source_type": "primary_conference_paper",
+      "source_location": "https://arxiv.org/abs/2507.10532",
+      "published_date": "2025-07-14",
+      "checked_date": "2026-08-28",
+      "observation": "作者在无泄漏随机算术上发现，准确奖励稳定提升并越过基模边界，而随机或错误奖励的标准基准增益不再可靠。",
+      "interpretation": "RLVR 方法判断必须使用无泄漏、跨模型且按生成机制隔离的评测。",
+      "unknown": "按语义族隔离能否进一步区分对训练变体的记忆与规则泛化。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "research_question": "在固定潜在数学问题族、验证标准、总 rollout token 和全局更新预算时，仅把随机一部分问题族扩成 4×/8× 经验证语义等价的 prompt 变体，prompt-uniform RLVR 是否会因族大小产生可重复的更新偏移与 family-heldout OOD 变化；按族归一化能否恢复对变体倍率的不变性？",
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "question_family": "因果/机制",
+      "cluster_id": "K01",
+      "decision_fork": {
+        "decision": "是否把下一轮 1–2 周工程和小模型 GPU 预算投入族级 provenance 与 family-normalized RLVR。",
+        "answer_a": "随机扩增等价变体会产生随倍率增长的族级更新偏移和 OOD 变化，且按族归一化能稳定消除或显著减弱两者。",
+        "action_a": "实现并默认记录 family ID，推进 family-normalized 权重的多任务短程训练与边界实验。",
+        "answer_b": "扩增倍率没有可重复的更新/OOD 效应，或归一化不能恢复且经常伤害训练。",
+        "action_b": "停止把族大小视为核心偏差源，保留 prompt-level 选择，把资源转向覆盖、难度或 verifier 质量。",
+        "uncertain_action": "只做金标准小族集、可信 verifier 和跨种子离线重放，不进入完整训练开发。",
+        "reversal_condition": "若效应在匹配难度、可信 verifier、金标准族标签或第二生成器上消失/翻转，撤销 family-normalized 的默认采用。"
+      },
+      "evidence_path": "从相同潜在问题生成并验证 1×/4×/8×表述族；固定全局 rollout token 和更新预算，离线重放 prompt-uniform 与 family-normalized 一步更新，测 oracle-gradient cosine、族级梯度质量、family-heldout 与高 k 支持。",
+      "cheap_probe": {
+        "input": "24–32 个带程序/人工金标准族标签的数学题族，每族 8 个可信 verifier 通过的表述变体；同一 1–3B 基模的缓存 rollout，并记录基模成功率、长度和 verifier disagreement。",
+        "procedure": "预注册随机一半题族为扩增族，构造 1×/4×/8× 三个 prompt 索引而不增加总 rollout token；三种子离线重放 prompt-uniform 与 family-normalized 的 50–200 步更新，比较扩增族梯度质量、相对族均匀 oracle 的梯度 cosine 和未见问题族/未见表述准确率。",
+        "possible_outcomes": [
+          "倍率产生单调更新偏移且归一化恢复",
+          "倍率只有方差效应、无稳定 OOD 差异",
+          "偏移由难度或 verifier disagreement 解释",
+          "归一化仅在低异质族有效并在高异质族反转"
+        ],
+        "decision_rules": {
+          "keep": "至少两种子和第二生成器上出现预注册剂量反应，且归一化将梯度偏差或 OOD 差异缩小至少一半。",
+          "narrow": "效应只在预定义高近重复/低异质题族或单一结果量出现，则缩小到该边界。",
+          "rewrite": "若难度或 verifier 条件完全中介倍率效应，改写为表述敏感或 verifier 条件机制题。",
+          "reject": "无剂量反应，效应符号跨种子不稳，或归一化相对简单基线没有恢复。"
+        }
+      },
+      "probe_disposition": "keep",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "正反答案直接决定是否投资族级元数据与新采样器。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "随机扩增倍率、离线重放和归一化形成清楚的因果对照。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "语义簇选择、覆盖与表述变体的近期一手结果形成真实张力。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可先在既有 rollout 池和小模型上一天内完成一步更新探针。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "三路检索未发现直接检验等价变体倍率不变性及归一化恢复的工作。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "低成本否证能阻止错误基础设施投资，支持结果又可直达方法论文。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "research_question": "由族内梯度协方差的有效秩、留一变体影响和概念覆盖共同构造的‘有效独立训练覆盖’，能否比原始 prompt 数、嵌入去重数、难度和 reward variance 更准确预测短程 family-heldout OOD 增益？",
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E05",
+        "E06",
+        "E07",
+        "E08"
+      ],
+      "closest_prior_ids": [
+        "E05",
+        "E06"
+      ],
+      "question_family": "测量",
+      "cluster_id": "K02",
+      "decision_fork": {
+        "decision": "是否开发并采用‘有效独立训练覆盖’作为合成数据选集与停止生成的核心指标。",
+        "answer_a": "复合指标在跨生成器和模型时稳定优于表面计数与现有单指标预测 OOD。",
+        "action_a": "实现可复用审计器，并用该指标指导数据配额和生成停止条件。",
+        "answer_b": "复合指标不比简单概念覆盖或嵌入去重稳定，梯度项还增加大量成本。",
+        "action_b": "放弃复合指标，采用最佳简单基线并将预算投入更多独立问题生成。",
+        "uncertain_action": "缩小为判断哪一个分量在当前模型族内最有增量预测力。",
+        "reversal_condition": "若领先只存在于同模型同生成器、换模型后排序翻转，则不作为通用选择指标。"
+      },
+      "evidence_path": "对多个合成数据子集计算表面计数、嵌入簇、概念覆盖、梯度有效秩与留一影响，再与冻结短程训练的 family-heldout 排序做跨生成器验证。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 8，未进入前三探针名额。",
+        "procedure": "依共享漏斗的最多三个入围上限，本轮不执行额外探针。",
+        "possible_outcomes": [
+          "未来资源变化后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "仅在前三候选被直接先行研究覆盖且本题重评进入前三时重开。",
+          "narrow": "不适用。",
+          "rewrite": "若主候选显示覆盖测量是主要中介，再围绕单一可预测分量重写。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "会改变选择指标，但不直接决定单一训练干预。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "多个预定义指标可对同一 OOD 排序做严格外推比较。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "覆盖、难度和语义簇统计已有相互张力。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "梯度有效秩与跨模型验证带来中等计算成本。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "复合有效覆盖有增量，但与覆盖/多样性指标研究邻近。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "价值可能高，但完整验证需多子集和多模型。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "research_question": "在等独立问题族、等 rollout 与等更新 token 下，先 family-uniform 取族、再在族内优先选择高表述敏感度或高可探索性变体，是否比 prompt-uniform、纯 family-uniform 和单 prompt curriculum 同时提高族外泛化与表述鲁棒性？",
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "closest_prior_ids": [
+        "E01",
+        "E02",
+        "E04"
+      ],
+      "question_family": "比较/干预",
+      "cluster_id": "K03",
+      "decision_fork": {
+        "decision": "是否把分层 family-first 采样器列为下一条 RLVR 数据课程主线。",
+        "answer_a": "family-first 且族内选择敏感/可探索变体，在预算匹配下同时改善族外泛化与新表述鲁棒性。",
+        "action_a": "实现在线分层采样器并扩大到多域训练。",
+        "answer_b": "该策略不优于简单 family-uniform 或牺牲族外泛化以换取表述鲁棒性。",
+        "action_b": "采用简单 family-uniform 或现有 prompt-level 课程，不承担二层估计成本。",
+        "uncertain_action": "限定到效应稳定的题型或只把敏感度用于诊断而非采样。",
+        "reversal_condition": "若收益不能跨生成器、模型或题型保持，或额外估计成本超过等成本数据增量，则撤销。"
+      },
+      "evidence_path": "对同一问题族池进行四种分层采样的预算匹配短程训练，测 family-heldout、族内新表述、训练稳定性与高 k 支持。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 6，未进入前三探针名额。",
+        "procedure": "本轮不执行四臂训练；等待 C01 先确认族大小偏差存在。",
+        "possible_outcomes": [
+          "C01 支持后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "C01 支持且二层选择相对纯归一化仍有独立决策价值时重开。",
+          "narrow": "只保留高表述敏感题型。",
+          "rewrite": "若可探索性而非族结构主导，改写为现有课程扩展。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "直接决定是否实现二层采样器。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "四个预算匹配基线给出可区分预测。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "课程、表述变化和覆盖结果直接触发。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "需要四臂短程训练而非纯日志探针。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "分层组合有增量，但与现有动态课程相邻。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "成本中等，且要先解决族定义。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "research_question": "嵌入相似、数学运算图同构、概念标签和留一梯度影响四种潜在问题族定义中，哪一种在跨生成器与跨模型时最能保持族内训练效应同质，并为 family-aware 权重提供稳定边界？",
+      "signal_ids": [
+        "E03",
+        "E04",
+        "E06",
+        "E07"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04"
+      ],
+      "question_family": "测量/比较",
+      "cluster_id": "K04",
+      "decision_fork": {
+        "decision": "是否建设操作图/影响式族定义，而不是沿用廉价 embedding 聚类。",
+        "answer_a": "操作图或影响式定义在跨生成器/模型上显著提高族内效应同质和权重稳定性。",
+        "action_a": "投资结构化标注或梯度原型，并把它作为 family-aware 方法的前置条件。",
+        "answer_b": "廉价 embedding/概念标签已足够，复杂定义没有稳定增量。",
+        "action_b": "使用廉价聚类，把工程预算留给采样与训练。",
+        "uncertain_action": "只在人审判为高风险的边界族使用复杂定义。",
+        "reversal_condition": "若复杂定义的增益低于其标注/计算成本或换模型后失效，则退回廉价定义。"
+      },
+      "evidence_path": "在带人工/程序金族标签的小样本上比较四种族定义的纯度、稳定性、梯度同质度和对 held-out 增益的预测。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 5，未进入前三探针名额。",
+        "procedure": "本轮只作为 C01/C09 的测量风险记录，不单独立项。",
+        "possible_outcomes": [
+          "主候选因族定义受阻后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "只有主候选显示 embedding 族导致结论反转时重开。",
+          "narrow": "限定为主实验的标签敏感性消融。",
+          "rewrite": "不单独改写。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "主要决定支撑表示，不直接决定主研究机制。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "四种定义对同一金标签与训练效应可直接比较。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "语义聚类与表述差异结果显示定义选择重要。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "小金标准集即可初筛。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "更像方法学比较，邻近聚类评测常见。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "低成本且可为所有 family-aware 题提供边界。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "research_question": "在在线 RLVR 中，按语义族累计梯度质量或有效更新次数设置动态上限，是否能比静态去重或 family-uniform 抽样更早阻止热点合成模板主导策略，同时不牺牲高价值难题的重复学习？",
+      "signal_ids": [
+        "E01",
+        "E03",
+        "E08",
+        "E09"
+      ],
+      "closest_prior_ids": [
+        "E01",
+        "E03"
+      ],
+      "question_family": "机制/干预",
+      "cluster_id": "K05",
+      "decision_fork": {
+        "decision": "是否开发在线族级梯度预算上限。",
+        "answer_a": "动态上限比静态方法更早抑制热点族主导，并保留重复高价值难题的收益。",
+        "action_a": "实现在线累计统计和阈值控制，进入小模型消融。",
+        "answer_b": "动态上限没有稳定优势，或错误截断真正高价值重复。",
+        "action_b": "采用简单去重/family-uniform，并避免增加在线状态。",
+        "uncertain_action": "改成离线告警而非训练时硬控制。",
+        "reversal_condition": "若阈值对模型、任务或训练阶段高度敏感且无法预先校准，则不部署。"
+      },
+      "evidence_path": "重放在线训练日志，比较无上限、样本去重、族均匀和累计梯度上限的族级质量分布、奖励饱和、支持与短程 OOD。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 9，未进入前三探针名额。",
+        "procedure": "本轮不执行在线控制探针。",
+        "possible_outcomes": [
+          "主候选支持后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "只有 C01 支持且静态归一化不足时重开。",
+          "narrow": "改为离线告警。",
+          "rewrite": "若奖励饱和而非族热点主导，回到现有课程问题。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "决定一种在线控制，但前提机制尚未证实。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "动态与三种静态基线可直接比较。"
+        },
+        "reality_grounding": {
+          "value": 1,
+          "reason": "近期结果支持热点/饱和风险，但没有直接族级累计证据。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "日志重放可初筛，因果结果仍需在线训练。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "族级梯度质量上限相对现有数据课程增量清楚。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "在线状态与阈值调参成本较高。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "research_question": "对同一潜在数学问题族的受控表述变体，在可信 verifier 下匹配真实难度后，族内训练价值差异还有多少分别由策略表述敏感、verifier 假阴性和基模记忆解释；这些分量能否预测该变体应被保留还是降权？",
+      "signal_ids": [
+        "E04",
+        "E08",
+        "E11",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E04",
+        "E11",
+        "E12"
+      ],
+      "question_family": "因果/机制",
+      "cluster_id": "K06",
+      "decision_fork": {
+        "decision": "是否开发变体价值的机制分解器来过滤或重权训练数据。",
+        "answer_a": "三个分量可重复分离，且更新前指标能预测保留/降权后的 OOD。",
+        "action_a": "把分解器接入变体生成与筛选流程。",
+        "answer_b": "分量不可识别或预测力不超过简单成功率/难度。",
+        "action_b": "不建复杂分解器，使用可信 verifier 与简单难度分层。",
+        "uncertain_action": "只保留 verifier disagreement 或记忆探针中最稳定的单一诊断。",
+        "reversal_condition": "若分解依赖不可获得的人工标签或跨模型不稳定，则不作为生产选择规则。"
+      },
+      "evidence_path": "对程序同构题生成受控表述，使用可信解析 verifier、partial-prompt 记忆探针和基模多次采样分解变体成功率与一步梯度。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 7，未进入前三探针名额。",
+        "procedure": "不单独执行；C01 探针会把难度、verifier disagreement 和记忆作为竞争解释记录。",
+        "possible_outcomes": [
+          "竞争解释主导后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "C01 的倍率效应被其中一个分量完全中介时重开。",
+          "narrow": "只保留稳定单一分量。",
+          "rewrite": "按实际中介机制重写。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "结果决定变体筛选是否用复杂机制分解。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "受控表述和可信 verifier 可区分三类解释。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "表述、verifier 偏差和记忆均有直接一手信号。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "分量识别需要高质量标签和多次采样。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "整合分解有价值，但各分量已有邻近研究。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "探针和生产估计成本都中等偏高。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "research_question": "在合成数学数据的短程 RLVR 方法比较中，随机 prompt-heldout 与按潜在问题族/生成模板留出的验证曲线在什么可观测条件下给出相反方法排名；family-heldout 能提前多少更新步预警记忆或变体泄漏导致的最终无泄漏 OOD 失败？",
+      "signal_ids": [
+        "E05",
+        "E06",
+        "E08",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E08",
+        "E12"
+      ],
+      "question_family": "测量/边界",
+      "cluster_id": "K07",
+      "decision_fork": {
+        "decision": "是否把 family/template-heldout 曲线设为短程 RLVR 方法选择与早停的必需评测。",
+        "answer_a": "它稳定早于随机 prompt-heldout 揭示最终 OOD 排名反转或泄漏。",
+        "action_a": "修改评测门槛：没有族/模板留出不得晋级完整训练。",
+        "answer_b": "它与随机留出排序一致或噪声更大，不能改善方法选择。",
+        "action_b": "保留随机留出并只做常规污染审计。",
+        "uncertain_action": "只在高近重复率数据集触发族留出。",
+        "reversal_condition": "若无泄漏生成题上的最终排名不被 family-heldout 更好预测，则不设为强制门槛。"
+      },
+      "evidence_path": "在相同训练日志上构造 prompt-random、family-heldout、template-heldout 与无泄漏生成题四种曲线，比较对最终 OOD 排名和早停的预测。",
+      "cheap_probe": {
+        "input": "至少三个既有短程 RLVR 方法的中间检查点、可回溯生成种子/模板/潜在问题族的数据，以及独立无泄漏生成的终局 OOD 小集。",
+        "procedure": "不重训模型，按 prompt-random、family-heldout、template-heldout 重切验证集；逐检查点计算方法排名，并以终局 OOD 排名为参照，记录首次正确预警排名反转的步数、近重复率分层与置信区间。",
+        "possible_outcomes": [
+          "族/模板留出稳定提前预警排名反转",
+          "只有高近重复率时有增量",
+          "template-heldout 优于 family-heldout",
+          "随机留出同样准确且方差更低"
+        ],
+        "decision_rules": {
+          "keep": "在至少两个方法对和两种数据生成设置上更早且正确预测终局 OOD 排名。",
+          "narrow": "只在预注册高近重复率/高模板集中度层有效，则限定触发条件。",
+          "rewrite": "若 template-heldout 稳定优于 family-heldout，改写为模板级评测门槛。",
+          "reject": "没有提前量、排名预测不更准，或严格留出高方差导致更多误选。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "会直接改变方法晋级和早停门槛。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "四种留出曲线可与最终无泄漏 OOD 排名核验。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "覆盖、弱监督饱和和污染信号共同支撑。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可优先重切既有数据和复用检查点。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "群组留出原则已知；非冗余增量缩小为 RLVR 排名反转条件与提前量。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "低成本评测可避免昂贵完整训练误选。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "research_question": "语义近重复的热点输入问题族被过度采样时，是否会像正确性 RLVR 造成输出实现冗余一样，选择性放大少数解题模板并收缩未被热点族覆盖的答案级支持；族级重权能否恢复高 k 与策略多样性？",
+      "signal_ids": [
+        "E04",
+        "E09",
+        "E10"
+      ],
+      "closest_prior_ids": [
+        "E09",
+        "E10"
+      ],
+      "question_family": "机制/类比",
+      "cluster_id": "K08",
+      "decision_fork": {
+        "decision": "是否将输入族重权作为保护高 k 支持与策略多样性的主要干预。",
+        "answer_a": "热点输入族的倍率因果性收缩跨族输出支持，族重权可恢复且不损害 pass@1。",
+        "action_a": "把输入族权重与输出反冗余联合纳入训练。",
+        "answer_b": "支持收缩主要由输出奖励/策略优化造成，与输入族倍率无关。",
+        "action_b": "停止输入侧干预，专注输出多样性目标或优化器。",
+        "uncertain_action": "仅将输入族倍率作为风险分层变量。",
+        "reversal_condition": "若控制输出奖励后输入倍率不再解释支持变化，或族重权只提高多样性却降低正确性，则撤销。"
+      },
+      "evidence_path": "控制热点族倍率，跟踪解法聚类、答案支持、pass@k 和跨族迁移；比较输入族重权、输出反冗余与两者组合。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 10，未进入前三探针名额。",
+        "procedure": "本轮不执行高 k 输出聚类实验。",
+        "possible_outcomes": [
+          "C01 显示强倍率效应后重开",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "只有输入倍率已证实且输出支持是主要损失量时重开。",
+          "narrow": "限定到高 k 支持。",
+          "rewrite": "若输出奖励主导，转回反冗余研究。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "只决定支持收缩的一类输入侧干预。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "输入与输出机制可能强交互，分离较难。"
+        },
+        "reality_grounding": {
+          "value": 1,
+          "reason": "依据主要是跨输入/输出侧的机制类比。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "需要训练并可靠聚类解法。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "输入族重权到输出支持收缩的桥接较新。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "探针成本中等且歧义风险高。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C09",
+      "research_question": "当语义族内梯度异质度、聚类误差或 verifier 条件差异升高时，family-normalized 抽样相对 prompt-uniform 会在什么可观测阈值后由去偏变成错权；该阈值能否跨生成器迁移并在更新前安全路由？",
+      "signal_ids": [
+        "E03",
+        "E04",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04",
+        "E11"
+      ],
+      "question_family": "边界/反例",
+      "cluster_id": "K09",
+      "decision_fork": {
+        "decision": "是否为 family-normalized 采样设置更新前路由阈值，而非全局启用。",
+        "answer_a": "存在跨任务可复现的异质度/误聚类阈值，能提前预测收益反转。",
+        "action_a": "实现路由守卫：阈值内归一化，阈值外回退 prompt-uniform 或拆族。",
+        "answer_b": "收益反转没有可迁移阈值，更新前指标不能可靠预测。",
+        "action_b": "不部署自动路由，只在金标准族或离线验证通过的域使用。",
+        "uncertain_action": "将目标缩小为单域安全边界并要求在线监控。",
+        "reversal_condition": "若阈值换模型/生成器后偏移超过可容忍范围或误路由成本高于平均收益，则禁用自动路由。"
+      },
+      "evidence_path": "人工注入拆分/合并误差与族内难度、奖励噪声异质度，比较两种采样器的一步 oracle-gradient error 和短程 OOD crossover。",
+      "cheap_probe": {
+        "input": "C01 金标准族与缓存 rollout；另构造 0%、10%、20%、40% 随机拆分/合并错误，并按族内梯度 cosine 方差和 verifier disagreement 分层。",
+        "procedure": "在第一生成器上拟合更新前指标到 family-normalized 相对 prompt-uniform 的 oracle-gradient error crossover，再冻结阈值到第二生成器；报告 AUROC、误路由损失和单域/跨域阈值漂移。",
+        "possible_outcomes": [
+          "存在跨生成器稳定阈值",
+          "只有单域阈值",
+          "verifier disagreement 单独主导",
+          "无更新前指标可预测收益反转"
+        ],
+        "decision_rules": {
+          "keep": "冻结阈值在第二生成器 AUROC 至少 0.75，且路由后的最坏误差低于两种全局策略。",
+          "narrow": "跨域不稳但单域阈值可重复，则缩小到单域安全边界。",
+          "rewrite": "若 verifier disagreement 单独解释反转，改写为 verifier 条件路由。",
+          "reject": "AUROC 接近随机、阈值漂移大，或误路由损失抵消平均收益。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "结果决定全局启用、条件路由或禁用归一化。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "可控制误聚类与异质度并寻找 crossover。"
+        },
+        "reality_grounding": {
+          "value": 1,
+          "reason": "最近工作提示簇统计和条件偏差，但反转阈值属未证推论。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "人工注入错误和一步更新重放即可低成本定位边界。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "三路检索未发现 RLVR 族归一化收益 crossover 与更新前路由的直接回答。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "低成本边界探针可防止全局错误部署。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C10",
+      "research_question": "在合成数据规模化前，保存生成种子、变换类型、概念/运算图和候选族标识并执行族级覆盖审计，是否比继续增加生成或单 prompt 质量过滤带来更高的单位成本 family-heldout 增益与更低的评测泄漏风险？",
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E05",
+        "E06",
+        "E07",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E05",
+        "E07",
+        "E12"
+      ],
+      "question_family": "价值/利益相关者",
+      "cluster_id": "K10",
+      "decision_fork": {
+        "decision": "是否优先建设族级 provenance 与覆盖审计，而不是继续扩大生成或 prompt 过滤。",
+        "answer_a": "元数据回填和族审计在等成本下带来更高 OOD 增益并显著降低泄漏风险。",
+        "action_a": "把族级字段设为数据契约，并在新生成前完成审计管线。",
+        "answer_b": "审计成本高、族定义不稳，收益低于更多独立生成或质量过滤。",
+        "action_b": "只保留最小 provenance，继续投资生成和 prompt 级过滤。",
+        "uncertain_action": "仅对高价值评测邻域和高重复数据源记录完整族信息。",
+        "reversal_condition": "若回填成本超过重生成且审计后的重权不能改善无泄漏 OOD，则不全面实施。"
+      },
+      "evidence_path": "对一批既有生成数据回填族级元数据，比较审计后重权、额外生成和质量过滤在相同工程/GPU 成本下的覆盖、泄漏与短程 OOD。",
+      "cheap_probe": {
+        "input": "阶段 6 排名第 4，未进入前三探针名额。",
+        "procedure": "本轮只把最小 family ID 记录作为 C01 的实验需求，不单独比较工程 ROI。",
+        "possible_outcomes": [
+          "C01 支持后转为实施课题",
+          "维持淘汰"
+        ],
+        "decision_rules": {
+          "keep": "C01 支持且 family provenance 成为必要基础设施时重开。",
+          "narrow": "限定为新数据的最小字段契约。",
+          "rewrite": "若主要价值是防泄漏，改写为评测治理。",
+          "reject": "本轮低于探针阈值。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "直接决定基础设施与生成预算先后。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "等成本比较可做，但工程成本估算与训练效应易混合。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "覆盖和污染风险均有一手证据。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可在既有数据小批回填和重权试验。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "族级数据契约有增量，但治理/污染审计原则较常见。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "小规模成本审计可直接改变大规模生成前决策。"
+        }
+      }
+    }
+  ],
+  "selection": {
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": [
+      "C07",
+      "C09"
+    ],
+    "why_this_question": "C01 是本轮唯一在六维评分均达到 2 分的候选。它直接服务 2026-09-12 前是否投入 1–2 周工程和小模型 GPU 的决策；三路先行研究检索找到 prompt weighting、语义簇选择、去重与 paraphrase 的邻近工作，却未发现随机操纵等价变体倍率并同时检验 RLVR 更新偏移、family-heldout OOD 与 family-normalized 恢复的直接答案。问题可用小金标准族和缓存 rollout 先做低成本、强判别探针，负结果同样会节省基础设施投资。",
+    "research_question_contract": {
+      "final_question": "在固定潜在数学问题族、验证标准、总 rollout token 和全局更新预算时，仅把随机一部分问题族扩成 4×/8× 经验证语义等价的 prompt 变体，prompt-uniform RLVR 是否会因族大小产生可重复的更新偏移与 family-heldout OOD 变化；按族归一化能否恢复对变体倍率的不变性？",
+      "triggering_signal_ids": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06"
+      ],
+      "users_and_decision": "使用者是负责 LLM 后训练、合成数据和 RLVR 方法选择的研究负责人；该问题决定是否在 2026-09-12 前投入 1–2 周工程与小模型 GPU 建设 family provenance、族级审计和 family-normalized 采样。",
+      "decision_deadline": "2026-09-12；先用一天级缓存 rollout/短程更新探针作 go/no-go，再决定是否进入完整多任务训练。",
+      "key_concepts_and_boundaries": [
+        "潜在问题族：最终答案、关键运算/概念结构一致，并由程序检查或人工双审确认；embedding 相似不能单独作为金标准。",
+        "语义等价变体：只改变措辞、顺序或表面情境，不改变所需知识、运算图、答案空间与 verifier 条件。",
+        "处理变量：预注册随机选择问题族，并将可见 prompt 数从 1× 扩为 4×/8×；固定问题族集合、验证标准、全局 rollout token、更新 token、优化器和模型初始化。",
+        "主要结果：族级梯度质量、相对 family-uniform oracle 的更新 cosine/误差，以及未见问题族和未见表述的 OOD；训练 reward 只作辅助结果。",
+        "恢复干预：每个 prompt 的权重除以其金标准族大小，并与 prompt-uniform、精确去重和难度匹配基线比较。",
+        "首轮范围：程序可验证的合成数学题、1–3B 小模型、两种变体生成器和至少三随机种子；不外推到开放式偏好奖励。"
+      ],
+      "competing_answers": {
+        "a": "等价变体倍率会造成随 1×/4×/8× 增长的族级更新偏移和可重复 OOD 变化；family-normalized 能显著恢复。",
+        "b": "倍率效应接近零或只是方差变化；或 family-normalized 无法恢复并因族内异质/误标签造成更大损失。",
+        "unknown": "效应只在特定难度、verifier disagreement、记忆水平、生成器或低异质族中出现，尚不足以支持全局策略。"
+      },
+      "action_mapping": {
+        "if_a": "实现并默认记录 family ID，推进 family-normalized 的多题型短程训练，并立刻用备选 C09 确定失效阈值。",
+        "if_b": "停止把族大小当作核心偏差源，不建设通用归一化采样器；把预算转向独立覆盖、难度课程或 verifier 质量。",
+        "if_uncertain": "只在已证实的低异质/高近重复域启用，补做金标准族、可信 verifier 和第二生成器复现，不进入全局部署。"
+      },
+      "discriminating_evidence": "关键证据是预注册随机扩增族产生跨种子的倍率剂量反应，并由 family-normalized 而非难度匹配、可信 verifier 替换或精确去重消除；若只在 verifier disagreement 或基模成功率不匹配时出现，则支持竞争机制而非族大小本身。",
+      "reversal_result": "任何一项都会反转默认投资结论：金标准族标签下剂量反应消失；第二生成器/题型效应翻转；可信 verifier 或难度匹配完全解释效应；family-normalized 的平均恢复不足且最坏 OOD 损失超过 prompt-uniform。",
+      "minimum_probe": "用 24–32 个金标准数学问题族、每族 8 个验证变体和同一缓存 rollout，随机扩增一半族为 1×/4×/8×，在固定全局预算下三种子重放 prompt-uniform 与 family-normalized 的 50–200 步更新；预注册至少两种子和第二生成器出现剂量反应、且归一化缩小至少一半偏差/差异才保留。",
+      "cost_risk_ethics": "先导约需 1 个研究日、现有 1–3B 模型的缓存生成或少量 GPU；主要风险是金标准族误标、把短程梯度代理误当长期能力、选择性报告种子和 verifier 条件混杂。使用合成数学题与模型输出，不涉及个人敏感数据；保留全部种子、失败结果和标签审计。",
+      "stopping_condition": "若三种子无预注册剂量反应、效应符号不稳，或 family-normalized 不能相对难度匹配/精确去重减少至少一半主要偏差，则在先导阶段停止；若保留，则完成第二生成器与一个额外题型复现后再决定完整训练。",
+      "residual_unknowns": [
+        "一步梯度恢复是否会转化为更长训练的真实 OOD 能力，而非短程代理改善。",
+        "潜在问题族的操作图金标准能否扩展到证明题、代码和开放式答案。",
+        "族内表述差异何时是有价值探索信号，何时只是独立证据的假象。",
+        "family-normalized 与 GRPO/RLOO/DAPO 的优势归一化、动态难度课程和输出支持收缩如何交互。",
+        "安全路由阈值是否能跨模型规模与生成器迁移；该问题由备选 C09 承接。"
+      ]
+    }
+  },
+  "decision_log": [
+    "2026-08-28：用户的‘再来一个’按上下文解释为继续采用模式 2，执行引擎固定为 current_codex。",
+    "2026-08-28：采用共享研究画像的默认业务目标，不要求用户参与候选评分。",
+    "2026-08-28：冻结前三次正式运行的九个入选问题为排除项，保证本轮从不同机制与决策分叉出发。",
+    "2026-08-28：阶段 1 执行四组广域检索并把每条在线证据的来源决定写入独立账本。",
+    "2026-08-28：12 项来源均在近 18 个月窗口内；聚合页、博客和历史 benchmark 仅用于导航，未作为正式证据。",
+    "2026-08-28：核心异常暂定为训练和评测的计数单位可能错位，但在阶段 3 结束前不评价或预选候选。",
+    "2026-08-28：阶段 2 用 5W1H 分别改变对象、单位、机制、时点、领域和识别设计，不把同义改写计入数量。",
+    "2026-08-28：苏格拉底追问同时质疑‘语义近似即重复’与‘更多变体即更多覆盖’两种相反前提。",
+    "2026-08-28：将更上游的目标澄清为估计合成数据的有效独立覆盖和可迁移学习机会。",
+    "2026-08-28：阶段 3 严格先生成后评价，形成 16 个原始问题，八类问题家族各两个。",
+    "2026-08-28：STORM 扩展只使用阶段 1 已纳入的一手来源视角，不把单模型角色扮演冒充独立证据。",
+    "2026-08-28：候选是否冗余、可行或值得投入留到阶段 4–7 判断。",
+    "2026-08-28：阶段 4 按回答依赖的机制和证据把 16 个原始问题聚为 10 个正式候选。",
+    "2026-08-28：保留因果效应、测量、采样干预、族定义、在线限额、机制分解、诊断、支持收缩、失败边界和治理价值十种不同决策路径。",
+    "2026-08-28：本阶段不做硬门槛和评分；相关字段保持结构合法的待评状态。",
+    "2026-08-28：阶段 5 为全部 10 个候选填写 A/B/不确定时的不同研发动作与明确反转条件。",
+    "2026-08-28：将 C01 的预算约束澄清为固定全局 rollout token 和更新预算；原阶段 4 的‘每族总 rollout token’会机械消除待识别的采样质量差异，因此不作为实验约束。",
+    "2026-08-28：C01 的竞争解释至少包括训练单位错配、真实表述难度、verifier 条件差异和标签/有限样本伪象，后续探针必须能区分而非只报告相关性。",
+    "2026-08-28：阶段 6 对 10 个候选逐项执行五项硬门槛；全部通过，避免把低排名伪装成硬门槛失败。",
+    "2026-08-28：依共享六维 scorecard 得分排序，C01=12，C07=11，C09=11，只有前三名进入阶段 7 的先验碰撞检索与廉价探针。",
+    "2026-08-28：同分时优先保留能改变不同类型决策的候选：C07 改评测门槛，C09 给 C01 的干预增加失效边界。",
+    "2026-08-28：阶段 7 只对 C01/C07/C09 三个入围题执行两个淘汰门和三路先行研究检索；Q05–Q13、碰撞记录和常识审查均写入证据账本。",
+    "2026-08-28：C01 保留；其最接近工作覆盖 prompt weighting、簇级选择、去重与 paraphrase，但未直接覆盖随机等价变体倍率及 family-normalized 恢复。",
+    "2026-08-28：C07 从宽泛‘族留出是否更好’缩小为排名反转的可观测条件与提前预警步数；C09 从显然‘坏聚类有害’缩小为可迁移更新前 crossover 路由。",
+    "2026-08-28：C02/C03/C04/C05/C06/C08/C10 因未进入前三探针名额而淘汰，不把低排名伪装成先验碰撞。",
+    "2026-08-28：已执行文献、反例、竞争假设与数据可用性现实试探；小模型训练尚未运行，已以预注册阈值冻结为最终最小下一步。",
+    "2026-08-28：阶段 8 选择 C01 为主问题，C07/C09 为两个互补备选；三者均通过硬门槛、先验碰撞与常识审查，且 probe_disposition 非 reject。",
+    "2026-08-28：最终契约严格保持 C01 的研究问题原句，并冻结使用者、决策期限、金标准族定义、随机操纵、竞争答案、行动映射、最小探针、反转与停止条件。",
+    "2026-08-28：本次交付是研究问题发现结果，不声称小模型实验已完成；经验结论须由契约中的下一步探针产生。"
+  ]
+}
