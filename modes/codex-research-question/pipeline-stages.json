@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "pipeline_id": "research_question_discovery_funnel_v1",
   "canonical_source": "../../tools/question-discovery-funnel/README.md",
   "checkpoint_policy": "每阶段保存并校验产物；两种模式均不要求用户给候选打分，只有缺少会改变方向的真实约束时才暂停。",
@@ -8,7 +8,7 @@
       "stage_id": "0_goal",
       "name": "决策或探索目标",
       "required_tools": [],
-      "required_output": "研究使用者、要做的研究决策、探索目标与停止条件"
+      "required_output": "研究使用者、要做的研究决策、探索目标、已有最佳问题基线、停止条件，以及允许输出‘本轮没有更好的问题’"
     },
     {
       "stage_id": "1_reality_signals",
@@ -32,7 +32,7 @@
       "stage_id": "4_cluster",
       "name": "按机制与证据聚类去重",
       "required_tools": ["mechanism-evidence-clustering"],
-      "required_output": "候选簇、代表问题、合并与删除理由"
+      "required_output": "候选簇与问题树：每簇只保留一个单一核心问题，并把机制、边界和干预拆为次级问题；仅合并同义问题，不得因为共享同一实验而合并不同未知"
     },
     {
       "stage_id": "5_decision_forks",
@@ -44,19 +44,19 @@
       "stage_id": "6_rank",
       "name": "硬门槛与信息价值排序",
       "required_tools": ["question-discovery-scorecard"],
-      "required_output": "先过五项硬门槛，再按六项 0–2 评分比较，不超过三个入围候选"
+      "required_output": "先过九项硬门槛（含可读性、单一性、概念负担和价值可见性），再按六项 0–2 评分；与已有最佳问题同台比较，不超过三个新候选入围，允许判定本轮没有更好的问题"
     },
     {
       "stage_id": "7_probe",
       "name": "非平凡性、先行研究与廉价现实试探",
       "required_tools": ["primary-source-collision-search", "consider-the-opposite"],
-      "required_output": "每个入围候选的常识性审查、精确问题/机制/相邻术语三路先行研究检索、最近工作碰撞、最小试探及保留、缩小、改写、淘汰规则"
+      "required_output": "先对脱离实验协议的核心未知做常识性审查与精确问题/机制/相邻术语三路先行研究检索，再记录最近工作碰撞、最小试探及保留、缩小、改写、淘汰规则；禁止以约束条件的罕见组合制造新颖性"
     },
     {
       "stage_id": "8_contract",
       "name": "问题契约与交付",
       "required_tools": ["research-question-contract"],
-      "required_output": "一个主问题、两个备选，以及主问题的完整问题契约"
+      "required_output": "若新问题优于已有基线，交付短标题、白话问题、价值说明、正式核心问题、分离的次级问题、一个主问题、两个备选及完整问题契约；否则交付‘本轮没有更好的问题’及比较理由"
     }
   ]
 }

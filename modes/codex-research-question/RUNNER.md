@@ -1,6 +1,6 @@
 # 可恢复无人化 Runner 与证据账本
 
-版本：v1.1（2026-08-27）
+版本：v1.2（2026-09-02）
 
 `research_question_runner.py` 是模式 1、模式 2 共用的运行控制层。它不改变阶段 0–8，也不代替任何思考工具；它负责创建运行、生成当前阶段包、原子保存 checkpoint、失败记录、断点恢复、证据检索账本、语义审计和最终交付清单。
 
@@ -65,6 +65,8 @@ python modes/codex-research-question/research_question_runner.py fail `
 
 再次调用 `next` 会从第一个未完成阶段恢复。Runner 拒绝跳阶段、跨 run envelope、重复 input/evidence ID 和阶段越权修改。
 
+新运行生成 schema v2.1。阶段 4 必须保留“核心问题—机制—边界—干预”问题树，阶段 6 必须应用九项硬门槛，阶段 8 可以合法交付 `no_better_question`，不再强迫每轮选择一个更狭窄的新问题。
+
 ## 可复现证据账本
 
 每个检索式都必须记录：
@@ -124,11 +126,12 @@ python modes/codex-research-question/research_question_session.py validate `
 
 语义审计继续检查：
 
-- 最终契约问题是否保持主候选的对象、机制与决策；精化改写告警，实质漂移报错；
+- 最终契约是否保持主候选的研究对象、比较、结果、范围和次级问题树；白话改写不再用字符串相似度判断；
 - 契约触发信号是否来自主候选；
 - A/B 是否真的映射到不同动作；
 - 主问题若不是最高分，是否产生显式警告；
 - 候选是否高度近重复；
+- 是否出现所有候选全过硬门槛或全部同分的饱和现象；
 - 证据地址是否重复、核查日期是否有效。
 
 ```powershell

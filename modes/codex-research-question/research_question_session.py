@@ -12,7 +12,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent
 DEFAULT_PROFILE = ROOT / "research-profile.json"
 DEFAULT_PIPELINE = ROOT / "pipeline-stages.json"
-SCHEMA_VERSION = "2.0"
+SCHEMA_VERSION = "2.1"
+LEGACY_SCHEMA_VERSION = "2.0"
 PIPELINE_ID = "research_question_discovery_funnel_v1"
 MODES = ("1", "2")
 HARD_GATES = (
@@ -21,7 +22,12 @@ HARD_GATES = (
     "neutral",
     "answerable",
     "ethical",
+    "readable",
+    "atomic",
+    "low_concept_burden",
+    "value_visible",
 )
+LEGACY_HARD_GATES = HARD_GATES[:5]
 SCORE_DIMENSIONS = (
     "decision_leverage",
     "discriminating_power",
@@ -41,7 +47,12 @@ DECISION_FORK_FIELDS = (
 )
 CHEAP_PROBE_FIELDS = ("input", "procedure", "possible_outcomes", "decision_rules")
 CONTRACT_FIELDS = (
+    "short_title",
+    "plain_question",
+    "why_it_matters",
     "final_question",
+    "question_identity",
+    "secondary_questions",
     "triggering_signal_ids",
     "users_and_decision",
     "decision_deadline",
@@ -55,11 +66,34 @@ CONTRACT_FIELDS = (
     "stopping_condition",
     "residual_unknowns",
 )
+LEGACY_CONTRACT_FIELDS = tuple(
+    field
+    for field in CONTRACT_FIELDS
+    if field
+    not in {
+        "short_title",
+        "plain_question",
+        "why_it_matters",
+        "question_identity",
+        "secondary_questions",
+    }
+)
 LIST_CONTRACT_FIELDS = (
     "triggering_signal_ids",
     "key_concepts_and_boundaries",
     "residual_unknowns",
 )
+QUESTION_IDENTITY_FIELDS = (
+    "unit_of_analysis",
+    "comparison",
+    "outcome",
+    "scope",
+)
+SECONDARY_QUESTION_FIELDS = ("mechanism", "boundary", "intervention")
+MAX_SHORT_TITLE_LENGTH = 30
+MAX_PLAIN_QUESTION_LENGTH = 80
+MAX_FORMAL_QUESTION_LENGTH = 120
+MAX_VALUE_STATEMENT_LENGTH = 160
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -88,6 +122,51 @@ def require_text_list(value: Any, label: str, minimum: int = 1) -> list[str]:
     if not isinstance(value, list) or len(value) < minimum:
         raise ValueError(f"{label} must contain at least {minimum} item(s)")
     return [require_text(item, label) for item in value]
+
+
+def require_bounded_text(value: Any, label: str, maximum: int) -> str:
+    text = require_text(value, label)
+    if len(normalized_question(text)) > maximum:
+        raise ValueError(f"{label} exceeds {maximum} normalized characters")
+    return text
+
+
+def validate_question_identity(value: Any, label: str) -> dict[str, str]:
+    if not isinstance(value, dict) or set(value) != set(QUESTION_IDENTITY_FIELDS):
+        raise ValueError(f"{label} differs from schema")
+    for field in QUESTION_IDENTITY_FIELDS:
+        require_text(value[field], f"{label}/{field}")
+    return value
+
+
+def validate_secondary_questions(value: Any, label: str) -> dict[str, list[str]]:
+    if not isinstance(value, dict) or set(value) != set(SECONDARY_QUESTION_FIELDS):
+        raise ValueError(f"{label} differs from schema")
+    for field in SECONDARY_QUESTION_FIELDS:
+        questions = value[field]
+        if not isinstance(questions, list):
+            raise ValueError(f"{label}/{field} must be a list")
+        for question in questions:
+            text = require_text(question, f"{label}/{field}")
+            if not text.endswith(("?", "？")):
+                raise ValueError(f"{label}/{field} items must be questions")
+    return value
+
+
+def interrogative_count(value: str) -> int:
+    return sum(
+        len(re.findall(pattern, value, flags=re.IGNORECASE))
+        for pattern in (r"是否", r"能否", r"何时", r"为什么", r"为何", r"如何", r"\bdoes\b", r"\bcan\b", r"\bwhy\b", r"\bhow\b")
+    )
+
+
+def bundles_effect_and_mechanism(value: str) -> bool:
+    return bool(
+        re.search(
+            r"是否.{0,80}通过.{0,80}(提高|降低|改变|影响|导致|改善|恶化)",
+            value,
+        )
+    )
 
 
 def validate_pipeline(pipeline: dict[str, Any]) -> list[dict[str, Any]]:
@@ -124,7 +203,8 @@ def validate_pipeline(pipeline: dict[str, Any]) -> list[dict[str, Any]]:
 def validate_profile(
     profile: dict[str, Any], pipeline: dict[str, Any] | None = None
 ) -> None:
-    if profile.get("schema_version") != SCHEMA_VERSION:
+    profile_version = profile.get("schema_version")
+    if profile_version not in {SCHEMA_VERSION, LEGACY_SCHEMA_VERSION}:
         raise ValueError("profile schema version differs")
     if profile.get("pipeline_id") != PIPELINE_ID:
         raise ValueError("profile pipeline_id differs")
@@ -173,6 +253,17 @@ def validate_profile(
         raise ValueError("selected questions require a prior-art review")
     if constraints.get("minimum_prior_art_query_families") != 3:
         raise ValueError("prior-art review requires three query families")
+    if profile_version == SCHEMA_VERSION:
+        if constraints.get("previous_questions_are_active_baselines") is not True:
+            raise ValueError("previous winners must remain active comparison baselines")
+        if constraints.get("no_better_question_outcome_allowed") is not True:
+            raise ValueError("the shared pipeline must allow a no-better-question outcome")
+        if constraints.get("same_experiment_requires_question_merge") is not False:
+            raise ValueError("sharing an experiment cannot require question merging")
+        if constraints.get("novelty_by_constraint_conjunction_allowed") is not False:
+            raise ValueError("novelty by constraint conjunction must be forbidden")
+        if constraints.get("layered_question_presentation_required") is not True:
+            raise ValueError("layered question presentation must be required")
     if pipeline is not None:
         validate_pipeline(pipeline)
         if invariants.get("canonical_stages") != DEFAULT_PIPELINE.name:
@@ -329,7 +420,9 @@ def validate_evidence(evidence: Any) -> set[str]:
     return ids
 
 
-def validate_candidates(candidates: Any, evidence_ids: set[str]) -> dict[str, dict]:
+def validate_candidates(
+    candidates: Any, evidence_ids: set[str], schema_version: str = SCHEMA_VERSION
+) -> dict[str, dict]:
     if not isinstance(candidates, list):
         raise ValueError("candidate_questions must be a list")
     by_id: dict[str, dict] = {}
@@ -347,6 +440,14 @@ def validate_candidates(candidates: Any, evidence_ids: set[str]) -> dict[str, di
         "hard_gates",
         "scores",
     }
+    if schema_version == SCHEMA_VERSION:
+        required_fields |= {
+            "short_title",
+            "plain_question",
+            "why_it_matters",
+            "question_identity",
+            "secondary_questions",
+        }
     for index, candidate in enumerate(candidates, start=1):
         if not isinstance(candidate, dict) or set(candidate) != required_fields:
             raise ValueError(f"candidate {index} fields differ from schema")
@@ -361,6 +462,36 @@ def validate_candidates(candidates: Any, evidence_ids: set[str]) -> dict[str, di
         )
         if not question.endswith(("?", "？")):
             raise ValueError(f"{candidate_id}: research_question must be a question")
+        if schema_version == SCHEMA_VERSION:
+            require_bounded_text(
+                candidate["short_title"],
+                f"{candidate_id}/short_title",
+                MAX_SHORT_TITLE_LENGTH,
+            )
+            plain_question = require_bounded_text(
+                candidate["plain_question"],
+                f"{candidate_id}/plain_question",
+                MAX_PLAIN_QUESTION_LENGTH,
+            )
+            if not plain_question.endswith(("?", "？")):
+                raise ValueError(f"{candidate_id}: plain_question must be a question")
+            require_bounded_text(
+                question,
+                f"{candidate_id}/research_question",
+                MAX_FORMAL_QUESTION_LENGTH,
+            )
+            require_bounded_text(
+                candidate["why_it_matters"],
+                f"{candidate_id}/why_it_matters",
+                MAX_VALUE_STATEMENT_LENGTH,
+            )
+            validate_question_identity(
+                candidate["question_identity"], f"{candidate_id}/question_identity"
+            )
+            validate_secondary_questions(
+                candidate["secondary_questions"],
+                f"{candidate_id}/secondary_questions",
+            )
         for reference_field in ("signal_ids", "closest_prior_ids"):
             references = require_text_list(
                 candidate[reference_field], f"{candidate_id}/{reference_field}"
@@ -406,10 +537,29 @@ def validate_candidates(candidates: Any, evidence_ids: set[str]) -> dict[str, di
         }:
             raise ValueError(f"{candidate_id}/probe_disposition is invalid")
         gates = candidate["hard_gates"]
-        if not isinstance(gates, dict) or set(gates) != set(HARD_GATES):
+        expected_gates = (
+            set(HARD_GATES)
+            if schema_version == SCHEMA_VERSION
+            else set(LEGACY_HARD_GATES)
+        )
+        if not isinstance(gates, dict) or set(gates) != expected_gates:
             raise ValueError(f"{candidate_id}: hard_gates differ from the scorecard")
         if any(type(value) is not bool for value in gates.values()):
             raise ValueError(f"{candidate_id}: hard gates must be boolean")
+        if schema_version == SCHEMA_VERSION:
+            if gates["atomic"] and (
+                interrogative_count(question) > 1
+                or any(mark in question for mark in (";", "；"))
+                or bundles_effect_and_mechanism(question)
+            ):
+                raise ValueError(
+                    f"{candidate_id}: atomic gate conflicts with a compound research question"
+                )
+            acronym_count = len(re.findall(r"\b[A-Z][A-Z0-9-]{1,}\b", plain_question))
+            if gates["low_concept_burden"] and acronym_count > 3:
+                raise ValueError(
+                    f"{candidate_id}: plain question exceeds the acronym burden"
+                )
         scores = candidate["scores"]
         if not isinstance(scores, dict) or set(scores) != set(SCORE_DIMENSIONS):
             raise ValueError(f"{candidate_id}: scores differ from the scorecard")
@@ -422,19 +572,57 @@ def validate_candidates(candidates: Any, evidence_ids: set[str]) -> dict[str, di
     return by_id
 
 
-def validate_contract(contract: Any, evidence_ids: set[str]) -> None:
-    if not isinstance(contract, dict) or set(contract) != set(CONTRACT_FIELDS):
+def validate_contract(
+    contract: Any, evidence_ids: set[str], schema_version: str = SCHEMA_VERSION
+) -> None:
+    expected_fields = (
+        set(CONTRACT_FIELDS)
+        if schema_version == SCHEMA_VERSION
+        else set(LEGACY_CONTRACT_FIELDS)
+    )
+    if not isinstance(contract, dict) or set(contract) != expected_fields:
         raise ValueError("research_question_contract differs from schema")
     for field in LIST_CONTRACT_FIELDS:
         require_text_list(contract[field], f"contract/{field}")
     unknown_signals = set(contract["triggering_signal_ids"]) - evidence_ids
     if unknown_signals:
         raise ValueError(f"contract references unknown signals {unknown_signals}")
-    for field in set(CONTRACT_FIELDS) - set(LIST_CONTRACT_FIELDS) - {
+    for field in expected_fields - set(LIST_CONTRACT_FIELDS) - {
         "competing_answers",
         "action_mapping",
+        "question_identity",
+        "secondary_questions",
     }:
         require_text(contract[field], f"contract/{field}")
+    if schema_version == SCHEMA_VERSION:
+        require_bounded_text(
+            contract["short_title"], "contract/short_title", MAX_SHORT_TITLE_LENGTH
+        )
+        plain_question = require_bounded_text(
+            contract["plain_question"],
+            "contract/plain_question",
+            MAX_PLAIN_QUESTION_LENGTH,
+        )
+        if not plain_question.endswith(("?", "？")):
+            raise ValueError("contract/plain_question must be a question")
+        require_bounded_text(
+            contract["why_it_matters"],
+            "contract/why_it_matters",
+            MAX_VALUE_STATEMENT_LENGTH,
+        )
+        final_question = require_bounded_text(
+            contract["final_question"],
+            "contract/final_question",
+            MAX_FORMAL_QUESTION_LENGTH,
+        )
+        if not final_question.endswith(("?", "？")):
+            raise ValueError("contract/final_question must be a question")
+        validate_question_identity(
+            contract["question_identity"], "contract/question_identity"
+        )
+        validate_secondary_questions(
+            contract["secondary_questions"], "contract/secondary_questions"
+        )
     answers = contract["competing_answers"]
     if not isinstance(answers, dict) or set(answers) != {"a", "b", "unknown"}:
         raise ValueError("contract/competing_answers differs from schema")
@@ -451,13 +639,43 @@ def validate_contract(contract: Any, evidence_ids: set[str]) -> None:
         require_text(value, f"contract/action_mapping/{key}")
 
 
+def validate_incumbent_comparison(value: Any, outcome: str) -> None:
+    required = {"incumbent_question_refs", "outcome", "reason"}
+    if not isinstance(value, dict) or set(value) != required:
+        raise ValueError("selection/incumbent_comparison differs from schema")
+    references = value["incumbent_question_refs"]
+    if not isinstance(references, list):
+        raise ValueError("incumbent_question_refs must be a list")
+    for reference in references:
+        require_text(reference, "selection/incumbent_question_refs")
+    if value["outcome"] not in {
+        "first-run",
+        "new-question-better",
+        "no-better-question",
+    }:
+        raise ValueError("selection/incumbent_comparison outcome is invalid")
+    require_text(value["reason"], "selection/incumbent_comparison/reason")
+    if outcome == "no_better_question":
+        if not references or value["outcome"] != "no-better-question":
+            raise ValueError(
+                "no-better-question requires at least one incumbent and a matching comparison"
+            )
+    elif references and value["outcome"] != "new-question-better":
+        raise ValueError("selected new question must explicitly beat listed incumbents")
+    elif not references and value["outcome"] != "first-run":
+        raise ValueError("a run without incumbents must be marked first-run")
+
+
 def validate_complete_session(session: dict[str, Any]) -> None:
+    schema_version = session["schema_version"]
     profile = session["profile_snapshot"]
     defaults = profile["workflow_defaults"]
     evidence_ids = validate_evidence(session["evidence"])
     if len(evidence_ids) < int(defaults["minimum_source_count"]):
         raise ValueError("complete session has too few evidence sources")
-    candidates = validate_candidates(session["candidate_questions"], evidence_ids)
+    candidates = validate_candidates(
+        session["candidate_questions"], evidence_ids, schema_version
+    )
     if not (
         int(defaults["minimum_candidate_count"])
         <= len(candidates)
@@ -465,13 +683,36 @@ def validate_complete_session(session: dict[str, Any]) -> None:
     ):
         raise ValueError("complete session candidate count is outside profile limits")
     selection = session.get("selection")
-    if not isinstance(selection, dict) or set(selection) != {
+    expected_selection_fields = {
         "primary_candidate_id",
         "backup_candidate_ids",
         "why_this_question",
         "research_question_contract",
-    }:
+    }
+    if schema_version == SCHEMA_VERSION:
+        expected_selection_fields |= {"outcome", "incumbent_comparison"}
+    if not isinstance(selection, dict) or set(selection) != expected_selection_fields:
         raise ValueError("complete session requires a valid selection")
+    outcome = (
+        selection["outcome"] if schema_version == SCHEMA_VERSION else "selected"
+    )
+    if outcome not in {"selected", "no_better_question"}:
+        raise ValueError("selection/outcome is invalid")
+    require_text(selection["why_this_question"], "selection/why_this_question")
+    if schema_version == SCHEMA_VERSION:
+        validate_incumbent_comparison(selection["incumbent_comparison"], outcome)
+    if outcome == "no_better_question":
+        if (
+            selection["primary_candidate_id"] is not None
+            or selection["backup_candidate_ids"] != []
+            or selection["research_question_contract"] is not None
+        ):
+            raise ValueError(
+                "no-better-question outcome cannot contain selected candidates or a contract"
+            )
+        if not isinstance(session.get("decision_log"), list) or not session["decision_log"]:
+            raise ValueError("complete session requires a decision_log")
+        return
     primary_id = require_text(
         selection["primary_candidate_id"], "selection/primary_candidate_id"
     )
@@ -492,8 +733,9 @@ def validate_complete_session(session: dict[str, Any]) -> None:
             raise ValueError("every selected candidate must pass every hard gate")
         if candidate["probe_disposition"] == "reject":
             raise ValueError("a rejected probe candidate cannot be selected")
-    require_text(selection["why_this_question"], "selection/why_this_question")
-    validate_contract(selection["research_question_contract"], evidence_ids)
+    validate_contract(
+        selection["research_question_contract"], evidence_ids, schema_version
+    )
     if not isinstance(session.get("decision_log"), list) or not session["decision_log"]:
         raise ValueError("complete session requires a decision_log")
 
@@ -504,10 +746,13 @@ def validate_session(
     pipeline: dict[str, Any],
     require_complete: bool = False,
 ) -> None:
-    if session.get("schema_version") != SCHEMA_VERSION:
+    session_version = session.get("schema_version")
+    if session_version == "1.0":
         raise ValueError(
             "legacy autonomous session: historical artifact, not a valid shared-pipeline mode run"
         )
+    if session_version not in {SCHEMA_VERSION, LEGACY_SCHEMA_VERSION}:
+        raise ValueError("unsupported session schema version")
     required = {
         "schema_version",
         "pipeline_id",
@@ -524,10 +769,15 @@ def validate_session(
     }
     if set(session) != required:
         raise ValueError("session top-level fields differ from schema")
-    validate_profile(profile, pipeline)
+    effective_profile = (
+        session["profile_snapshot"]
+        if session_version == LEGACY_SCHEMA_VERSION
+        else profile
+    )
+    validate_profile(effective_profile, pipeline)
     if session["pipeline_id"] != PIPELINE_ID:
         raise ValueError("session pipeline identity differs")
-    if session["profile_snapshot"] != profile:
+    if session_version == SCHEMA_VERSION and session["profile_snapshot"] != profile:
         raise ValueError("session profile snapshot differs from the shared profile")
     execution = session["execution"]
     if not isinstance(execution, dict) or set(execution) != {
@@ -536,7 +786,7 @@ def validate_session(
         "adapter_prompt",
     }:
         raise ValueError("session execution fields differ from schema")
-    selected_mode = mode_definition(profile, str(execution["mode_id"]))
+    selected_mode = mode_definition(effective_profile, str(execution["mode_id"]))
     if (
         execution["engine"] != selected_mode["engine"]
         or execution["adapter_prompt"] != selected_mode["adapter_prompt"]
@@ -588,11 +838,73 @@ def semantic_audit(session: dict[str, Any]) -> dict[str, Any]:
     candidates = session["candidate_questions"]
     by_id = {item["candidate_id"]: item for item in candidates}
     selection = session["selection"]
+    if selection.get("outcome") == "no_better_question":
+        if candidates and all(all(item["hard_gates"].values()) for item in candidates):
+            add(
+                warnings,
+                "hard_gate_saturation",
+                "every candidate passes every hard gate; review whether generation and screening were actually separated",
+            )
+        score_totals = [score_total(item) for item in candidates]
+        if len(set(score_totals)) == 1 and len(score_totals) > 1:
+            add(
+                warnings,
+                "score_saturation",
+                "all candidates have the same score; treat self-scoring as preliminary rather than evidence",
+            )
+        evidence_locations: dict[str, str] = {}
+        for item in session["evidence"]:
+            location = item["source_location"].strip().rstrip("/").lower()
+            if location in evidence_locations:
+                add(
+                    warnings,
+                    "duplicate_evidence_location",
+                    f"{item['evidence_id']} duplicates {evidence_locations[location]}",
+                )
+            else:
+                evidence_locations[location] = item["evidence_id"]
+            try:
+                date.fromisoformat(item["checked_date"])
+            except ValueError:
+                add(
+                    errors,
+                    "invalid_checked_date",
+                    f"{item['evidence_id']} checked_date must be ISO YYYY-MM-DD",
+                )
+        return {
+            "passed": not errors,
+            "errors": errors,
+            "warnings": warnings,
+            "metrics": {
+                "candidate_count": len(candidates),
+                "evidence_count": len(session["evidence"]),
+                "eligible_candidate_count": sum(
+                    all(item["hard_gates"].values())
+                    and item["probe_disposition"] != "reject"
+                    for item in candidates
+                ),
+                "selection_outcome": "no_better_question",
+                "unique_evidence_locations": len(evidence_locations),
+            },
+        }
     primary = by_id[selection["primary_candidate_id"]]
     selected_ids = [selection["primary_candidate_id"], *selection["backup_candidate_ids"]]
     contract = selection["research_question_contract"]
 
-    if normalized_question(contract["final_question"]) != normalized_question(primary["research_question"]):
+    if session["schema_version"] == SCHEMA_VERSION:
+        if contract["question_identity"] != primary["question_identity"]:
+            add(
+                errors,
+                "contract_question_identity_mismatch",
+                "the final contract changes the primary question identity",
+            )
+        if contract["secondary_questions"] != primary["secondary_questions"]:
+            add(
+                errors,
+                "contract_secondary_question_drift",
+                "the final contract changes the primary candidate's question tree",
+            )
+    elif normalized_question(contract["final_question"]) != normalized_question(primary["research_question"]):
         similarity = question_similarity(
             contract["final_question"], primary["research_question"]
         )
@@ -615,6 +927,19 @@ def semantic_audit(session: dict[str, Any]) -> dict[str, Any]:
         if all(item["hard_gates"].values()) and item["probe_disposition"] != "reject"
     ]
     top_score = max(score_total(item) for item in eligible)
+    if candidates and all(all(item["hard_gates"].values()) for item in candidates):
+        add(
+            warnings,
+            "hard_gate_saturation",
+            "every candidate passes every hard gate; review whether generation and screening were actually separated",
+        )
+    score_totals = [score_total(item) for item in candidates]
+    if len(set(score_totals)) == 1 and len(score_totals) > 1:
+        add(
+            warnings,
+            "score_saturation",
+            "all candidates have the same score; treat self-scoring as preliminary rather than evidence",
+        )
     if score_total(primary) < top_score:
         add(
             warnings,
@@ -660,6 +985,7 @@ def semantic_audit(session: dict[str, Any]) -> dict[str, Any]:
         "selected_scores": selected_scores,
         "top_eligible_score": top_score,
         "unique_evidence_locations": len(evidence_locations),
+        "selection_outcome": "selected",
     }
     return {"passed": not errors, "errors": errors, "warnings": warnings, "metrics": metrics}
 

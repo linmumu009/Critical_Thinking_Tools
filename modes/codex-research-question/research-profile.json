@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "pipeline_id": "research_question_discovery_funnel_v1",
   "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
   "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
@@ -54,6 +54,11 @@
     "selected_question_common_knowledge_review_required": true,
     "selected_question_prior_art_review_required": true,
     "minimum_prior_art_query_families": 3,
+    "previous_questions_are_active_baselines": true,
+    "no_better_question_outcome_allowed": true,
+    "same_experiment_requires_question_merge": false,
+    "novelty_by_constraint_conjunction_allowed": false,
+    "layered_question_presentation_required": true,
     "human_candidate_scoring_required": false,
     "mode_2_external_model_api_allowed": false,
     "candidate_mapping_audit_is_research_evidence": false

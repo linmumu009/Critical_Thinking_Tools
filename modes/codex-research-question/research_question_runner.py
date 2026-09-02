@@ -13,7 +13,7 @@ import research_question_session as rqs
 
 ROOT = Path(__file__).resolve().parent
 RUNS_ROOT = ROOT / "runs"
-RUNNER_VERSION = "1.1"
+RUNNER_VERSION = "1.2"
 LEDGER_VERSION = "1.1"
 PRIOR_ART_QUERY_PURPOSES = {
     "exact-question",
@@ -402,7 +402,7 @@ def ledger_audit(session: dict[str, Any], ledger: dict[str, Any]) -> dict[str, A
                 f"{evidence_id} ledger location differs from the session evidence",
             )
 
-    if session.get("selection"):
+    if session.get("selection") and session["selection"].get("outcome") != "no_better_question":
         selected = [
             session["selection"]["primary_candidate_id"],
             *session["selection"]["backup_candidate_ids"],

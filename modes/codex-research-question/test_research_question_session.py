@@ -56,7 +56,21 @@ class ResearchQuestionSessionTests(unittest.TestCase):
         session["candidate_questions"] = [
             {
                 "candidate_id": f"Q{index}",
+                "short_title": f"Question {index}",
+                "plain_question": f"Could effect {index} change the decision?",
+                "why_it_matters": "Its answer determines whether the team funds the intervention.",
                 "research_question": f"Research question {index}?",
+                "question_identity": {
+                    "unit_of_analysis": f"training example family {index}",
+                    "comparison": "intervention versus matched control",
+                    "outcome": "held-out capability",
+                    "scope": "text-only verifiable tasks",
+                },
+                "secondary_questions": {
+                    "mechanism": [f"What mechanism explains effect {index}?"],
+                    "boundary": [f"When does effect {index} disappear?"],
+                    "intervention": [],
+                },
                 "signal_ids": [f"E{index:02d}"],
                 "closest_prior_ids": [f"E{((index) % 8) + 1:02d}"],
                 "question_family": "mechanism",
@@ -89,11 +103,31 @@ class ResearchQuestionSessionTests(unittest.TestCase):
             for index in range(1, 9)
         ]
         session["selection"] = {
+            "outcome": "selected",
             "primary_candidate_id": "Q1",
             "backup_candidate_ids": ["Q2", "Q3"],
             "why_this_question": "It has the clearest decision fork and cheapest probe.",
+            "incumbent_comparison": {
+                "incumbent_question_refs": [],
+                "outcome": "first-run",
+                "reason": "No earlier selected question exists in this fixture.",
+            },
             "research_question_contract": {
+                "short_title": "Question 1",
+                "plain_question": "Could effect 1 change the decision?",
+                "why_it_matters": "Its answer determines whether the team funds the intervention.",
                 "final_question": "Research question 1?",
+                "question_identity": {
+                    "unit_of_analysis": "training example family 1",
+                    "comparison": "intervention versus matched control",
+                    "outcome": "held-out capability",
+                    "scope": "text-only verifiable tasks",
+                },
+                "secondary_questions": {
+                    "mechanism": ["What mechanism explains effect 1?"],
+                    "boundary": ["When does effect 1 disappear?"],
+                    "intervention": [],
+                },
                 "triggering_signal_ids": ["E01"],
                 "users_and_decision": "The research team must choose the next experiment.",
                 "decision_deadline": "Before the next training allocation.",
@@ -166,6 +200,10 @@ class ResearchQuestionSessionTests(unittest.TestCase):
         self.assertEqual(api_prompt.split(marker)[1], codex_prompt.split(marker)[1])
         self.assertIn('"question-formulation-technique"', api_prompt)
         self.assertIn('"storm-costorm"', api_prompt)
+        cluster_prompt = rqs.build_stage_prompt(
+            self.profile, self.pipeline, "2", "4_cluster"
+        )
+        self.assertIn("不得因为共享同一实验而合并不同未知", cluster_prompt)
 
     def test_complete_sessions_pass_for_both_engines(self) -> None:
         for mode in rqs.MODES:
@@ -238,16 +276,61 @@ class ResearchQuestionSessionTests(unittest.TestCase):
         self.assertEqual(result["errors"], [])
         self.assertEqual(result["metrics"]["selected_scores"]["Q1"], 12)
 
-    def test_semantic_audit_rejects_contract_drift(self) -> None:
+    def test_semantic_audit_rejects_contract_identity_drift(self) -> None:
         session = self.complete_fixture()
-        session["selection"]["research_question_contract"]["final_question"] = (
-            "A different final question?"
-        )
+        session["selection"]["research_question_contract"]["question_identity"][
+            "outcome"
+        ] = "a different outcome"
         result = rqs.semantic_audit(session)
         self.assertFalse(result["passed"])
         self.assertIn(
-            "contract_question_mismatch", {item["code"] for item in result["errors"]}
+            "contract_question_identity_mismatch",
+            {item["code"] for item in result["errors"]},
         )
+
+    def test_atomic_gate_rejects_compound_core_question(self) -> None:
+        session = self.complete_fixture()
+        session["candidate_questions"][0]["research_question"] = (
+            "Does the intervention change capability; can normalization remove it?"
+        )
+        with self.assertRaisesRegex(ValueError, "compound research question"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
+
+        session = self.complete_fixture()
+        session["candidate_questions"][0]["research_question"] = (
+            "干预位置是否会通过降低优化方差提高独立能力？"
+        )
+        with self.assertRaisesRegex(ValueError, "compound research question"):
+            rqs.validate_session(session, self.profile, self.pipeline, True)
+
+    def test_no_better_question_is_a_valid_complete_outcome(self) -> None:
+        session = self.complete_fixture()
+        session["selection"] = {
+            "outcome": "no_better_question",
+            "primary_candidate_id": None,
+            "backup_candidate_ids": [],
+            "why_this_question": "No new candidate beats the incumbent on clarity, value, and evidence.",
+            "incumbent_comparison": {
+                "incumbent_question_refs": ["results/previous-run.json#Q1"],
+                "outcome": "no-better-question",
+                "reason": "The incumbent remains clearer and has stronger reality evidence.",
+            },
+            "research_question_contract": None,
+        }
+        rqs.validate_session(session, self.profile, self.pipeline, True)
+        audit = rqs.semantic_audit(session)
+        self.assertTrue(audit["passed"])
+        self.assertEqual(audit["metrics"]["selection_outcome"], "no_better_question")
+
+    def test_historical_v2_session_remains_valid(self) -> None:
+        historical = json.loads(
+            (
+                rqs.ROOT
+                / "results"
+                / "2026-08-27-shared-funnel-mode2-run-03.json"
+            ).read_text(encoding="utf-8")
+        )
+        rqs.validate_session(historical, self.profile, self.pipeline, True)
 
     def test_semantic_audit_warns_when_primary_is_not_top_score(self) -> None:
         session = self.complete_fixture()
