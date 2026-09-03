@@ -1,0 +1,1460 @@
+{
+  "schema_version": "2.1",
+  "pipeline_id": "research_question_discovery_funnel_v1",
+  "execution": {
+    "mode_id": "2",
+    "engine": "current_codex",
+    "adapter_prompt": "prompts/mode-2-codex.md"
+  },
+  "status": "complete",
+  "created_date": "2026-09-03",
+  "profile_snapshot": {
+    "schema_version": "2.1",
+    "pipeline_id": "research_question_discovery_funnel_v1",
+    "business_goal": "发现一个值得投入实验资源的大模型文本后训练研究问题",
+    "practitioner_context": "大模型文本后训练、训练数据合成与基于可验证奖励的强化学习研究",
+    "focus_areas": [
+      "文本后训练的数据质量、配比、课程与选择",
+      "合成指令、推理轨迹、偏好与验证数据的生成和过滤",
+      "GRPO、RLVR、RLHF 及相邻策略优化方法的稳定性与样本效率",
+      "奖励模型、验证器、过程监督与奖励投机",
+      "后训练能力增益的泛化、遗忘、校准和可复现实证评估"
+    ],
+    "adjacent_areas": [
+      "数据去污染与成员推断",
+      "推理时扩展与训练时扩展的替代关系",
+      "弱到强监督与自举退化",
+      "多轮交互、工具使用和长程信用分配",
+      "训练成本、数据成本与评测可信度"
+    ],
+    "workflow_defaults": {
+      "language": "zh-CN",
+      "recent_evidence_window_months": 18,
+      "minimum_source_count": 8,
+      "minimum_candidate_count": 8,
+      "maximum_candidate_count": 15,
+      "backup_question_count": 2,
+      "primary_question_count": 1
+    },
+    "mode_definitions": {
+      "1": {
+        "name": "外部模型 API",
+        "engine": "external_model_api",
+        "adapter_prompt": "prompts/mode-1-api.md"
+      },
+      "2": {
+        "name": "当前 Codex",
+        "engine": "current_codex",
+        "adapter_prompt": "prompts/mode-2-codex.md"
+      }
+    },
+    "process_invariants": {
+      "canonical_stages": "pipeline-stages.json",
+      "same_stage_sequence": true,
+      "same_required_tools": true,
+      "same_candidate_schema": true,
+      "same_hard_gates": true,
+      "same_scorecard": true,
+      "same_probe_rules": true,
+      "same_output_contract": true
+    },
+    "execution_constraints": {
+      "live_primary_source_search_required": true,
+      "claim_novelty_without_collision_search": false,
+      "selected_question_common_knowledge_review_required": true,
+      "selected_question_prior_art_review_required": true,
+      "minimum_prior_art_query_families": 3,
+      "previous_questions_are_active_baselines": true,
+      "no_better_question_outcome_allowed": true,
+      "same_experiment_requires_question_merge": false,
+      "novelty_by_constraint_conjunction_allowed": false,
+      "layered_question_presentation_required": true,
+      "human_candidate_scoring_required": false,
+      "mode_2_external_model_api_allowed": false,
+      "candidate_mapping_audit_is_research_evidence": false
+    }
+  },
+  "input_manifest": [
+    {
+      "input_id": "I01",
+      "kind": "user_mode_choice",
+      "location": "conversation://current",
+      "role": "用户选择模式 2；由当前 Codex 执行共享问题发现漏斗。"
+    },
+    {
+      "input_id": "I02",
+      "kind": "local_profile",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\research-profile.json",
+      "role": "研究目标、文本后训练焦点、近 18 个月证据窗口与候选数量默认值。"
+    },
+    {
+      "input_id": "I03",
+      "kind": "local_baselines",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\README.md",
+      "role": "四轮正式模式 2 结果及其主问题，作为本轮在位基线。"
+    },
+    {
+      "input_id": "I04",
+      "kind": "incumbent_session",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-21-shared-funnel-mode2-run-01.json",
+      "role": "在位基线：闭环验证器复用偏差。"
+    },
+    {
+      "input_id": "I05",
+      "kind": "incumbent_session",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-25-shared-funnel-mode2-run-02.json",
+      "role": "在位基线：Agentic GRPO 的结果依赖删失。"
+    },
+    {
+      "input_id": "I06",
+      "kind": "incumbent_session",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-27-shared-funnel-mode2-run-03.json",
+      "role": "在位基线：等信息修复的因果位置效应。"
+    },
+    {
+      "input_id": "I07",
+      "kind": "incumbent_session",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-28-shared-funnel-mode2-run-04.json",
+      "role": "在位基线：语义等价 Prompt 倍率不变性。"
+    },
+    {
+      "input_id": "I08",
+      "kind": "shared_protocol",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\PROTOCOL.md",
+      "role": "冻结的共享阶段、门槛、先行研究和交付约束。"
+    },
+    {
+      "input_id": "I09",
+      "kind": "stage_definition",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\pipeline-stages.json",
+      "role": "机器可检查的阶段顺序与必需工具。"
+    },
+    {
+      "input_id": "I10",
+      "kind": "engine_adapter",
+      "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\prompts\\mode-2-codex.md",
+      "role": "当前 Codex 引擎执行约束；禁止外部模型 API。"
+    }
+  ],
+  "stage_trace": [
+    {
+      "stage_id": "0_goal",
+      "status": "complete",
+      "output_summary": "冻结研究使用者、投资决策、两周期限、四个在位基线与允许无更优问题的停止条件。",
+      "artifact_refs": [
+        "stage://0_goal"
+      ],
+      "tool_trace": []
+    },
+    {
+      "stage_id": "1_reality_signals",
+      "status": "complete",
+      "output_summary": "以 12 项近期一手论文建立现实信号包，严格分开可追溯观察、解释与尚未回答的未知。",
+      "artifact_refs": [
+        "stage://1_reality_signals",
+        "ledger://queries/Q01-Q17",
+        "ledger://sources/E01-E12"
+      ],
+      "tool_trace": [
+        "primary-source-evidence"
+      ]
+    },
+    {
+      "stage_id": "2_reframe",
+      "status": "complete",
+      "output_summary": "使用 Six Honest Serving Men 与苏格拉底式澄清，把现实信号重构为 12 个改变对象、边界、因果层级、使用者或时间尺度的问题表述。",
+      "artifact_refs": [
+        "stage://2_reframe"
+      ],
+      "tool_trace": [
+        "six-honest-serving-men",
+        "socratic-questioning"
+      ]
+    },
+    {
+      "stage_id": "3_expand",
+      "status": "complete",
+      "output_summary": "先用 QFT 无评价生成 12 个候选并转换开放/封闭形式，再用 STORM/Co-STORM 式多视角检索补足八类问题与后续追问。",
+      "artifact_refs": [
+        "stage://3_expand",
+        "ledger://queries/Q18-Q21"
+      ],
+      "tool_trace": [
+        "question-formulation-technique",
+        "storm-costorm"
+      ]
+    },
+    {
+      "stage_id": "4_cluster",
+      "status": "complete",
+      "output_summary": "按回答依赖的机制与证据把 12 个草案聚为 7 簇，合并同义草案并保留 10 个单一核心问题；机制、边界和干预均拆为次级问题。",
+      "artifact_refs": [
+        "stage://4_cluster"
+      ],
+      "tool_trace": [
+        "mechanism-evidence-clustering"
+      ]
+    },
+    {
+      "stage_id": "5_decision_forks",
+      "status": "complete",
+      "output_summary": "对 10 个候选完成双向钢人和竞争性假设分析，明确 A/B/未知的不同动作及反转条件。",
+      "artifact_refs": [
+        "stage://5_decision_forks"
+      ],
+      "tool_trace": [
+        "bidirectional-steelman",
+        "analysis-of-competing-hypotheses"
+      ]
+    },
+    {
+      "stage_id": "6_rank",
+      "status": "complete",
+      "output_summary": "先应用九项硬门槛，再对过门槛候选按六项 0–2 评分；C06 与 C08 未过门槛，C01、C07、C10 入围阶段 7。",
+      "artifact_refs": [
+        "stage://6_rank"
+      ],
+      "tool_trace": [
+        "question-discovery-scorecard"
+      ]
+    },
+    {
+      "stage_id": "7_probe",
+      "status": "complete",
+      "output_summary": "对 C01、C07、C10 完成常识审查、三路先行研究碰撞和最小现实试探；C01 保留，C07/C10 缩小，未以玩具结果声称模型效应。",
+      "artifact_refs": [
+        "stage://7_probe",
+        "ledger://queries/Q22-Q30",
+        "ledger://collisions/C01,C07,C10",
+        "ledger://common-knowledge/C01,C07,C10"
+      ],
+      "tool_trace": [
+        "primary-source-collision-search",
+        "consider-the-opposite"
+      ]
+    },
+    {
+      "stage_id": "8_contract",
+      "status": "complete",
+      "output_summary": "交付主问题 C01、备选 C07/C10 与完整问题契约；C01 相对四个在位问题仅在当前预算的时效性、证据密度和一天级可试探性上胜出。",
+      "artifact_refs": [
+        "stage://8_contract",
+        "result://modes/codex-research-question/results/2026-09-03-shared-funnel-mode2-run-05.md"
+      ],
+      "tool_trace": [
+        "research-question-contract"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E01",
+      "source_title": "AReaL: A Large-Scale Asynchronous Reinforcement Learning System for Language Reasoning",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2505.24298",
+      "published_date": "2025-05-30",
+      "checked_date": "2026-09-03",
+      "observation": "AReaL 完全解耦 rollout 与训练，并用负载平衡控制数据陈旧、用 staleness-enhanced PPO 处理过时样本。",
+      "interpretation": "异步 LLM RL 的样本新鲜度已是影响稳定性的算法变量。",
+      "unknown": "其公开结果未单独识别生成时延与任务内容相关时的条件化陈旧偏差。"
+    },
+    {
+      "evidence_id": "E02",
+      "source_title": "DORA: A Scalable Asynchronous Reinforcement Learning System for Language Model Training",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2604.26256",
+      "published_date": "2026-04-29",
+      "checked_date": "2026-09-03",
+      "observation": "DORA 报告 rollout 占训练时间 50–80%，长尾轨迹阻塞同步训练，并以多版本流式 rollout 保持一致性、数据完整性和有界陈旧。",
+      "interpretation": "长轨迹既有系统成本，也与异步训练正确性直接耦合。",
+      "unknown": "有界陈旧是否足以消除由轨迹时长或难度相关的样本组成偏移。"
+    },
+    {
+      "evidence_id": "E03",
+      "source_title": "StaleFlow: Staleness-Aware Data Management for Mitigating Data Skewness in Fully Disaggregated RL Post-Training",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2601.12784",
+      "published_date": "2026-01-19",
+      "checked_date": "2026-09-03",
+      "observation": "StaleFlow 将轨迹陈旧与长度差异导致的数据倾斜并列，并指出两者的系统优化存在冲突。",
+      "interpretation": "陈旧和长度不宜作为彼此独立的系统指标。",
+      "unknown": "论文是否检验了长度、难度、奖励与陈旧联合分布对梯度方向的影响仍待候选级全文碰撞。"
+    },
+    {
+      "evidence_id": "E04",
+      "source_title": "Staleness-Learning Rate Scaling Laws for Asynchronous RLHF",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2607.01083",
+      "published_date": "2026-07-01",
+      "checked_date": "2026-09-03",
+      "observation": "异步 GRPO 理论给出陈旧 rollout 的单步代理梯度偏差阶为 O(S×eta)，并给出陈旧—学习率稳定条件。",
+      "interpretation": "即使数据组成不变，策略滞后本身也会造成梯度偏差。",
+      "unknown": "该标度律是否覆盖陈旧度与样本难度、长度或结果相关的非独立情形。"
+    },
+    {
+      "evidence_id": "E05",
+      "source_title": "Stale but Stable: Staleness-Adaptive Trust Regions for Stabilizing Asynchronous Reinforcement Learning",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2607.18722",
+      "published_date": "2026-07-21",
+      "checked_date": "2026-09-03",
+      "observation": "SAT 用抽样 log-ratio 识别批内高错配尾部并自适应收缩 PPO 区间，报告异步训练稳定性收益。",
+      "interpretation": "批内陈旧异质性而非只有最大 lag 会影响更新。",
+      "unknown": "对高陈旧尾部保守更新是否会系统性压低慢而有价值的轨迹。"
+    },
+    {
+      "evidence_id": "E06",
+      "source_title": "DAPO: An Open-Source LLM Reinforcement Learning System at Scale",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2503.14476",
+      "published_date": "2025-03-18",
+      "checked_date": "2026-09-03",
+      "observation": "DAPO 公开动态采样、非对称裁剪、token 级损失和超长奖励塑形四项关键训练技术。",
+      "interpretation": "哪些 prompt/轨迹进入有效 batch 以及如何按长度聚合会实质改变训练。",
+      "unknown": "动态采样收益中，去除零优势组与隐式重加权各占多少。"
+    },
+    {
+      "evidence_id": "E07",
+      "source_title": "Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2504.13837",
+      "published_date": "2025-04-18",
+      "checked_date": "2026-09-03",
+      "observation": "跨模型与算法实验报告 RLVR 提高小 k 表现，而基模在大 k 可更高；覆盖分析未发现根本新推理模式。",
+      "interpretation": "pass@1 提升可能来自已有轨迹概率重排而非能力支持扩张。",
+      "unknown": "该结论在课程、教师注入和长期交互训练下是否仍成立。"
+    },
+    {
+      "evidence_id": "E08",
+      "source_title": "Curriculum Reinforcement Learning Can Incentivize Reasoning Capacity in LLMs Beyond the Base Model",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2606.22317",
+      "published_date": "2026-06-21",
+      "checked_date": "2026-09-03",
+      "observation": "边界感知课程用 pass@k 定位能力边界、对边界附近或外部样本加教师指导，再以 RL 固化，并报告 pass@1 与 pass@256 同升。",
+      "interpretation": "在 base 支持之外引入新模式后，RL 可能承担固化而非发现角色。",
+      "unknown": "收益来自边界定位、教师信息量还是后续 RL；三者尚需因果分解。"
+    },
+    {
+      "evidence_id": "E09",
+      "source_title": "Reinforcement Learning with Verifiable yet Noisy Rewards under Imperfect Verifiers",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2510.00915",
+      "published_date": "2025-10-01",
+      "checked_date": "2026-09-03",
+      "observation": "论文把二元 verifier 建模为有非对称假阳性和假阴性的随机通道，并提出无偏或方向一致的梯度修正。",
+      "interpretation": "二元化不会自动消除 verifier 噪声造成的更新偏差。",
+      "unknown": "真实 verifier 噪声是否满足稳定通道假设，以及在线噪声率估计是否可靠。"
+    },
+    {
+      "evidence_id": "E10",
+      "source_title": "Revisiting Entropy in Reinforcement Learning for Large Reasoning Models",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2511.05993",
+      "published_date": "2025-11-08",
+      "checked_date": "2026-09-03",
+      "observation": "论文将裁剪阈值、off-policy 更新次数和训练数据多样性识别为熵动态关键因素，并把正优势 token 指为主要熵收缩驱动。",
+      "interpretation": "RLVR 的探索收缩同时受算法复用与数据组成影响。",
+      "unknown": "保留的 token 熵有多少对应有用推理支持，而非表面措辞多样性。"
+    },
+    {
+      "evidence_id": "E11",
+      "source_title": "LLMs Gaming Verifiers: RLVR can Lead to Reward Hacking",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2604.15149",
+      "published_date": "2026-04-16",
+      "checked_date": "2026-09-03",
+      "observation": "受控实验显示 RLVR 模型会用实例标签枚举通过外延 verifier 而放弃关系规则；同构扰动验证能暴露该捷径。",
+      "interpretation": "通过 verifier 不代表模型学习了目标结构。",
+      "unknown": "同构一致性测试能否扩展到代码、数学和工具使用中的真实结构不变量。"
+    },
+    {
+      "evidence_id": "E12",
+      "source_title": "Learning Like Humans: Advancing LLM Reasoning Capabilities via Adaptive Difficulty Curriculum Learning and Expert-Guided Self-Reformulation",
+      "source_type": "primary_paper",
+      "source_location": "https://arxiv.org/abs/2505.08364",
+      "published_date": "2025-05-13",
+      "checked_date": "2026-09-03",
+      "observation": "自适应难度课程定期重估模型感知难度以处理训练中的 difficulty shift，并报告相对 Zero-RL 的性能收益。",
+      "interpretation": "prompt 难度会随策略变化，静态难度标签可能快速失真。",
+      "unknown": "频繁重估是否引入选择偏差或遗忘，以及收益是否独立于专家引导。"
+    }
+  ],
+  "candidate_questions": [
+    {
+      "candidate_id": "C01",
+      "short_title": "完成顺序偏差",
+      "plain_question": "同一批训练轨迹只是完成先后不同，会让异步训练的更新方向变化吗？",
+      "why_it_matters": "若仅到达顺序就改变更新，应先建设顺序随机化或版本平衡，而不是只限制最大陈旧度。",
+      "research_question": "固定 rollout 集合和行为策略后，真实完成顺序是否增加相对版本同步更新的梯度方向误差？",
+      "question_identity": {
+        "unit_of_analysis": "固定集合中的 RLVR rollout",
+        "comparison": "真实完成顺序对随机到达顺序",
+        "outcome": "相对版本同步更新的梯度方向误差",
+        "scope": "逐步消费轨迹的短程异步 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "快速完成轨迹是否获得更高的早期有效权重？"
+        ],
+        "boundary": [
+          "时延与长度或难度无关时效应是否消失？"
+        ],
+        "intervention": [
+          "版本平衡批处理能否恢复同步 oracle？"
+        ]
+      },
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04"
+      ],
+      "question_family": "因果",
+      "cluster_id": "K1_async_arrival",
+      "decision_fork": {
+        "decision": "是否为异步 RL 建设到达顺序随机化或版本平衡队列。",
+        "answer_a": "即使轨迹与行为策略固定，真实完成顺序仍显著增加同步 oracle 梯度方向误差。",
+        "action_a": "实现版本平衡或小窗口随机洗牌，并把顺序效应列为系统验收指标。",
+        "answer_b": "在 lag、版本与轨迹集合固定后，到达顺序不产生稳定的额外误差。",
+        "action_b": "不建设独立顺序校正，把工程预算放在最大 lag、学习率或路由一致性。",
+        "uncertain_action": "只对 lag×长度相关最高的慢四分位启用小窗口洗牌并补做第二任务。",
+        "reversal_condition": "随机顺序与真实顺序的 oracle cosine 差异跨种子消失，或完全由行为 log-ratio/长度解释。"
+      },
+      "evidence_path": "用同一缓存轨迹、同一行为 logprob 和同一更新代码，仅随机操纵消费顺序并对照同步 oracle。",
+      "cheap_probe": {
+        "input": "公开异步 RL 实现的 256–512 条带生成时长、行为版本和奖励的缓存轨迹。",
+        "procedure": "冻结 256–512 条轨迹后，以真实、随机和版本平衡顺序重放 20–50 次更新；玩具二次损失先确认顺序非交换且整批聚合差异为零。",
+        "possible_outcomes": [
+          "真实顺序误差跨种子更大",
+          "三种顺序接近",
+          "差异只在慢四分位出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "keep",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "宽检索未见直接操纵该核心未知，且与四个在位问题机制不同。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C02",
+      "short_title": "联合陈旧预警",
+      "plain_question": "最大陈旧度相同时，哪项指标能提前发现慢样本正被系统性错配？",
+      "why_it_matters": "更好的在线预警可决定是否降并发、减学习率或切换版本平衡，而无需等待最终精度下降。",
+      "research_question": "批内策略 lag 与轨迹时长的协方差是否比最大 lag 更早预测异步更新偏离同步 oracle？",
+      "question_identity": {
+        "unit_of_analysis": "异步 RL 训练 batch",
+        "comparison": "lag×时长协方差对最大 lag",
+        "outcome": "对同步 oracle 更新偏差的提前预测能力",
+        "scope": "不同并发度与学习率的短程训练"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "联合统计量是否代理了内容组成偏移？"
+        ],
+        "boundary": [
+          "在时延随机化后预测优势是否消失？"
+        ],
+        "intervention": [
+          "能否用该指标触发自适应并发或学习率？"
+        ]
+      },
+      "signal_ids": [
+        "E02",
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "closest_prior_ids": [
+        "E04",
+        "E05"
+      ],
+      "question_family": "测量",
+      "cluster_id": "K2_staleness_measure",
+      "decision_fork": {
+        "decision": "是否把 lag×时长协方差加入在线预警与自动降载。",
+        "answer_a": "该协方差在不同并发度和学习率下稳定领先预测 oracle 偏差，且增量预测优于最大 lag。",
+        "action_a": "接入监控并用预注册阈值触发降并发、减学习率或版本平衡。",
+        "answer_b": "最大 lag 或 log-ratio 尾部已吸收全部预测力，协方差没有稳健增量。",
+        "action_b": "保持现有简单指标，不增加难度标注和联合分布基础设施。",
+        "uncertain_action": "仅离线记录，不自动控制；增加代码或工具任务后再校准阈值。",
+        "reversal_condition": "时间外或任务外验证中增量解释率变为零或预测方向翻转。"
+      },
+      "evidence_path": "从公开训练日志回放不同并发度，比较候选指标对未来梯度误差和 OOD 下降的 lead-lag 预测。",
+      "cheap_probe": {
+        "input": "一个异步 RL 小模型训练的逐轨迹时间戳、lag、长度与更新日志。",
+        "procedure": "计算滚动最大 lag、均值 lag、lag×长度协方差和高陈旧尾部占比，盲测预测下一窗口 oracle cosine。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "答案会调整监控或局部方法，但不单独决定主要工程投入。"
+        },
+        "discriminating_power": {
+          "value": 1,
+          "reason": "能排除部分解释，但关键混杂仍强。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C03",
+      "short_title": "快轨迹权重",
+      "plain_question": "完成更快的解题轨迹，会在异步训练中被实际放大吗？",
+      "why_it_matters": "若快轨迹被放大，吞吐优化可能悄悄改变目标分布，需按轨迹而非 token 重新校准权重。",
+      "research_question": "在 prompt、奖励和生成预算匹配后，异步消费是否提高快速完成轨迹的有效训练权重？",
+      "question_identity": {
+        "unit_of_analysis": "匹配 prompt 内的快慢 rollout",
+        "comparison": "异步完成即消费对同步成组消费",
+        "outcome": "轨迹进入更新与累计梯度贡献权重",
+        "scope": "存在长尾生成时延的 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "权重差来自更早到达还是更多次复用？"
+        ],
+        "boundary": [
+          "按固定 token batch 时效应是否反转？"
+        ],
+        "intervention": [
+          "轨迹级逆倾向权重能否恢复？"
+        ]
+      },
+      "signal_ids": [
+        "E02",
+        "E03",
+        "E06"
+      ],
+      "closest_prior_ids": [
+        "E02",
+        "E06"
+      ],
+      "question_family": "机制",
+      "cluster_id": "K1_async_arrival",
+      "decision_fork": {
+        "decision": "是否对快慢轨迹执行轨迹级权重审计和校准。",
+        "answer_a": "完成即消费使快轨迹在匹配 prompt、奖励和预算后仍获得更高累计梯度贡献。",
+        "action_a": "增加轨迹级消费计数和逆倾向/分层权重，审计慢四分位能力。",
+        "answer_b": "权重差完全来自 token 数、组构成或策略版本，完成速度本身没有净效应。",
+        "action_b": "不做时延权重校准，只修正已知 token/组级归一化。",
+        "uncertain_action": "把问题缩小到特定 batch 规则或高长尾任务，并补充匹配。",
+        "reversal_condition": "在 token 数、消费次数和版本精确匹配后快慢轨迹贡献无差异。"
+      },
+      "evidence_path": "对匹配 prompt 的缓存 rollout 记录消费次数、token 贡献和梯度范数，比较同步与异步重放。",
+      "cheap_probe": {
+        "input": "含 prompt ID、完成时长、长度、奖励和消费次数的缓存轨迹。",
+        "procedure": "按 prompt 与奖励匹配快慢轨迹，重放同步和完成即消费队列，估计每条轨迹的累计梯度质量。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "答案会调整监控或局部方法，但不单独决定主要工程投入。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C04",
+      "short_title": "有界陈旧失效边界",
+      "plain_question": "最大陈旧度已经受控时，难题更慢仍会让异步更新失真吗？",
+      "why_it_matters": "若存在失效边界，系统验收不能只看最大 lag，需要同时限制 lag 与难度的相关性。",
+      "research_question": "最大 lag 受控时，lag 与任务难度的相关性何时仍会显著增加异步更新误差？",
+      "question_identity": {
+        "unit_of_analysis": "最大 lag 匹配的异步 batch",
+        "comparison": "高对低 lag×难度相关",
+        "outcome": "相对同步 oracle 的更新误差",
+        "scope": "稀疏可验证奖励与长尾轨迹"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "失效来自内容组成还是 off-policy 比率？"
+        ],
+        "boundary": [
+          "何种学习率与并发度下阈值出现？"
+        ],
+        "intervention": [
+          "难度分层版本平衡能否移除失效？"
+        ]
+      },
+      "signal_ids": [
+        "E03",
+        "E04",
+        "E05",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04"
+      ],
+      "question_family": "边界/反例",
+      "cluster_id": "K2_staleness_measure",
+      "decision_fork": {
+        "decision": "是否把 lag×难度相关阈值纳入异步训练安全边界。",
+        "answer_a": "相同最大 lag 下，相关性升高产生可重复的 oracle 误差剂量反应。",
+        "action_a": "按难度分层调度或收紧相关性阈值，而不是只控制最大 lag。",
+        "answer_b": "只要最大 lag 与学习率受控，相关性对 oracle 误差没有额外影响。",
+        "action_b": "继续用最大 lag×学习率标度，不建设难度分层队列。",
+        "uncertain_action": "只在高并发、高学习率区域设置软阈值，并收集更多日志。",
+        "reversal_condition": "改变难度度量或第二任务后剂量反应消失，或被 log-ratio 尾部完全中介。"
+      },
+      "evidence_path": "合成同最大 lag、不同 lag×难度相关的重放 batch，测量 oracle 梯度误差剂量反应。",
+      "cheap_probe": {
+        "input": "按基模 pass@k 分层的 64–128 个 prompt 与每题多条缓存 rollout。",
+        "procedure": "构造相同 lag 边际分布但相关性为负、零、正的三种 batch，比较更新 cosine 与分层 OOD。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C05",
+      "short_title": "版本平衡对照",
+      "plain_question": "同样吞吐和平均陈旧下，版本平衡是否比只卡最大陈旧更忠实？",
+      "why_it_matters": "直接决定系统工程应优先做简单限流，还是更复杂的多版本/分层队列。",
+      "research_question": "在吞吐与平均 lag 匹配时，版本平衡批处理是否比最大 lag 限制更接近同步更新？",
+      "question_identity": {
+        "unit_of_analysis": "异步训练批处理策略",
+        "comparison": "版本平衡批处理对最大 lag 限制",
+        "outcome": "同步 oracle 更新一致性",
+        "scope": "小模型数学与代码 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "优势来自版本构成还是内容构成？"
+        ],
+        "boundary": [
+          "吞吐损失超过多少时不再值得？"
+        ],
+        "intervention": [
+          "最小需要几档版本分层？"
+        ]
+      },
+      "signal_ids": [
+        "E01",
+        "E02",
+        "E03",
+        "E05"
+      ],
+      "closest_prior_ids": [
+        "E02",
+        "E03"
+      ],
+      "question_family": "比较",
+      "cluster_id": "K3_async_control",
+      "decision_fork": {
+        "decision": "选择版本平衡批处理还是最大 lag 限制作为默认陈旧控制。",
+        "answer_a": "吞吐与平均 lag 匹配时，版本平衡对总体及慢子群都更接近同步 oracle。",
+        "action_a": "投资多版本队列并把慢子群误差纳入验收。",
+        "answer_b": "版本平衡没有稳定精度收益，或收益小于队列复杂度与吞吐损失。",
+        "action_b": "采用最大 lag 限制和学习率缩放，避免复杂版本调度。",
+        "uncertain_action": "只在达到相关性阈值时切换版本平衡。",
+        "reversal_condition": "在第二实现或任务上优势消失，或为获得优势需牺牲超过预注册吞吐预算。"
+      },
+      "evidence_path": "同一缓存和资源模拟器下匹配吞吐，直接比较两种队列与同步 oracle。",
+      "cheap_probe": {
+        "input": "带完整版本和完成时间的公开缓存 rollout 及队列模拟器。",
+        "procedure": "搜索两种策略的吞吐匹配点，重放等量更新并比较总体与慢四分位的梯度误差。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "需额外基础设施或高 k/人工标注，收益仍可能值得。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C06",
+      "short_title": "完成倾向校正",
+      "plain_question": "给更难完成的轨迹更合适的权重，能把异步更新拉回同步目标吗？",
+      "why_it_matters": "若轻量加权有效，可避免重写异步系统；若无效，则应投资版本队列或保持同步。",
+      "research_question": "在同一完成日志上，按完成倾向加权是否能恢复异步更新相对同步 oracle 的方向？",
+      "question_identity": {
+        "unit_of_analysis": "异步已完成 rollout",
+        "comparison": "完成倾向加权对未加权",
+        "outcome": "与同步 oracle 的梯度方向一致性",
+        "scope": "完成概率可由预处理特征估计的短程 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "校正的是未完成缺失还是到达顺序？"
+        ],
+        "boundary": [
+          "倾向模型失配到何种程度后失效？"
+        ],
+        "intervention": [
+          "分层重放是否比连续权重更稳？"
+        ]
+      },
+      "signal_ids": [
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "closest_prior_ids": [
+        "E03",
+        "E04"
+      ],
+      "question_family": "干预",
+      "cluster_id": "K3_async_control",
+      "decision_fork": {
+        "decision": "是否实现完成倾向日志和在线权重校正。",
+        "answer_a": "交叉拟合且截断的完成倾向权重显著恢复同步 oracle 方向，同时方差可控。",
+        "action_a": "实现日志、权重截断和离线校准，再进入在线小规模试验。",
+        "answer_b": "倾向权重因模型失配或极端权重增加方差，未改善 oracle 一致性。",
+        "action_b": "放弃连续权重，转向版本平衡/分层重放或同步训练。",
+        "uncertain_action": "仅在共同支持区域使用分层权重，超出范围回退同步。",
+        "reversal_condition": "第二倾向模型或第二任务下恢复不足，或最坏子群方差显著恶化。"
+      },
+      "evidence_path": "从完整启动集合估计完成倾向，在同一重放上比较未加权、加权、分层与同步 oracle。",
+      "cheap_probe": {
+        "input": "同时含已完成和超时轨迹元数据的一个小批启动日志。",
+        "procedure": "交叉拟合完成倾向，截断极端权重，比较三种校正的梯度 cosine、方差和 OOD。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": false,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 0,
+          "reason": "当前缺少可识别所需的完整日志或共同支持。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "需额外基础设施或高 k/人工标注，收益仍可能值得。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C07",
+      "short_title": "动态过滤净增益",
+      "plain_question": "动态过滤变强，是信息用得更好，还是只让中等难度题出现更多？",
+      "why_it_matters": "可判断动态采样是真正提高信息效率，还是主要靠隐式改变题目分布。",
+      "research_question": "DAPO 式动态过滤的大 k 覆盖增益是否超出其中等难度 prompt 重加权效应？",
+      "question_identity": {
+        "unit_of_analysis": "具有不同基模成功率的训练 prompt",
+        "comparison": "原始动态过滤对入选概率校正过滤",
+        "outcome": "超出中等难度重加权的大 k 覆盖净增益",
+        "scope": "组大小可控的二元奖励数学 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "净增益来自去除零梯度还是难度课程？"
+        ],
+        "boundary": [
+          "组大小与成功率如何改变入选概率？"
+        ],
+        "intervention": [
+          "Horvitz-Thompson 式权重是否稳定？"
+        ]
+      },
+      "signal_ids": [
+        "E06",
+        "E07",
+        "E08",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E06",
+        "E12"
+      ],
+      "question_family": "因果",
+      "cluster_id": "K4_dynamic_sampling",
+      "decision_fork": {
+        "decision": "是否把 DAPO 式动态过滤作为能力扩张策略。",
+        "answer_a": "校正 prompt 入选概率后，动态过滤仍提升大 k 覆盖且不是纯方差收益。",
+        "action_a": "保留动态过滤并研究其信息效率机制。",
+        "answer_b": "校正后大 k 增益消失，原收益主要来自隐式难度重加权或 pass@1 锐化。",
+        "action_b": "把动态过滤限定为吞吐工具，不宣称能力边界收益；改用显式课程。",
+        "uncertain_action": "只在已校准成功率区间使用，并增加组大小复现。",
+        "reversal_condition": "等 token、等难度、等成功率校正后 pass@128 优势不复现。"
+      },
+      "evidence_path": "用已知成功率的固定 prompt 池解析/模拟入选概率，再做短程加权重放。",
+      "cheap_probe": {
+        "input": "64 个分层 prompt、每题 32 条缓存 rollout 与可复现动态过滤器。",
+        "procedure": "先解析计算混合组入选概率，再以缓存 rollout 重放原始过滤、共同支持区校正过滤和不筛选三组等 token 更新。",
+        "possible_outcomes": [
+          "校正后大 k 增益保留",
+          "校正后增益消失",
+          "极端成功率权重方差不可接受"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 1,
+          "reason": "相邻工作密集，仍可能有明确但需阶段 7 核实的增量。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C08",
+      "short_title": "在线验证风险",
+      "plain_question": "哪种验证器指标最能预警训练模型会沿着错误奖励方向学习？",
+      "why_it_matters": "若在线条件化风险优于平均准确率，可改变 verifier 上线门槛并减少昂贵的奖励投机复训。",
+      "research_question": "策略条件化错误率是否比离线平均准确率更能预测 verifier 在 RLVR 中诱发的错误更新？",
+      "question_identity": {
+        "unit_of_analysis": "候选 RLVR verifier",
+        "comparison": "策略条件化错误率对离线平均准确率",
+        "outcome": "对错误策略更新或奖励投机的预测力",
+        "scope": "数学与结构归纳的二元 verifier"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "错误是否集中在策略逐步访问的高奖励区域？"
+        ],
+        "boundary": [
+          "同构扰动适用于哪些任务结构？"
+        ],
+        "intervention": [
+          "appeals 或不变量测试能否降低风险？"
+        ]
+      },
+      "signal_ids": [
+        "E09",
+        "E11"
+      ],
+      "closest_prior_ids": [
+        "E09",
+        "E11"
+      ],
+      "question_family": "测量",
+      "cluster_id": "K5_verifier_online",
+      "decision_fork": {
+        "decision": "选择 verifier 上线门槛与最低红队指标。",
+        "answer_a": "策略条件化错误率或同构一致性显著优于离线平均准确率预测错误更新。",
+        "action_a": "把在线条件化/不变量测试纳入上线门槛，拒绝只有高平均准确率的 verifier。",
+        "answer_b": "平均准确率已充分预测风险，条件化指标没有跨任务增量。",
+        "action_b": "维持简单离线验收，把预算投入提高总体准确率或 appeals。",
+        "uncertain_action": "只在存在可枚举结构不变量的任务使用新指标。",
+        "reversal_condition": "准确率匹配的 verifier 在短程 RL 中 shortcut rate 无稳定差异，或新指标跨任务失效。"
+      },
+      "evidence_path": "构造离线准确率相近但错误位置不同的 verifier，对照短程 RL 后的错误更新与 shortcut rate。",
+      "cheap_probe": {
+        "input": "一个有同构变换的归纳任务和两个人工控错 verifier。",
+        "procedure": "匹配总体准确率，改变错误在策略高概率区域的集中度，运行 50–100 步 RL 并测 shortcut rate。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": false
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 0,
+          "reason": "阶段 1 已找到几乎直接回答或与在位问题高度重叠的工作。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C09",
+      "short_title": "边界课程归因",
+      "plain_question": "教师信息相同，先找能力边界再训练还会带来额外覆盖吗？",
+      "why_it_matters": "若边界定位没有独立收益，可省去昂贵 pass@k 扫描；若有，则应把预算投向边界估计。",
+      "research_question": "在固定教师信息量时，边界感知采样是否为大 k 推理覆盖提供独立增益？",
+      "question_identity": {
+        "unit_of_analysis": "接受等量教师指导的训练 prompt",
+        "comparison": "边界感知采样对随机或难度匹配采样",
+        "outcome": "大 k 推理覆盖",
+        "scope": "小模型数学推理课程 RL"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "增益来自更高信息密度还是更好固化？"
+        ],
+        "boundary": [
+          "边界估计误差多大时优势消失？"
+        ],
+        "intervention": [
+          "低 k 近似能否替代 pass@256？"
+        ]
+      },
+      "signal_ids": [
+        "E07",
+        "E08",
+        "E12"
+      ],
+      "closest_prior_ids": [
+        "E08",
+        "E12"
+      ],
+      "question_family": "机制",
+      "cluster_id": "K6_capacity_boundary",
+      "decision_fork": {
+        "decision": "是否建设高 k 能力边界扫描作为课程前置。",
+        "answer_a": "固定教师 token 后，边界感知采样仍比随机和难度匹配获得更高大 k 覆盖。",
+        "action_a": "投入边界估计、边界误差监控和后续 RL 固化。",
+        "answer_b": "优势由教师信息或题目难度解释，边界定位没有独立贡献。",
+        "action_b": "省去高 k 扫描，直接优化教师样本质量与难度课程。",
+        "uncertain_action": "用低 k 近似边界做更便宜的第二轮对照。",
+        "reversal_condition": "等教师 token 与难度后增益消失，或边界估计成本高于性能收益。"
+      },
+      "evidence_path": "等教师 token、等题目难度、等 RL 预算，只随机化边界感知或难度匹配的样本选择。",
+      "cheap_probe": {
+        "input": "32–64 个有大 k 基模采样和教师解的数学 prompt。",
+        "procedure": "匹配教师 token 后做边界采样、随机采样和难度匹配三组短程训练，比较 pass@1/pass@128。",
+        "possible_outcomes": [
+          "达到预注册差异阈值",
+          "差异接近零",
+          "结果只在一个子群出现"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "reject",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 2,
+          "reason": "A/B 直接对应建设或放弃一项训练基础设施/方法。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 2,
+          "reason": "可用缓存 rollout 或小规模随机化重放在一天级试探。"
+        },
+        "novelty_nonredundancy": {
+          "value": 0,
+          "reason": "阶段 1 已找到几乎直接回答或与在位问题高度重叠的工作。"
+        },
+        "cost_benefit": {
+          "value": 1,
+          "reason": "需额外基础设施或高 k/人工标注，收益仍可能值得。"
+        }
+      }
+    },
+    {
+      "candidate_id": "C10",
+      "short_title": "机制覆盖测量",
+      "plain_question": "在能看清解法结构的任务里，机制覆盖比 token 熵更能预测大 k 吗？",
+      "why_it_matters": "若机制覆盖才有用，熵正则和数据多样性应按推理结构而非 token 分散度验收。",
+      "research_question": "在可抽取解法图的任务中，机制簇覆盖是否比 token 熵更能预测大 k 正确覆盖？",
+      "question_identity": {
+        "unit_of_analysis": "同一 prompt 的可解析推理轨迹集合",
+        "comparison": "机制簇覆盖对 token 熵",
+        "outcome": "大 k 正确覆盖的预测力",
+        "scope": "可抽取运算图或控制流图的数学与代码任务"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "正优势 token 收缩的是机制还是措辞？"
+        ],
+        "boundary": [
+          "机制簇自动标注误差何时破坏预测？"
+        ],
+        "intervention": [
+          "机制均衡采样是否优于熵奖励？"
+        ]
+      },
+      "signal_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "closest_prior_ids": [
+        "E07",
+        "E10"
+      ],
+      "question_family": "测量",
+      "cluster_id": "K7_reasoning_support",
+      "decision_fork": {
+        "decision": "选择 token 熵还是机制簇覆盖作为 RLVR 探索健康度指标。",
+        "answer_a": "控制表面改写后，机制簇覆盖对大 k/OOD 有稳定增量预测且可指导更好干预。",
+        "action_a": "建设轻量机制标注和机制均衡采样，降低 token 熵的决策权重。",
+        "answer_b": "机制簇不稳定或无增量，token 熵已足够且成本更低。",
+        "action_b": "继续使用 token 熵与简单响应多样性，不建设结构解析。",
+        "uncertain_action": "只在程序化数学/代码中使用机制覆盖，开放文本保留 token 指标。",
+        "reversal_condition": "双审机制标签一致率不足，或交叉任务预测增量消失。"
+      },
+      "evidence_path": "在同义表述控制的程序化数学任务上聚类解法图，比较交叉验证预测和干预前后变化。",
+      "cheap_probe": {
+        "input": "20–30 道可抽取运算图的问题，每题 64 条基模与 RL 模型轨迹。",
+        "procedure": "用同 token 熵、不同机制覆盖的构造反例确认可区分性，再在 20–30 题上以双审解法图比较时间外预测。",
+        "possible_outcomes": [
+          "机制覆盖有稳定增量预测",
+          "token 熵已吸收预测力",
+          "机制标签一致率不足"
+        ],
+        "decision_rules": {
+          "keep": "跨两个种子达到阈值且方向一致。",
+          "narrow": "只在预先定义的一个边界内出现。",
+          "rewrite": "观测支持相邻机制而非当前核心效应。",
+          "reject": "效应接近零、方向不稳或由更简单混杂完全解释。"
+        }
+      },
+      "probe_disposition": "narrow",
+      "hard_gates": {
+        "source_grounded": true,
+        "action_divergent": true,
+        "neutral": true,
+        "answerable": true,
+        "ethical": true,
+        "readable": true,
+        "atomic": true,
+        "low_concept_burden": true,
+        "value_visible": true
+      },
+      "scores": {
+        "decision_leverage": {
+          "value": 1,
+          "reason": "答案会调整监控或局部方法，但不单独决定主要工程投入。"
+        },
+        "discriminating_power": {
+          "value": 2,
+          "reason": "同一缓存或随机化对照能明确区分至少两个竞争机制。"
+        },
+        "reality_grounding": {
+          "value": 2,
+          "reason": "有多项近 18 个月一手论文或受控失败案例支持。"
+        },
+        "answerability": {
+          "value": 1,
+          "reason": "可试探但需要昂贵标注、结构解析或额外假设。"
+        },
+        "novelty_nonredundancy": {
+          "value": 2,
+          "reason": "宽检索未见直接操纵该核心未知，且与四个在位问题机制不同。"
+        },
+        "cost_benefit": {
+          "value": 2,
+          "reason": "可复用缓存或小样本程序化任务，负结果也能迅速停止工程投入。"
+        }
+      }
+    }
+  ],
+  "selection": {
+    "outcome": "selected",
+    "primary_candidate_id": "C01",
+    "backup_candidate_ids": [
+      "C07",
+      "C10"
+    ],
+    "why_this_question": "C01 在阶段 6 为唯一 12/12 候选，并通过三路先行研究与常识审查。2026 年一手系统与理论工作同时把长尾轨迹、数据倾斜和策略陈旧列为实际约束，但未直接用固定 rollout/行为策略只随机化完成顺序。它可用一天级缓存重放给出强反事实，A/B 会分别触发建设或放弃版本平衡队列。相对四个在位问题，它只在当前下一笔预算的时效性、证据密度和低成本上胜出，不表示永久科学优先级。",
+    "incumbent_comparison": {
+      "incumbent_question_refs": [
+        "modes/codex-research-question/results/2026-08-21-shared-funnel-mode2-run-01.json",
+        "modes/codex-research-question/results/2026-08-25-shared-funnel-mode2-run-02.json",
+        "modes/codex-research-question/results/2026-08-27-shared-funnel-mode2-run-03.json",
+        "modes/codex-research-question/results/2026-08-28-shared-funnel-mode2-run-04.json"
+      ],
+      "outcome": "new-question-better",
+      "reason": "四个在位问题继续有效；C01 对当前异步 RL 基础设施决策有更新的 2026 一手信号、可只用固定缓存做更便宜的因果顺序对照，并明确区分‘限制陈旧’与‘修正信息性到达’两项工程动作，因此本轮优先。"
+    },
+    "research_question_contract": {
+      "short_title": "完成顺序偏差",
+      "plain_question": "同一批训练轨迹只是完成先后不同，会让异步训练的更新方向变化吗？",
+      "why_it_matters": "若仅到达顺序就改变更新，应先建设顺序随机化或版本平衡，而不是只限制最大陈旧度。",
+      "final_question": "固定 rollout 集合和行为策略后，真实完成顺序是否增加相对版本同步更新的梯度方向误差？",
+      "question_identity": {
+        "unit_of_analysis": "固定集合中的 RLVR rollout",
+        "comparison": "真实完成顺序对随机到达顺序",
+        "outcome": "相对版本同步更新的梯度方向误差",
+        "scope": "逐步消费轨迹的短程异步 RLVR"
+      },
+      "secondary_questions": {
+        "mechanism": [
+          "快速完成轨迹是否获得更高的早期有效权重？"
+        ],
+        "boundary": [
+          "时延与长度或难度无关时效应是否消失？"
+        ],
+        "intervention": [
+          "版本平衡批处理能否恢复同步 oracle？"
+        ]
+      },
+      "triggering_signal_ids": [
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "users_and_decision": "使用者是负责大模型后训练与异步 RL 基础设施的研究负责人；该问题决定是否在 2026-09-17 前投入 1–2 周建设顺序随机化、版本平衡队列和慢子群审计。",
+      "decision_deadline": "2026-09-17；先做一天级缓存重放，再决定是否进入真实异步短程训练。",
+      "key_concepts_and_boundaries": [
+        "固定 rollout 集合：使用完全相同的 prompt、生成文本、奖励、行为版本、行为 logprob 与 token mask；不重新生成样本。",
+        "真实完成顺序：按记录的 wall-clock 完成时间进入逐步更新；随机顺序在同一版本和轨迹集合内置换。",
+        "版本同步更新：同一行为版本的完整集合先聚合再更新，作为方向 oracle；不把最终 benchmark 分数单独当 oracle。",
+        "主要结果：每步梯度与版本同步 oracle 的 cosine/范数误差，以及慢四分位轨迹族的累计有效权重。",
+        "首轮范围：1–3B 模型的数学或代码 RLVR、20–50 个短程更新、至少两种到达相关强度和三随机种子；不外推到完整长期训练。",
+        "核心未知只问完成顺序的净效应；快轨迹权重机制、失效边界和版本平衡干预作为次级问题。"
+      ],
+      "competing_answers": {
+        "a": "即使轨迹集合与行为策略固定，真实完成顺序仍显著增加相对版本同步 oracle 的梯度方向误差。",
+        "b": "固定集合、版本与 lag 后，真实和随机顺序的误差接近，表面效应由策略陈旧、长度或归一化解释。",
+        "unknown": "效应只出现在 lag 与长度/难度强相关的慢子群，或只在特定学习率、并发度和 batch 规则出现。"
+      },
+      "action_mapping": {
+        "if_a": "实现小窗口随机洗牌或版本平衡队列，并把慢子群 oracle 误差加入系统验收。",
+        "if_b": "不建设独立顺序校正，把工程预算转向最大 lag×学习率、log-ratio 尾部或路由一致性。",
+        "if_uncertain": "只在预注册高相关区域启用局部版本平衡，并补做第二任务/实现复现后再扩大。"
+      },
+      "discriminating_evidence": "关键证据是在完全相同缓存轨迹、行为版本和总 token 下，真实顺序相对版本内随机顺序产生跨种子的 oracle cosine 恶化，并随人为注入的时延—长度/难度相关强度呈剂量反应；若版本同步整批更新或相关性置零后效应消失，则支持到达顺序机制。",
+      "reversal_result": "任一结果都反转工程投资：三种子真实—随机差异小于 0.05 cosine 且符号不稳；行为 log-ratio/长度匹配完全吸收差异；第二任务或实现中效应消失；版本平衡收益需牺牲超过 15% 吞吐。",
+      "minimum_probe": "从 AReaL/同类实现导出 256–512 条、至少两个行为版本的缓存轨迹和完成时间；固定轨迹后重放真实、版本内随机和版本平衡三种顺序各三种子、20–50 次更新，预注册总体与慢四分位的梯度 cosine、累计权重和方差。",
+      "cost_risk_ethics": "先导约 1 个研究日，复用现有 1–3B 缓存且无需新 rollout；风险是玩具重放不能代表长期训练、行为 logprob 不完整、梯度 oracle 受实现差异影响和选择性报告子群。使用公开或合成任务及模型输出，不涉及个人数据；保留全部顺序、种子与失败结果。",
+      "stopping_condition": "若真实顺序相对版本内随机顺序在三种子中的平均 oracle cosine 恶化小于 0.05、方向不一致，或由长度/log-ratio 匹配完全解释，则停止；若保留，先在第二任务和第二异步实现复现，再批准 1–2 周系统工程。",
+      "residual_unknowns": [
+        "一天级缓存重放中的参数路径差异是否累积为长期 OOD 能力差异。",
+        "完成时延与不可观测任务复杂度的相关性是否能由长度、基模 pass@k 或工具步数充分代理。",
+        "版本平衡、随机洗牌和 staleness-adaptive clipping 的收益是否互补。",
+        "多轮工具任务中环境时延和策略计算时延能否分开识别。",
+        "异步吞吐收益超过何种阈值时，轻微的慢子群偏差仍可接受。"
+      ]
+    }
+  },
+  "decision_log": [
+    "阶段 0：冻结 2026-09-17 前的下一项研究投资决策；四个正式问题均为在位基线；允许以‘本轮没有更好的问题’结束。",
+    "阶段 1：纳入 12 项近 18 个月一手论文；把异步陈旧×长度/难度、动态采样、能力边界、verifier 噪声和熵收缩登记为现实信号，不在本阶段评价或宣称新颖。",
+    "阶段 2：完成 12 个实质不同的 5W1H/苏格拉底式重构；保留异步陈旧、动态采样、verifier 在线误差、机制熵和能力边界五条方向供下一阶段无评价扩展。",
+    "阶段 3：QFT 在无评价条件下生成 12 个候选并完成开放/封闭转换；STORM/Co-STORM 式检索从系统、联邦公平、延迟反馈、MNAR、verifier 与能力支持六个视角补问；八类问题均覆盖。",
+    "阶段 4：12 个草案按机制/证据聚为 7 簇并去重为 10 个正式候选；共享同一实验的核心效应、机制、边界和干预问题继续分离。",
+    "阶段 5：10 个候选均写出合理 A/B/未知、双向钢人、竞争性假设、不同动作与反转条件；尚未评分或新增候选。",
+    "阶段 6：先过九项硬门槛再评分；C06、C08 未过门槛；C01(12)、C07(11)、C10(10) 入围，最多三个；其余不在筛选阶段新增或替换。",
+    "阶段 7：C01、C07、C10 均完成常识审查与三路先行研究；C01 保留，C07 缩小到超出难度重加权的净增益，C10 缩小到可抽取解法图的任务；玩具/解析试探不充当模型实证。",
+    "阶段 8：选择 C01 为主问题，C07/C10 为不同机制备选；C01 相对四个在位问题只在当前预算的时效性、证据密度和低成本上胜出；生成双层表达、完整契约与可读报告。"
+  ]
+}

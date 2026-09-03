@@ -1,0 +1,88 @@
+{
+  "manifest_version": "1.0",
+  "run_id": "2026-09-03-shared-funnel-mode2-run-05",
+  "mode": "2",
+  "engine": "current_codex",
+  "completed_at_utc": "2026-09-03T02:35:24.493617+00:00",
+  "audit": {
+    "run_id": "2026-09-03-shared-funnel-mode2-run-05",
+    "passed": true,
+    "structural_error": null,
+    "semantic_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "candidate_count": 10,
+        "evidence_count": 12,
+        "eligible_candidate_count": 3,
+        "selected_scores": {
+          "C01": 12,
+          "C07": 11,
+          "C10": 10
+        },
+        "top_eligible_score": 12,
+        "unique_evidence_locations": 12,
+        "selection_outcome": "selected"
+      }
+    },
+    "evidence_ledger_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "query_count": 30,
+        "source_decision_count": 12,
+        "collision_review_count": 3,
+        "common_knowledge_review_count": 3,
+        "online_evidence_count": 12
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\session.json",
+      "sha256": "56d06b4fafd6cbb589f4dfbbb9259afcbbd2616743b3b99e98c8bdea0c8ae259"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\evidence-ledger.json",
+      "sha256": "5972970b0949cddbfe4a99269cb3b646a61cab8b0899c6992d3d1c640e3bce01"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\0_goal.json",
+      "sha256": "5cb86fa24b5171e93516f569b97b7b6134727bc1dac603f10b4eb0b3915950ca"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\1_reality_signals.json",
+      "sha256": "f8c2e3c611688d3e61af7c91d35de92cfc7f3eb89206fc0ddb75a66967efa719"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\2_reframe.json",
+      "sha256": "f89ffe83544f2c23bb396e77eef1ebc7aaa258bde01f97e42d7c225be7ddc99f"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\3_expand.json",
+      "sha256": "1b0cf5694f3dd3fb159f0459b4b0e7f6a3dc4a20bcdd9b7407fe981be5d26e43"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\4_cluster.json",
+      "sha256": "fce299b9d5120a325000529bb5904f2c97f425927cf592798bfac60427ed6676"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\5_decision_forks.json",
+      "sha256": "e3aa927684772dac3c80ea49d25cec1ce4b85b4873ac00c172cbcb02b71866d3"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\6_rank.json",
+      "sha256": "1e51999d80d0d39e0f64d2cf0ac0212f2c9d0abee927427e6558444885590a40"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\7_probe.json",
+      "sha256": "7dc690a28d5308420a1ea11376a62cbba507e8686e097cb797eb9b7db822c667"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-09-03-shared-funnel-mode2-run-05\\stages\\8_contract.json",
+      "sha256": "930a111fe9b8014848621482149429dc24e51096fdbd6c4c5c077d755b89eda1"
+    }
+  ]
+}

@@ -1,0 +1,521 @@
+{
+  "ledger_version": "1.1",
+  "run_id": "2026-09-03-shared-funnel-mode2-run-05",
+  "created_at_utc": "2026-09-03T02:06:09.292624+00:00",
+  "updated_at_utc": "2026-09-03T02:30:01.989073+00:00",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "text": "site:arxiv.org 2025 reinforcement learning verifiable rewards LLM post-training gradient bias entropy diversity",
+      "provider": "web",
+      "scope": "Recent primary papers on RLVR gradients, entropy, and diversity",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:10:50.854270+00:00",
+      "result_count": 12
+    },
+    {
+      "query_id": "Q02",
+      "text": "site:arxiv.org 2025 asynchronous reinforcement learning LLM reasoning policy staleness long rollout",
+      "provider": "web",
+      "scope": "Recent primary papers on asynchronous RL and policy staleness",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:10:59.397663+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q03",
+      "text": "site:openreview.net 2025 RLVR verifier error reward hacking language model reasoning",
+      "provider": "web",
+      "scope": "Recent primary papers on verifier errors and reward hacking",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:04.788625+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q04",
+      "text": "site:arxiv.org 2025 LLM RL data selection curriculum prompt difficulty verifiable rewards",
+      "provider": "web",
+      "scope": "Recent primary papers on RL data selection, curricula, and difficulty",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:09.842929+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q05",
+      "text": "site:arxiv.org/abs/ 2026 asynchronous LLM reinforcement learning rollout staleness latency policy version",
+      "provider": "web",
+      "scope": "2026 primary papers on asynchronous rollout staleness and latency",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:13.543159+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q06",
+      "text": "site:arxiv.org/abs/ 2025 DAPO dynamic sampling overlong reward shaping RLVR",
+      "provider": "web",
+      "scope": "Primary paper search for DAPO dynamic sampling and overlong handling",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:17.394673+00:00",
+      "result_count": 6
+    },
+    {
+      "query_id": "Q07",
+      "text": "site:arxiv.org/abs/ 2025 RLVR data difficulty curriculum reasoning prompts",
+      "provider": "web",
+      "scope": "Primary papers on RLVR difficulty curricula",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:24.270445+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q08",
+      "text": "site:openreview.net/forum 2026 reinforcement learning reasoning outcome reward model verifier hacking",
+      "provider": "web",
+      "scope": "2026 primary papers on outcome rewards and verifier gaming",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:29.017259+00:00",
+      "result_count": 10
+    },
+    {
+      "query_id": "Q09",
+      "text": "DAPO open-source LLM reinforcement learning system arxiv 2025 dynamic sampling clip-higher",
+      "provider": "web",
+      "scope": "Locate the DAPO primary paper",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:33.785100+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q10",
+      "text": "Dr. GRPO demystifying group relative policy optimization arxiv 2025 length bias",
+      "provider": "web",
+      "scope": "Locate primary work on GRPO normalization and length bias",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:39.703969+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q11",
+      "text": "Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model arxiv",
+      "provider": "web",
+      "scope": "Locate primary work on RLVR capability boundaries",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:44.521782+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q12",
+      "text": "reward model classification accuracy resistance reward hacking RLVR verifier arxiv 2025",
+      "provider": "web",
+      "scope": "Locate primary work on verifier accuracy versus online robustness",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:50.987470+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q13",
+      "text": "site:arxiv.org/abs/ asynchronous LLM RL latency conditioned staleness trajectory length bias hard prompts",
+      "provider": "web",
+      "scope": "Collision scan for latency-conditioned staleness and task bias",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:11:57.287898+00:00",
+      "result_count": 4
+    },
+    {
+      "query_id": "Q14",
+      "text": "site:arxiv.org/abs/ LLM RL completion length rollout time policy staleness correlation asynchronous",
+      "provider": "web",
+      "scope": "Collision scan for completion length, rollout time, and staleness",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:12:02.333284+00:00",
+      "result_count": 4
+    },
+    {
+      "query_id": "Q15",
+      "text": "site:arxiv.org/abs/ async GRPO hard samples stale rollouts difficulty bias",
+      "provider": "web",
+      "scope": "Collision scan for hard samples and stale asynchronous GRPO",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:12:06.787912+00:00",
+      "result_count": 4
+    },
+    {
+      "query_id": "Q16",
+      "text": "site:arxiv.org/abs/ LLM RL straggler trajectories long tail discard truncate bias",
+      "provider": "web",
+      "scope": "Collision scan for stragglers, discards, and truncation bias",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:12:11.952743+00:00",
+      "result_count": 5
+    },
+    {
+      "query_id": "Q17",
+      "text": "\"LLMs Gaming Verifiers\" arxiv",
+      "provider": "web",
+      "scope": "Exact title search for the arXiv version of LLMs Gaming Verifiers",
+      "purpose": "reality-signal",
+      "executed_at_utc": "2026-09-03T02:16:03.771435+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q18",
+      "text": "site:arxiv.org asynchronous federated learning straggler data heterogeneity bias stale updates non-iid",
+      "provider": "web",
+      "scope": "Adjacent view: asynchronous federated learning and fast-client dominance",
+      "purpose": "citation-chain",
+      "executed_at_utc": "2026-09-03T02:19:02.771268+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q19",
+      "text": "site:proceedings.mlr.press asynchronous reinforcement learning experience delay data distribution bias",
+      "provider": "web",
+      "scope": "Adjacent view: delayed experience and data-distribution bias",
+      "purpose": "citation-chain",
+      "executed_at_utc": "2026-09-03T02:19:07.625472+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q20",
+      "text": "site:arxiv.org informative censoring completion time outcome missing not at random machine learning trajectories",
+      "provider": "web",
+      "scope": "Adjacent view: informative completion time and MNAR censoring",
+      "purpose": "citation-chain",
+      "executed_at_utc": "2026-09-03T02:19:12.132083+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q21",
+      "text": "site:arxiv.org verifier online optimization distribution shift reward model accuracy Goodhart reinforcement learning",
+      "provider": "web",
+      "scope": "Adjacent view: verifier shift under online optimization",
+      "purpose": "citation-chain",
+      "executed_at_utc": "2026-09-03T02:19:17.108253+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q22",
+      "text": "site:arxiv.org/abs/ \"arrival order\" asynchronous RLVR rollout policy staleness LLM",
+      "provider": "web",
+      "scope": "Exact question search for C01",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-09-03T02:28:19.252211+00:00",
+      "result_count": 4
+    },
+    {
+      "query_id": "Q23",
+      "text": "site:arxiv.org/abs/ \"completion time\" trajectory asynchronous reinforcement learning bias",
+      "provider": "web",
+      "scope": "Completion-time mechanism search for C01",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-09-03T02:28:27.609780+00:00",
+      "result_count": 6
+    },
+    {
+      "query_id": "Q24",
+      "text": "site:arxiv.org/abs/ \"fast client\" dominance asynchronous federated learning non-IID",
+      "provider": "web",
+      "scope": "Adjacent fast-client dominance search for C01",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-09-03T02:28:33.136113+00:00",
+      "result_count": 6
+    },
+    {
+      "query_id": "Q25",
+      "text": "site:arxiv.org/abs/ \"dynamic sampling\" \"inclusion probability\" DAPO RLVR",
+      "provider": "web",
+      "scope": "Exact question search for C07",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-09-03T02:28:37.996977+00:00",
+      "result_count": 3
+    },
+    {
+      "query_id": "Q26",
+      "text": "site:arxiv.org/abs/ GRPO \"all-correct\" \"all-wrong\" filtering selection bias",
+      "provider": "web",
+      "scope": "Group-filter selection mechanism search for C07",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-09-03T02:28:43.401522+00:00",
+      "result_count": 5
+    },
+    {
+      "query_id": "Q27",
+      "text": "site:proceedings.mlr.press Horvitz-Thompson adaptive sampling curriculum reinforcement learning",
+      "provider": "web",
+      "scope": "Adjacent adaptive-sampling correction search for C07",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-09-03T02:28:49.761434+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q28",
+      "text": "site:arxiv.org/abs/ \"mechanism diversity\" token entropy reasoning trajectories RLVR",
+      "provider": "web",
+      "scope": "Exact question search for C10",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-09-03T02:28:54.405496+00:00",
+      "result_count": 4
+    },
+    {
+      "query_id": "Q29",
+      "text": "site:arxiv.org/abs/ positive advantage tokens entropy collapse reasoning path diversity RLVR",
+      "provider": "web",
+      "scope": "Entropy-collapse mechanism search for C10",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-09-03T02:28:59.262112+00:00",
+      "result_count": 8
+    },
+    {
+      "query_id": "Q30",
+      "text": "site:arxiv.org/abs/ semantic diversity reasoning paths operation graph pass@k language model",
+      "provider": "web",
+      "scope": "Adjacent structured-path diversity search for C10",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-09-03T02:29:05.427633+00:00",
+      "result_count": 7
+    }
+  ],
+  "source_decisions": [
+    {
+      "evidence_id": "E01",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2505.24298",
+      "source_type": "primary_paper",
+      "claim_supported": "AReaL uses fully asynchronous generation and staleness-aware PPO to handle outdated rollouts.",
+      "reason": "Direct evidence that rollout freshness is an algorithmic variable in asynchronous LLM RL.",
+      "checked_at_utc": "2026-09-03T02:12:53.338840+00:00"
+    },
+    {
+      "evidence_id": "E02",
+      "query_ids": [
+        "Q05"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2604.26256",
+      "source_type": "primary_paper",
+      "claim_supported": "DORA reports long-tailed rollouts as a synchronous bottleneck and uses multi-version streaming rollouts.",
+      "reason": "Direct evidence of tension between long trajectories and asynchronous correctness.",
+      "checked_at_utc": "2026-09-03T02:12:59.066517+00:00"
+    },
+    {
+      "evidence_id": "E03",
+      "query_ids": [
+        "Q05"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2601.12784",
+      "source_type": "primary_paper",
+      "claim_supported": "StaleFlow treats rollout staleness and length-induced data skew as coupled concerns.",
+      "reason": "Supports joint review of staleness and length heterogeneity.",
+      "checked_at_utc": "2026-09-03T02:13:03.979130+00:00"
+    },
+    {
+      "evidence_id": "E04",
+      "query_ids": [
+        "Q05"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2607.01083",
+      "source_type": "primary_paper",
+      "claim_supported": "The asynchronous GRPO analysis gives per-step stale-rollout surrogate-gradient bias of order O(S*eta).",
+      "reason": "Provides a theoretical reality signal for staleness-induced gradient bias.",
+      "checked_at_utc": "2026-09-03T02:13:08.151540+00:00"
+    },
+    {
+      "evidence_id": "E05",
+      "query_ids": [
+        "Q13"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2607.18722",
+      "source_type": "primary_paper",
+      "claim_supported": "SAT adapts the PPO trust region for the high-staleness tail and reports improved stability.",
+      "reason": "Shows that within-batch staleness heterogeneity matters.",
+      "checked_at_utc": "2026-09-03T02:13:13.085912+00:00"
+    },
+    {
+      "evidence_id": "E06",
+      "query_ids": [
+        "Q09"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2503.14476",
+      "source_type": "primary_paper",
+      "claim_supported": "DAPO identifies dynamic sampling, asymmetric clipping, token-level loss, and overlong shaping as key techniques.",
+      "reason": "Shows that data admission and length aggregation are consequential training variables.",
+      "checked_at_utc": "2026-09-03T02:13:17.962002+00:00"
+    },
+    {
+      "evidence_id": "E07",
+      "query_ids": [
+        "Q11"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2504.13837",
+      "source_type": "primary_paper",
+      "claim_supported": "NeurIPS 2025 reports small-k RLVR gains without corresponding large-k capability expansion.",
+      "reason": "Direct evidence that pass-at-1 and capability support can diverge.",
+      "checked_at_utc": "2026-09-03T02:13:37.046375+00:00"
+    },
+    {
+      "evidence_id": "E08",
+      "query_ids": [
+        "Q07"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2606.22317",
+      "source_type": "primary_paper",
+      "claim_supported": "Boundary-aware curriculum RL reports improvements in both pass-at-1 and pass-at-256.",
+      "reason": "Provides contrary evidence and an intervention for capability-boundary expansion.",
+      "checked_at_utc": "2026-09-03T02:13:42.279775+00:00"
+    },
+    {
+      "evidence_id": "E09",
+      "query_ids": [
+        "Q12"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2510.00915",
+      "source_type": "primary_paper",
+      "claim_supported": "Binary RLVR verifiers retain asymmetric false-positive and false-negative noise that can bias gradients.",
+      "reason": "Shows that verifier noise can systematically alter policy updates.",
+      "checked_at_utc": "2026-09-03T02:13:47.173324+00:00"
+    },
+    {
+      "evidence_id": "E10",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2511.05993",
+      "source_type": "primary_paper",
+      "claim_supported": "ACL 2026 Findings links entropy dynamics to clipping, off-policy updates, data diversity, and positive-advantage tokens.",
+      "reason": "Provides a coupled optimization-data-exploration signal.",
+      "checked_at_utc": "2026-09-03T02:13:51.971441+00:00"
+    },
+    {
+      "evidence_id": "E11",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2604.15149",
+      "source_type": "primary_paper",
+      "claim_supported": "LLMs Gaming Verifiers shows extensional verification can reward instance enumeration instead of relational rules.",
+      "reason": "Provides a controlled case where passing the verifier is not learning the target mechanism.",
+      "checked_at_utc": "2026-09-03T02:13:57.058787+00:00"
+    },
+    {
+      "evidence_id": "E12",
+      "query_ids": [
+        "Q07"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2505.08364",
+      "source_type": "primary_paper",
+      "claim_supported": "Adaptive difficulty curricula periodically re-estimate perceived difficulty as the policy changes.",
+      "reason": "Shows that fixed difficulty labels can become stale.",
+      "checked_at_utc": "2026-09-03T02:14:03.019988+00:00"
+    }
+  ],
+  "collision_reviews": [
+    {
+      "candidate_id": "C01",
+      "query_ids": [
+        "Q22",
+        "Q23",
+        "Q24"
+      ],
+      "closest_evidence_ids": [
+        "E03",
+        "E04",
+        "E05"
+      ],
+      "overlap": "AReaL, DORA, StaleFlow, and staleness analyses cover bounded lag, length skew, and trust-region correction.",
+      "nonredundant_increment": "Randomize only arrival order on a fixed rollout and behavior-policy set to isolate latency-conditioned composition from generic staleness, with a slow-subgroup oracle comparison.",
+      "prior_art_verdict": "incremental",
+      "disposition": "keep",
+      "checked_at_utc": "2026-09-03T02:29:41.615271+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "query_ids": [
+        "Q25",
+        "Q26",
+        "Q27"
+      ],
+      "closest_evidence_ids": [
+        "E06",
+        "E08",
+        "E12"
+      ],
+      "overlap": "DAPO studies dynamic group filtering, while adaptive curricula study frontier-focused sampling and learning efficiency.",
+      "nonredundant_increment": "Explicitly estimate and correct each prompt inclusion probability, then test whether large-k coverage gains remain under equal tokens and difficulty.",
+      "prior_art_verdict": "incremental",
+      "disposition": "keep",
+      "checked_at_utc": "2026-09-03T02:29:50.979540+00:00"
+    },
+    {
+      "candidate_id": "C10",
+      "query_ids": [
+        "Q28",
+        "Q29",
+        "Q30"
+      ],
+      "closest_evidence_ids": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "overlap": "Recent work links token entropy, high-entropy fork tokens, response diversity, and pass-at-k, but measures diversity mainly at token or output level.",
+      "nonredundant_increment": "On programmatically traceable tasks, compare operation-graph mechanism clusters against token entropy after holding paraphrase diversity fixed.",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-09-03T02:30:01.987073+00:00"
+    }
+  ],
+  "common_knowledge_reviews": [
+    {
+      "candidate_id": "C01",
+      "basis_evidence_ids": [
+        "E03",
+        "E04"
+      ],
+      "obvious_baseline": "Stale rollouts can bias asynchronous policy updates.",
+      "residual_uncertainty": "Whether completion order adds a causal error beyond matched rollout set, behavior policy, and lag remains unresolved.",
+      "counterexample_or_boundary": "The effect should vanish when latency is independent of content or updates wait for a complete version-balanced set.",
+      "verdict": "context-dependent",
+      "disposition": "keep",
+      "checked_at_utc": "2026-09-03T02:29:36.789977+00:00"
+    },
+    {
+      "candidate_id": "C07",
+      "basis_evidence_ids": [
+        "E06",
+        "E12"
+      ],
+      "obvious_baseline": "Removing all-correct and all-wrong groups raises the fraction of nonzero-advantage updates.",
+      "residual_uncertainty": "It is unknown whether any large-k capability-boundary gain survives correction for prompt inclusion probability.",
+      "counterexample_or_boundary": "If prompts have equal inclusion probability or corrected and uncorrected sampling match, only variance or throughput should change.",
+      "verdict": "context-dependent",
+      "disposition": "keep",
+      "checked_at_utc": "2026-09-03T02:29:46.589231+00:00"
+    },
+    {
+      "candidate_id": "C10",
+      "basis_evidence_ids": [
+        "E07",
+        "E10"
+      ],
+      "obvious_baseline": "Higher token entropy often accompanies more varied generations, and RLVR can reduce both entropy and pass-at-k coverage.",
+      "residual_uncertainty": "It is unknown whether structural reasoning-mechanism coverage adds predictive value after surface paraphrase diversity is controlled.",
+      "counterexample_or_boundary": "Token entropy can rise through synonymous wording without adding a new solution mechanism, while one low-entropy fork may encode a distinct algorithm.",
+      "verdict": "context-dependent",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-09-03T02:29:57.047063+00:00"
+    }
+  ]
+}
