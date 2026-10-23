@@ -1,0 +1,5619 @@
+{
+  "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+  "stages": [
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "0_goal",
+      "output_summary": "冻结多任务知识保持的测量决策、用户原始基线与五个历史基线，保留无更优出口。",
+      "artifact_refs": [
+        "stage://0_goal"
+      ],
+      "payload": {
+        "user_input": "多任务联合训练中，把预训练损失/PPL和知识探针结合或替换。复述概率低但可辨认，想区分术语本身概率低与条件关系概率低。原话含语音歧义，尚无真实训练日志。",
+        "users": "研究多任务文本后训练与知识保持的使用者",
+        "decision": "先决定该测量什么，再决定是否值得把知识指标用作多任务权重/约束。替换CE不是预设结论。",
+        "goal": "找到能区分词项先验、条件关系和提取困难的可检验核心问题。",
+        "deadline": "2026-11-06（本轮建议的两周研究规划点，非用户已承诺期限）",
+        "incumbent_user_baseline": "直接用知识探针替代通用PPL，判断多任务训练有无知识遗忘。",
+        "historical_incumbents": [
+          {
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-21-shared-funnel-mode2-run-01.json",
+            "question": "在迭代式合成数据后训练中，当同一个验证器被反复用于样本筛选、课程选择和停止判断时，模型在独立验证器与分布外任务上的真实增益会随轮次下降多少；在相同验证预算下，把这三个角色分离并在不同模型家族间轮换，能否阻止这种闭环过拟合？",
+            "fit": "继续作为有效研究基线；对本轮用户指定的知识保持/测量决策适配度低。"
+          },
+          {
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-25-shared-funnel-mode2-run-02.json",
+            "question": "在长轨迹 agentic GRPO 中，当 rollout 因超时、工具错误或提前终止而不能完整返回，且完成概率依赖轨迹行为与潜在成败时，只在幸存轨迹上计算组内基线和标准化会产生多大的结果依赖删失偏差；续跑/回收或删失感知估计能否恢复完整 rollout oracle 的更新方向？",
+            "fit": "继续作为有效研究基线；对本轮用户指定的知识保持/测量决策适配度低。"
+          },
+          {
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-27-shared-funnel-mode2-run-03.json",
+            "question": "在同一批固定 k 零命中的 RLVR 数学失败轨迹上，若保持教师修复内容、修复后成功轨迹集合与训练 FLOP 相同，仅把等信息修复放在首个经干预验证的因果分叉、序列开头或匹配的非因果位置，修复位置是否会通过降低 importance-ratio 方差提高移除指导后的 OOD 净 capability gain？",
+            "fit": "继续作为有效研究基线；对本轮用户指定的知识保持/测量决策适配度低。"
+          },
+          {
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-28-shared-funnel-mode2-run-04.json",
+            "question": "在固定潜在数学问题族、验证标准、总 rollout token 和全局更新预算时，仅把随机一部分问题族扩成 4×/8× 经验证语义等价的 prompt 变体，prompt-uniform RLVR 是否会因族大小产生可重复的更新偏移与 family-heldout OOD 变化；按族归一化能否恢复对变体倍率的不变性？",
+            "fit": "继续作为有效研究基线；对本轮用户指定的知识保持/测量决策适配度低。"
+          },
+          {
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-09-03-shared-funnel-mode2-run-05.json",
+            "question": "固定 rollout 集合和行为策略后，真实完成顺序是否增加相对版本同步更新的梯度方向误差？",
+            "fit": "继续作为有效研究基线；对本轮用户指定的知识保持/测量决策适配度低。"
+          }
+        ],
+        "assumptions": [
+          "PPL指验证文本上的困惑度/其对应平均负对数似然。",
+          "探针首先操作化为固定输入的行为测量；隐藏层分类器与可微辅助损失是另两种对象。",
+          "没有指定模型、任务、训练方式和算力；本轮只完成研究发现和廉价反例/来源试探，不自行训练或下载模型。"
+        ],
+        "stop": [
+          "若只是PPL和probe定义不同而无增量未知，淘汰。",
+          "若先行研究直接覆盖且无清楚剩余边界，淘汰。",
+          "可交付本轮没有更好的问题；不强行替换历史主问题。"
+        ],
+        "no_better_question_allowed": true
+      },
+      "session_updates": {
+        "input_manifest": [
+          {
+            "input_id": "I01",
+            "kind": "user_statement",
+            "location": "conversation://current",
+            "role": "多任务联合训练中，把预训练损失/PPL和知识探针结合或替换。复述概率低但可辨认，想区分术语本身概率低与条件关系概率低。原话含语音歧义，尚无真实训练日志。"
+          },
+          {
+            "input_id": "I02",
+            "kind": "user_mode_choice",
+            "location": "conversation://current",
+            "role": "用户明确选择模式2。"
+          },
+          {
+            "input_id": "I03",
+            "kind": "shared_profile",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\research-profile.json",
+            "role": "默认研究画像；本轮以用户明确的知识探针主题为准。"
+          },
+          {
+            "input_id": "I04",
+            "kind": "protocol",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\PROTOCOL.md",
+            "role": "共享阶段0–8及引擎约束。"
+          },
+          {
+            "input_id": "I05",
+            "kind": "incumbent",
+            "location": "conversation://current",
+            "role": "直接用知识探针替代通用PPL，判断多任务训练有无知识遗忘。"
+          },
+          {
+            "input_id": "I06",
+            "kind": "historical_incumbent",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-21-shared-funnel-mode2-run-01.json",
+            "role": "在迭代式合成数据后训练中，当同一个验证器被反复用于样本筛选、课程选择和停止判断时，模型在独立验证器与分布外任务上的真实增益会随轮次下降多少；在相同验证预算下，把这三个角色分离并在不同模型家族间轮换，能否阻止这种闭环过拟合？"
+          },
+          {
+            "input_id": "I07",
+            "kind": "historical_incumbent",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-25-shared-funnel-mode2-run-02.json",
+            "role": "在长轨迹 agentic GRPO 中，当 rollout 因超时、工具错误或提前终止而不能完整返回，且完成概率依赖轨迹行为与潜在成败时，只在幸存轨迹上计算组内基线和标准化会产生多大的结果依赖删失偏差；续跑/回收或删失感知估计能否恢复完整 rollout oracle 的更新方向？"
+          },
+          {
+            "input_id": "I08",
+            "kind": "historical_incumbent",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-27-shared-funnel-mode2-run-03.json",
+            "role": "在同一批固定 k 零命中的 RLVR 数学失败轨迹上，若保持教师修复内容、修复后成功轨迹集合与训练 FLOP 相同，仅把等信息修复放在首个经干预验证的因果分叉、序列开头或匹配的非因果位置，修复位置是否会通过降低 importance-ratio 方差提高移除指导后的 OOD 净 capability gain？"
+          },
+          {
+            "input_id": "I09",
+            "kind": "historical_incumbent",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-28-shared-funnel-mode2-run-04.json",
+            "role": "在固定潜在数学问题族、验证标准、总 rollout token 和全局更新预算时，仅把随机一部分问题族扩成 4×/8× 经验证语义等价的 prompt 变体，prompt-uniform RLVR 是否会因族大小产生可重复的更新偏移与 family-heldout OOD 变化；按族归一化能否恢复对变体倍率的不变性？"
+          },
+          {
+            "input_id": "I10",
+            "kind": "historical_incumbent",
+            "location": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-09-03-shared-funnel-mode2-run-05.json",
+            "role": "固定 rollout 集合和行为策略后，真实完成顺序是否增加相对版本同步更新的梯度方向误差？"
+          }
+        ],
+        "decision_log": [
+          "模式2已由用户选择。当前主题覆盖默认画像的知识保持邻域；不调用外部模型API。",
+          "用户原始提案与历史问题均登记为在位基线；胜出仅指本轮指定决策。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "1_reality_signals",
+      "output_summary": "核对14项一手来源，严格区分来源观察、解释和未知；识别PPL替代、概率成分分解和probe梯度保护已有工作。",
+      "artifact_refs": [
+        "stage://1_reality_signals"
+      ],
+      "payload": {
+        "signals": [
+          {
+            "evidence_id": "E01",
+            "source_title": "Beyond Perplexity: A Lightweight Benchmark for Knowledge Retention in Supervised Fine-Tuning",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2601.03505",
+            "published_date": "2026-01-07",
+            "checked_date": "2026-10-23",
+            "observation": "KR-Test以正确/错误续写条件似然比较测量事实保持，已展示LoRA中PPL与知识指标分离。",
+            "interpretation": "简单将PPL换成对比probe已有直接先行工作。",
+            "unknown": "匹配长度风格后，答案先验漂移在联合训练中还造成多少误判？"
+          },
+          {
+            "evidence_id": "E02",
+            "source_title": "Inside-Out: Hidden Factual Knowledge in LLMs",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2503.15299",
+            "published_date": "2025-03-19",
+            "checked_date": "2026-10-23",
+            "observation": "在其QA设定中，隐藏表示正确性分类器比外部概率评分识别更多正确答案。",
+            "interpretation": "内部可读、候选可辨认与自由生成须分开。v4为2025-08-06；初版略早于18个月窗口，作为基础机制。",
+            "unknown": "这种差距在多任务更新前后是否保持可比较？"
+          },
+          {
+            "evidence_id": "E03",
+            "source_title": "Spurious Forgetting in Continual Learning of Language Models",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a774503daed55eb53c634847ae071ec7-Abstract-Conference.html",
+            "published_date": "2025-04-24",
+            "checked_date": "2026-10-23",
+            "observation": "持续学习中的旧任务性能可在少量恢复训练后回升，论文将部分下降解释为任务对齐退化。",
+            "interpretation": "行为下降不直接等于存储知识消失；持续学习结果不能直接外推同时联合训练。",
+            "unknown": "联合训练中的提取困难和关系特异变化各占多少？"
+          },
+          {
+            "evidence_id": "E04",
+            "source_title": "Scaling Laws for Forgetting during Finetuning with Pretraining Data Injection",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.mlr.press/v267/bethune25a.html",
+            "published_date": "2025-07-13",
+            "checked_date": "2026-10-23",
+            "observation": "在论文研究条件下，少量预训练数据混入可减轻预训练集上的遗忘。",
+            "interpretation": "预训练分布保持是合理基线，不能只因probe更专门就删除通用CE。",
+            "unknown": "预训练集损失保持是否同时保持长尾事实关系？"
+          },
+          {
+            "evidence_id": "E05",
+            "source_title": "Empty Shelves or Lost Keys? Recall Is the Bottleneck for Parametric Factuality",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2602.14080",
+            "published_date": "2026-02-15",
+            "checked_date": "2026-10-23",
+            "observation": "提出事实级行为画像，区分编码与可访问性，并配套WikiProfile。",
+            "interpretation": "复述/辨认差距已被直接研究，需找训练期间的增量。",
+            "unknown": "画像在多任务词项分布变化时是否稳定？"
+          },
+          {
+            "evidence_id": "E06",
+            "source_title": "A Lie Detector Test for Language Models: Reading Knowledge a Model Won't Reveal",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2609.21996",
+            "published_date": "2026-09-18",
+            "checked_date": "2026-10-23",
+            "observation": "PIR预印本报告在所测隐藏答案情境下可读内部辨认，unlearning后辨认下降。",
+            "interpretation": "可作为隐藏/移除的相邻鉴别思路，不能视作普适知识真值。",
+            "unknown": "固定探针跨普通多任务训练检查点的失配是否混入遗忘判断？"
+          },
+          {
+            "evidence_id": "E07",
+            "source_title": "Surface Form Competition: Why the Highest Probability Answer Isn't Always Right",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2021.emnlp-main.564/",
+            "published_date": "2021-11",
+            "checked_date": "2026-10-23",
+            "observation": "提出domain-conditional PMI，按任务上下文的先验似然重新加权答案。",
+            "interpretation": "词项先验校正本身并非新方法；老论文作为必要先行工作。",
+            "unknown": "联合训练的先验漂移是否影响事实保持的相对排序？"
+          },
+          {
+            "evidence_id": "E08",
+            "source_title": "Increasing Probability Mass on Answer Choices Does Not Always Improve Accuracy",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2023.emnlp-main.522/",
+            "published_date": "2023-12",
+            "checked_date": "2026-10-23",
+            "observation": "多种减少表面形式竞争的归一化或提示方法可能无效甚至损害准确率。",
+            "interpretation": "必须考虑先验校正伤害长尾或真实关系信号的反例。基础反证在窗口外。",
+            "unknown": "何种关系和答案分布下校正可信？"
+          },
+          {
+            "evidence_id": "E09",
+            "source_title": "Assessing Factual Reliability of Large Language Model Knowledge",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2024.naacl-long.46/",
+            "published_date": "2024-06",
+            "checked_date": "2026-10-23",
+            "observation": "MONITOR比较同一事实在不同提示/上下文下的输出分布，研究事实可靠性。",
+            "interpretation": "泛化到改写和上下文应作为测量检验。窗口外方法基线。",
+            "unknown": "它能否预测联合训练后未知模板中的关系保持？"
+          },
+          {
+            "evidence_id": "E10",
+            "source_title": "How Can We Know When Language Models Know? On the Calibration of Language Models for Question Answering",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2021.tacl-1.57/",
+            "published_date": "2021",
+            "checked_date": "2026-10-23",
+            "observation": "QA候选概率与正确率并不天然校准，研究了多类校准策略。",
+            "interpretation": "概率低不等于事实缺失；校准与知识区分。基础先行工作。",
+            "unknown": "训练中校准漂移是否与关系保持不同步？"
+          },
+          {
+            "evidence_id": "E11",
+            "source_title": "Factual Probing Is [MASK]: Learning vs. Learning to Recall",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2104.05240",
+            "published_date": "2021-04-12",
+            "checked_date": "2026-10-23",
+            "observation": "提示优化可利用探针训练事实的分布规律，提高预测而不只读取原有知识。",
+            "interpretation": "训练损失probe与独立诊断probe必须按事实和实体分割。基础泄漏控制。",
+            "unknown": "校正探针用于优化后能否迁移到未训练事实关系？"
+          },
+          {
+            "evidence_id": "E12",
+            "source_title": "Dissecting Learning and Forgetting in Language Model Finetuning",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.iclr.cc/paper_files/paper/2024/file/c4de749a4bd8802f0b4033d09a7867db-Paper-Conference.pdf",
+            "published_date": "2024-05",
+            "checked_date": "2026-10-23",
+            "observation": "控制文本比较中，主题/风格偏好变化解释了较多微调概率变化，论文也比较事实/反事实。",
+            "interpretation": "已经直接处理概率变化与事实变化的混淆；只是把该分解搬到联合训练不足以构成新贡献。窗口外关键先行工作。",
+            "unknown": "校正是否提高不同训练方案在未见问法上事实保持的排序一致性？"
+          },
+          {
+            "evidence_id": "E13",
+            "source_title": "Continual Learning via Self-Probe Gradients",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2609.32771",
+            "published_date": "2026-09-26",
+            "checked_date": "2026-10-23",
+            "observation": "CPLUS以自探针和旧样本梯度约束新更新，报告在未用于训练的benchmark上也减轻遗忘。",
+            "interpretation": "用probe保护旧行为已有近期方法；本轮不能以probe进loss本身声称创新。预印本。",
+            "unknown": "关系对比约束与这类梯度保护相比，对未参与约束事实的增益如何？"
+          },
+          {
+            "evidence_id": "E14",
+            "source_title": "Probing Representation Forgetting in Supervised and Unsupervised Continual Learning",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2203.13381",
+            "published_date": "2022-03-24",
+            "checked_date": "2026-10-23",
+            "observation": "用最优线性分类器比较表征遗忘，展示任务性能下降与表征损失可以不同步。",
+            "interpretation": "固定probe失效与表征遗忘不同是已知；外推事实LLM需检验。窗口外相邻领域方法基线。",
+            "unknown": "无事实标签的读出对齐能否校正多任务知识保持判断？"
+          }
+        ],
+        "local_inputs": "只读协议、画像、历史正式结果；未读未跟踪project工作簿、benchmark诊断或API凭证。",
+        "user_signal_status": "用户提供的是研究线索，无模型名、具体检查点或概率记录；不作为已观察到的实证异常。",
+        "search_scope": "优先2025-04-23至2026-10-23；窗口外论文仅用于必须的机制和先行研究基线。",
+        "key_distinctions": [
+          "PPL=exp(平均token CE)，不是另一个独立训练目标。",
+          "原始p(a|q)与领域参考p(a|q0)均为有上下文条件的量；后者只是先验代理。",
+          "对比辨认、自由生成和隐藏表示分类器是三种不同读出。"
+        ],
+        "recovery_note": "原06在阶段3发现更直接先行工作；06b重新完成阶段0–8，避免越权向后阶段写入证据。"
+      },
+      "session_updates": {
+        "evidence": [
+          {
+            "evidence_id": "E01",
+            "source_title": "Beyond Perplexity: A Lightweight Benchmark for Knowledge Retention in Supervised Fine-Tuning",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2601.03505",
+            "published_date": "2026-01-07",
+            "checked_date": "2026-10-23",
+            "observation": "KR-Test以正确/错误续写条件似然比较测量事实保持，已展示LoRA中PPL与知识指标分离。",
+            "interpretation": "简单将PPL换成对比probe已有直接先行工作。",
+            "unknown": "匹配长度风格后，答案先验漂移在联合训练中还造成多少误判？"
+          },
+          {
+            "evidence_id": "E02",
+            "source_title": "Inside-Out: Hidden Factual Knowledge in LLMs",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2503.15299",
+            "published_date": "2025-03-19",
+            "checked_date": "2026-10-23",
+            "observation": "在其QA设定中，隐藏表示正确性分类器比外部概率评分识别更多正确答案。",
+            "interpretation": "内部可读、候选可辨认与自由生成须分开。v4为2025-08-06；初版略早于18个月窗口，作为基础机制。",
+            "unknown": "这种差距在多任务更新前后是否保持可比较？"
+          },
+          {
+            "evidence_id": "E03",
+            "source_title": "Spurious Forgetting in Continual Learning of Language Models",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a774503daed55eb53c634847ae071ec7-Abstract-Conference.html",
+            "published_date": "2025-04-24",
+            "checked_date": "2026-10-23",
+            "observation": "持续学习中的旧任务性能可在少量恢复训练后回升，论文将部分下降解释为任务对齐退化。",
+            "interpretation": "行为下降不直接等于存储知识消失；持续学习结果不能直接外推同时联合训练。",
+            "unknown": "联合训练中的提取困难和关系特异变化各占多少？"
+          },
+          {
+            "evidence_id": "E04",
+            "source_title": "Scaling Laws for Forgetting during Finetuning with Pretraining Data Injection",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.mlr.press/v267/bethune25a.html",
+            "published_date": "2025-07-13",
+            "checked_date": "2026-10-23",
+            "observation": "在论文研究条件下，少量预训练数据混入可减轻预训练集上的遗忘。",
+            "interpretation": "预训练分布保持是合理基线，不能只因probe更专门就删除通用CE。",
+            "unknown": "预训练集损失保持是否同时保持长尾事实关系？"
+          },
+          {
+            "evidence_id": "E05",
+            "source_title": "Empty Shelves or Lost Keys? Recall Is the Bottleneck for Parametric Factuality",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2602.14080",
+            "published_date": "2026-02-15",
+            "checked_date": "2026-10-23",
+            "observation": "提出事实级行为画像，区分编码与可访问性，并配套WikiProfile。",
+            "interpretation": "复述/辨认差距已被直接研究，需找训练期间的增量。",
+            "unknown": "画像在多任务词项分布变化时是否稳定？"
+          },
+          {
+            "evidence_id": "E06",
+            "source_title": "A Lie Detector Test for Language Models: Reading Knowledge a Model Won't Reveal",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2609.21996",
+            "published_date": "2026-09-18",
+            "checked_date": "2026-10-23",
+            "observation": "PIR预印本报告在所测隐藏答案情境下可读内部辨认，unlearning后辨认下降。",
+            "interpretation": "可作为隐藏/移除的相邻鉴别思路，不能视作普适知识真值。",
+            "unknown": "固定探针跨普通多任务训练检查点的失配是否混入遗忘判断？"
+          },
+          {
+            "evidence_id": "E07",
+            "source_title": "Surface Form Competition: Why the Highest Probability Answer Isn't Always Right",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2021.emnlp-main.564/",
+            "published_date": "2021-11",
+            "checked_date": "2026-10-23",
+            "observation": "提出domain-conditional PMI，按任务上下文的先验似然重新加权答案。",
+            "interpretation": "词项先验校正本身并非新方法；老论文作为必要先行工作。",
+            "unknown": "联合训练的先验漂移是否影响事实保持的相对排序？"
+          },
+          {
+            "evidence_id": "E08",
+            "source_title": "Increasing Probability Mass on Answer Choices Does Not Always Improve Accuracy",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2023.emnlp-main.522/",
+            "published_date": "2023-12",
+            "checked_date": "2026-10-23",
+            "observation": "多种减少表面形式竞争的归一化或提示方法可能无效甚至损害准确率。",
+            "interpretation": "必须考虑先验校正伤害长尾或真实关系信号的反例。基础反证在窗口外。",
+            "unknown": "何种关系和答案分布下校正可信？"
+          },
+          {
+            "evidence_id": "E09",
+            "source_title": "Assessing Factual Reliability of Large Language Model Knowledge",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2024.naacl-long.46/",
+            "published_date": "2024-06",
+            "checked_date": "2026-10-23",
+            "observation": "MONITOR比较同一事实在不同提示/上下文下的输出分布，研究事实可靠性。",
+            "interpretation": "泛化到改写和上下文应作为测量检验。窗口外方法基线。",
+            "unknown": "它能否预测联合训练后未知模板中的关系保持？"
+          },
+          {
+            "evidence_id": "E10",
+            "source_title": "How Can We Know When Language Models Know? On the Calibration of Language Models for Question Answering",
+            "source_type": "primary_paper",
+            "source_location": "https://aclanthology.org/2021.tacl-1.57/",
+            "published_date": "2021",
+            "checked_date": "2026-10-23",
+            "observation": "QA候选概率与正确率并不天然校准，研究了多类校准策略。",
+            "interpretation": "概率低不等于事实缺失；校准与知识区分。基础先行工作。",
+            "unknown": "训练中校准漂移是否与关系保持不同步？"
+          },
+          {
+            "evidence_id": "E11",
+            "source_title": "Factual Probing Is [MASK]: Learning vs. Learning to Recall",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2104.05240",
+            "published_date": "2021-04-12",
+            "checked_date": "2026-10-23",
+            "observation": "提示优化可利用探针训练事实的分布规律，提高预测而不只读取原有知识。",
+            "interpretation": "训练损失probe与独立诊断probe必须按事实和实体分割。基础泄漏控制。",
+            "unknown": "校正探针用于优化后能否迁移到未训练事实关系？"
+          },
+          {
+            "evidence_id": "E12",
+            "source_title": "Dissecting Learning and Forgetting in Language Model Finetuning",
+            "source_type": "primary_paper",
+            "source_location": "https://proceedings.iclr.cc/paper_files/paper/2024/file/c4de749a4bd8802f0b4033d09a7867db-Paper-Conference.pdf",
+            "published_date": "2024-05",
+            "checked_date": "2026-10-23",
+            "observation": "控制文本比较中，主题/风格偏好变化解释了较多微调概率变化，论文也比较事实/反事实。",
+            "interpretation": "已经直接处理概率变化与事实变化的混淆；只是把该分解搬到联合训练不足以构成新贡献。窗口外关键先行工作。",
+            "unknown": "校正是否提高不同训练方案在未见问法上事实保持的排序一致性？"
+          },
+          {
+            "evidence_id": "E13",
+            "source_title": "Continual Learning via Self-Probe Gradients",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2609.32771",
+            "published_date": "2026-09-26",
+            "checked_date": "2026-10-23",
+            "observation": "CPLUS以自探针和旧样本梯度约束新更新，报告在未用于训练的benchmark上也减轻遗忘。",
+            "interpretation": "用probe保护旧行为已有近期方法；本轮不能以probe进loss本身声称创新。预印本。",
+            "unknown": "关系对比约束与这类梯度保护相比，对未参与约束事实的增益如何？"
+          },
+          {
+            "evidence_id": "E14",
+            "source_title": "Probing Representation Forgetting in Supervised and Unsupervised Continual Learning",
+            "source_type": "primary_paper",
+            "source_location": "https://arxiv.org/abs/2203.13381",
+            "published_date": "2022-03-24",
+            "checked_date": "2026-10-23",
+            "observation": "用最优线性分类器比较表征遗忘，展示任务性能下降与表征损失可以不同步。",
+            "interpretation": "固定probe失效与表征遗忘不同是已知；外推事实LLM需检验。窗口外相邻领域方法基线。",
+            "unknown": "无事实标签的读出对齐能否校正多任务知识保持判断？"
+          }
+        ],
+        "decision_log": [
+          "阶段1：先行工作已覆盖简单PPL/probe替换；后续只讨论可识别的剩余未知。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "2_reframe",
+      "output_summary": "完成12条5W1H与苏格拉底重构，区分词项偏好、关系特异证据、提取与读出迁移。",
+      "artifact_refs": [
+        "stage://2_reframe"
+      ],
+      "payload": {
+        "reframes": [
+          {
+            "tool": "Who",
+            "changed_axis": "测量使用者",
+            "question": "谁会因为probe下降而追加事实重放，谁更需要知道自由生成是否恢复？"
+          },
+          {
+            "tool": "What",
+            "changed_axis": "对象",
+            "question": "下降的是整段token似然、答案条件似然、候选排名还是隐藏层读出？"
+          },
+          {
+            "tool": "Why",
+            "changed_axis": "上游目标",
+            "question": "我们要保持语言分布、事实关系，还是用户可调用的答案能力？"
+          },
+          {
+            "tool": "When",
+            "changed_axis": "时间尺度",
+            "question": "多任务训练初期的概率下降与训练终点的事实遗忘是否同一现象？"
+          },
+          {
+            "tool": "Where",
+            "changed_axis": "边界",
+            "question": "稀有答案、频繁答案和不同关系类型会不会出现相反的probe变化？"
+          },
+          {
+            "tool": "How",
+            "changed_axis": "可观察机制",
+            "question": "给同一答案更换匹配主体后，训练前后的条件对比变化是否仍存在？"
+          },
+          {
+            "tool": "Socratic definition",
+            "changed_axis": "定义",
+            "question": "PPL已由条件概率计算，为什么把词项概率和条件概率当作互斥解释？"
+          },
+          {
+            "tool": "Socratic assumption",
+            "changed_axis": "前提",
+            "question": "看到正确选项后答对，是否可能只靠类型、频率或干扰项弱点？"
+          },
+          {
+            "tool": "Socratic alternative",
+            "changed_axis": "替代解释",
+            "question": "固定隐藏层probe失效，是否只是表示旋转导致读出不再适配？"
+          },
+          {
+            "tool": "Socratic consequence",
+            "changed_axis": "干预",
+            "question": "如果词项偏好改变但关系对比稳定，还应增加知识重放吗？"
+          },
+          {
+            "tool": "Upstream why",
+            "changed_axis": "任务优先级",
+            "question": "通用CE保持与事实probe保持冲突时，哪种约束服务真实下游目标？"
+          },
+          {
+            "tool": "Downstream how",
+            "changed_axis": "证据路径",
+            "question": "能否在不看评测事实答案的恢复条件下判断提取失败？"
+          }
+        ],
+        "upstream": "先定义希望保住的能力，再选指标与联合训练约束。",
+        "downstream": "先做可控反例和匹配事实对，再验证真实模型，禁止将log比直接命名为纯知识。"
+      },
+      "session_updates": {
+        "decision_log": [
+          "阶段2：PPL与条件概率不是二选一；不预设词项先验可以从单个输出概率中唯一拆出。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "3_expand",
+      "output_summary": "先用QFT生成12个无评价问法，再按独立论文视角扩展；覆盖八类问题。",
+      "artifact_refs": [
+        "stage://3_expand"
+      ],
+      "payload": {
+        "qft": {
+          "question_focus": "多任务训练中知识复述概率与辨认不一致，拟用probe替代PPL。",
+          "rules": [
+            "只产问，不作答、不评价、不排序。",
+            "开放/封闭转换用于揭示未知，不作为新候选数量。"
+          ],
+          "questions": [
+            {
+              "raw_id": "R01",
+              "question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+              "family": "比较"
+            },
+            {
+              "raw_id": "R02",
+              "question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+              "family": "干预"
+            },
+            {
+              "raw_id": "R03",
+              "question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+              "family": "测量"
+            },
+            {
+              "raw_id": "R04",
+              "question": "通用文本平均损失保持时长尾事实的条件似然是否仍会下降？",
+              "family": "边界"
+            },
+            {
+              "raw_id": "R05",
+              "question": "答案别名概率聚合是否减少跨训练检查点的事实遗忘误报？",
+              "family": "机制"
+            },
+            {
+              "raw_id": "R06",
+              "question": "关系对比梯度是否比通用文本梯度更准确地识别损害持出事实的任务更新？",
+              "family": "因果"
+            },
+            {
+              "raw_id": "R07",
+              "question": "困难干扰项是否改变多任务训练后事实辨认保持的评估结论？",
+              "family": "描述"
+            },
+            {
+              "raw_id": "R08",
+              "question": "单一知识探针能否替代全部多任务训练的预训练损失？",
+              "family": "价值"
+            },
+            {
+              "raw_id": "R09",
+              "question": "大模型是否存在辨认正确但不能生成正确答案的事实？",
+              "family": "描述"
+            },
+            {
+              "raw_id": "R10",
+              "question": "训练后的生成辨认差距能否预测无目标事实重放的提取恢复？",
+              "family": "机制"
+            },
+            {
+              "raw_id": "R11",
+              "question": "训练方案排序是否受答案词项偏好污染？",
+              "family": "测量"
+            },
+            {
+              "raw_id": "R12",
+              "question": "是否应该让知识probe彻底取代PPL？",
+              "family": "价值"
+            }
+          ],
+          "transformations": [
+            {
+              "from": "R09",
+              "closed": "是否存在复述辨认差距？",
+              "open": "训练期间哪些变化扩大复述辨认差距？"
+            },
+            {
+              "from": "R01",
+              "closed": "校正能否改善排序？",
+              "open": "什么条件使校正更接近持出事实保持排序？"
+            }
+          ]
+        },
+        "storm": [
+          {
+            "perspective": "测量与校准",
+            "source_ids": [
+              "E01",
+              "E07",
+              "E08",
+              "E12"
+            ],
+            "observation": "正确/错误对比、PMI和内容风格分解均已有基础。",
+            "follow_up": "若静态分数校正已有，联合训练方案排序是否仍受先验变化影响？"
+          },
+          {
+            "perspective": "知识可访问性",
+            "source_ids": [
+              "E02",
+              "E03",
+              "E05",
+              "E06"
+            ],
+            "observation": "辨认与生成存在差距，行为恢复并不总需重学。",
+            "follow_up": "跨训练检查点的读出是否可比较？"
+          },
+          {
+            "perspective": "训练与梯度保护",
+            "source_ids": [
+              "E04",
+              "E11",
+              "E13"
+            ],
+            "observation": "文本重放、probe优化泄漏和自探针梯度保护均有已有工作。",
+            "follow_up": "直接训练知识probe的收益能否跨实体/事实迁移？"
+          },
+          {
+            "perspective": "表征测量",
+            "source_ids": [
+              "E14",
+              "E02"
+            ],
+            "observation": "最佳重拟合读出与固定读出衡量不同。",
+            "follow_up": "能否不看评测事实标签只做表示对齐？"
+          }
+        ],
+        "family_coverage": {
+          "描述": [
+            "R07",
+            "R09"
+          ],
+          "测量": [
+            "R03",
+            "R11"
+          ],
+          "因果": [
+            "R06"
+          ],
+          "机制": [
+            "R05",
+            "R10"
+          ],
+          "边界/反例": [
+            "R04"
+          ],
+          "比较": [
+            "R01"
+          ],
+          "干预": [
+            "R02"
+          ],
+          "价值/利益相关者": [
+            "R08",
+            "R12"
+          ]
+        },
+        "independence": "多视角来自独立论文观察，未把同一模型扮演角色当独立来源。QFT阶段不打分。"
+      },
+      "session_updates": {
+        "decision_log": [
+          "阶段3：12个原始问题冻结；之后只允许去重/缩小/改写，不在筛选阶段新增候选。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "4_cluster",
+      "output_summary": "12个原始问法按机制与证据去重为10个正式候选；每个保留单一核心与独立次级树。",
+      "artifact_refs": [
+        "stage://4_cluster"
+      ],
+      "payload": {
+        "mapping": {
+          "R01": "C01",
+          "R02": "C02",
+          "R03": "C03",
+          "R04": "C04",
+          "R05": "C05",
+          "R06": "C06",
+          "R07": "C07",
+          "R08": "C08",
+          "R09": "C09",
+          "R10": "C10",
+          "R11": "C01",
+          "R12": "C08"
+        },
+        "clusters": [
+          {
+            "cluster_id": "answer-prior",
+            "core": "C01",
+            "tree": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "evidence": [
+              "E01",
+              "E07",
+              "E12"
+            ]
+          },
+          {
+            "cluster_id": "objective-transfer",
+            "core": "C02",
+            "tree": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "evidence": [
+              "E01",
+              "E11",
+              "E13"
+            ]
+          },
+          {
+            "cluster_id": "probe-transport",
+            "core": "C03",
+            "tree": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "evidence": [
+              "E02",
+              "E06",
+              "E14"
+            ]
+          },
+          {
+            "cluster_id": "averaging",
+            "core": "C04",
+            "tree": {
+              "mechanism": [
+                "常见token能否抵消事实token损失？"
+              ],
+              "boundary": [
+                "事实token占比是否控制稀释强度？"
+              ],
+              "intervention": [
+                "按事实族等权是否增加检出率？"
+              ]
+            },
+            "evidence": [
+              "E01",
+              "E04"
+            ]
+          },
+          {
+            "cluster_id": "alias-mass",
+            "core": "C05",
+            "tree": {
+              "mechanism": [
+                "概率是否转移到另一个正确表述？"
+              ],
+              "boundary": [
+                "开放式别名集合覆盖不足是否产生偏差？"
+              ],
+              "intervention": [
+                "规范化或语义裁判哪种更可靠？"
+              ]
+            },
+            "evidence": [
+              "E07",
+              "E08",
+              "E09"
+            ]
+          },
+          {
+            "cluster_id": "gradient-predictor",
+            "core": "C06",
+            "tree": {
+              "mechanism": [
+                "负余弦是否反映关系而非输出频率？"
+              ],
+              "boundary": [
+                "一阶预测在何种步长失效？"
+              ],
+              "intervention": [
+                "投影冲突梯度能否改善任务折衷？"
+              ]
+            },
+            "evidence": [
+              "E04",
+              "E13"
+            ]
+          },
+          {
+            "cluster_id": "distractor",
+            "core": "C07",
+            "tree": {
+              "mechanism": [
+                "类型线索是否替代实体关系线索？"
+              ],
+              "boundary": [
+                "长尾答案是否更受负例难度影响？"
+              ],
+              "intervention": [
+                "双向事实对是否抑制捷径？"
+              ]
+            },
+            "evidence": [
+              "E01",
+              "E05",
+              "E08"
+            ]
+          },
+          {
+            "cluster_id": "undefined-replacement",
+            "core": "C08",
+            "tree": {
+              "mechanism": [
+                "替换的是验证指标还是训练项？"
+              ],
+              "boundary": [
+                "被probe忽略的语言能力怎样评估？"
+              ],
+              "intervention": [
+                "能否先缩为一个保持目标？"
+              ]
+            },
+            "evidence": [
+              "E01",
+              "E04"
+            ]
+          },
+          {
+            "cluster_id": "known-gap",
+            "core": "C09",
+            "tree": {
+              "mechanism": [
+                "读出方式为何不同？"
+              ],
+              "boundary": [
+                "差距是否受候选答案提供影响？"
+              ],
+              "intervention": [
+                "能否通过提取而非重学恢复？"
+              ]
+            },
+            "evidence": [
+              "E02",
+              "E05",
+              "E06"
+            ]
+          },
+          {
+            "cluster_id": "recovery-prediction",
+            "core": "C10",
+            "tree": {
+              "mechanism": [
+                "差距是否指向可访问性而非知识丢失？"
+              ],
+              "boundary": [
+                "难负例下预测是否还成立？"
+              ],
+              "intervention": [
+                "任务格式重对齐是否足够？"
+              ]
+            },
+            "evidence": [
+              "E02",
+              "E03",
+              "E05"
+            ]
+          }
+        ],
+        "merge_rationale": "R11仅是R01同义；R12仅是R08同义。C01校准测量、C02训练迁移、C03读出运输用不同证据，不因共用检查点而合并。",
+        "schema_note": "本阶段的分叉、门槛、分数和试探为显式待评占位，未发生提前评价。"
+      },
+      "session_updates": {
+        "candidate_questions": [
+          {
+            "candidate_id": "C01",
+            "short_title": "先验校正能否改善训练排序",
+            "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+            "research_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+            "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+            "signal_ids": [
+              "E01",
+              "E07",
+              "E12"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E12",
+              "E08"
+            ],
+            "question_family": "比较",
+            "cluster_id": "answer-prior",
+            "question_identity": {
+              "unit_of_analysis": "事实级训练前后变化",
+              "comparison": "原始probe与参考上下文校正probe",
+              "outcome": "对未见问法事实保持排序的一致性",
+              "scope": "多任务文本训练方案比较"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C02",
+            "short_title": "关系约束能否迁移",
+            "plain_question": "用一批知识题约束训练，能保住没用来约束的事实吗？",
+            "research_question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+            "why_it_matters": "决定把额外训练预算用于通用文本重放、关系对比损失还是已有自探针梯度保护。",
+            "signal_ids": [
+              "E01",
+              "E11",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13",
+              "E11"
+            ],
+            "question_family": "干预",
+            "cluster_id": "objective-transfer",
+            "question_identity": {
+              "unit_of_analysis": "未参与约束的事实",
+              "comparison": "关系对比约束与通用文本重放",
+              "outcome": "持出事实的生成与辨认保持",
+              "scope": "多任务文本后训练"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C03",
+            "short_title": "旧探针是否读错新表示",
+            "plain_question": "训练后旧探针变差，能否只调整读法就恢复判断？",
+            "research_question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+            "why_it_matters": "决定是重训知识、重训probe，还是只校正probe与新表示之间的读出失配。",
+            "signal_ids": [
+              "E02",
+              "E06",
+              "E14"
+            ],
+            "closest_prior_ids": [
+              "E14",
+              "E02",
+              "E06"
+            ],
+            "question_family": "测量",
+            "cluster_id": "probe-transport",
+            "question_identity": {
+              "unit_of_analysis": "固定隐藏层事实正确性probe",
+              "comparison": "不做对齐与无标签表示对齐",
+              "outcome": "持出事实保持判断的准确性",
+              "scope": "多任务训练前后同一模型层"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C04",
+            "short_title": "平均损失的稀释",
+            "plain_question": "平均文本损失没变时，稀有事实会被掩盖吗？",
+            "research_question": "通用文本平均损失保持时长尾事实的条件似然是否仍会下降？",
+            "why_it_matters": "决定是否补充事实分层监测，避免只看平均损失。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E04"
+            ],
+            "question_family": "边界",
+            "cluster_id": "averaging",
+            "question_identity": {
+              "unit_of_analysis": "长尾事实子群",
+              "comparison": "整体平均损失与事实子群条件损失",
+              "outcome": "子群损失下降的检出",
+              "scope": "多任务训练日志"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "常见token能否抵消事实token损失？"
+              ],
+              "boundary": [
+                "事实token占比是否控制稀释强度？"
+              ],
+              "intervention": [
+                "按事实族等权是否增加检出率？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C05",
+            "short_title": "别名造成的假遗忘",
+            "plain_question": "同一个答案换种叫法，会让探针误报遗忘吗？",
+            "research_question": "答案别名概率聚合是否减少跨训练检查点的事实遗忘误报？",
+            "why_it_matters": "决定是否为知识保持评测维护答案别名集合。",
+            "signal_ids": [
+              "E07",
+              "E08",
+              "E09"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E08"
+            ],
+            "question_family": "机制",
+            "cluster_id": "alias-mass",
+            "question_identity": {
+              "unit_of_analysis": "同事实多个答案表述",
+              "comparison": "单一表述评分与互斥别名聚合",
+              "outcome": "跨问法一致的遗忘判断",
+              "scope": "固定候选事实与检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "概率是否转移到另一个正确表述？"
+              ],
+              "boundary": [
+                "开放式别名集合覆盖不足是否产生偏差？"
+              ],
+              "intervention": [
+                "规范化或语义裁判哪种更可靠？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C06",
+            "short_title": "任务梯度冲突",
+            "plain_question": "任务互相干扰时，保护知识题的梯度比保护普通文本更有效吗？",
+            "research_question": "关系对比梯度是否比通用文本梯度更准确地识别损害持出事实的任务更新？",
+            "why_it_matters": "决定是否用知识梯度而非通用CE梯度调节多任务权重。",
+            "signal_ids": [
+              "E04",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13"
+            ],
+            "question_family": "因果",
+            "cluster_id": "gradient-predictor",
+            "question_identity": {
+              "unit_of_analysis": "每个任务的单步更新",
+              "comparison": "关系对比梯度与通用CE梯度",
+              "outcome": "持出事实损失增量预测",
+              "scope": "相同参数位置的短程更新"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "负余弦是否反映关系而非输出频率？"
+              ],
+              "boundary": [
+                "一阶预测在何种步长失效？"
+              ],
+              "intervention": [
+                "投影冲突梯度能否改善任务折衷？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C07",
+            "short_title": "辨认题的捷径",
+            "plain_question": "能选对答案，是知道事实还是干扰项太弱？",
+            "research_question": "困难干扰项是否改变多任务训练后事实辨认保持的评估结论？",
+            "why_it_matters": "决定是否重做探针负例，避免把辨认高分直接当知识保留。",
+            "signal_ids": [
+              "E01",
+              "E05",
+              "E08"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E08"
+            ],
+            "question_family": "描述",
+            "cluster_id": "distractor",
+            "question_identity": {
+              "unit_of_analysis": "同一事实的辨认题",
+              "comparison": "随机负例与类型频率匹配困难负例",
+              "outcome": "保持结论的稳定性",
+              "scope": "固定答案位置和模板"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "类型线索是否替代实体关系线索？"
+              ],
+              "boundary": [
+                "长尾答案是否更受负例难度影响？"
+              ],
+              "intervention": [
+                "双向事实对是否抑制捷径？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C08",
+            "short_title": "直接替换PPL",
+            "plain_question": "把PPL换成知识分数就够了吗？",
+            "research_question": "单一知识探针能否替代全部多任务训练的预训练损失？",
+            "why_it_matters": "原始提案保留为负面对照，暴露尚未定义的语言质量、知识范围和训练目标。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01"
+            ],
+            "question_family": "价值",
+            "cluster_id": "undefined-replacement",
+            "question_identity": {
+              "unit_of_analysis": "全部多任务训练目标",
+              "comparison": "单一probe与预训练CE",
+              "outcome": "尚未定义的综合成功",
+              "scope": "未限定任务与知识范围"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "替换的是验证指标还是训练项？"
+              ],
+              "boundary": [
+                "被probe忽略的语言能力怎样评估？"
+              ],
+              "intervention": [
+                "能否先缩为一个保持目标？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C09",
+            "short_title": "复述辨认差距是否存在",
+            "plain_question": "模型会不会知道却说不出来？",
+            "research_question": "大模型是否存在辨认正确但不能生成正确答案的事实？",
+            "why_it_matters": "登记用户线索对应的已有问题，防止把已知现象当成本轮新贡献。",
+            "signal_ids": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "closest_prior_ids": [
+              "E02",
+              "E05"
+            ],
+            "question_family": "描述",
+            "cluster_id": "known-gap",
+            "question_identity": {
+              "unit_of_analysis": "静态事实QA",
+              "comparison": "辨认与自由生成",
+              "outcome": "二者差距是否存在",
+              "scope": "已研究模型设定"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "读出方式为何不同？"
+              ],
+              "boundary": [
+                "差距是否受候选答案提供影响？"
+              ],
+              "intervention": [
+                "能否通过提取而非重学恢复？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C10",
+            "short_title": "差距能否预测恢复",
+            "plain_question": "训练后说不出但能辨认的事实，更容易恢复吗？",
+            "research_question": "训练后的生成辨认差距能否预测无目标事实重放的提取恢复？",
+            "why_it_matters": "决定把恢复预算先投向提取对齐还是事实重放。",
+            "signal_ids": [
+              "E02",
+              "E03",
+              "E05"
+            ],
+            "closest_prior_ids": [
+              "E03",
+              "E05"
+            ],
+            "question_family": "机制",
+            "cluster_id": "recovery-prediction",
+            "question_identity": {
+              "unit_of_analysis": "训练后生成失败的事实",
+              "comparison": "有辨认优势与无辨认优势事实",
+              "outcome": "不见目标事实的恢复概率",
+              "scope": "多任务后检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "差距是否指向可访问性而非知识丢失？"
+              ],
+              "boundary": [
+                "难负例下预测是否还成立？"
+              ],
+              "intervention": [
+                "任务格式重对齐是否足够？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "阶段5待评；此字段只为共享结构占位。",
+              "answer_a": "阶段5待评；此字段只为共享结构占位。",
+              "action_a": "阶段5待评；此字段只为共享结构占位。",
+              "answer_b": "阶段5待评；此字段只为共享结构占位。",
+              "action_b": "阶段5待评；此字段只为共享结构占位。",
+              "uncertain_action": "阶段5待评；此字段只为共享结构占位。",
+              "reversal_condition": "阶段5待评；此字段只为共享结构占位。"
+            },
+            "evidence_path": "阶段5待展开；需要同一事实的训练前后概率、固定负例和独立持出问法。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          }
+        ],
+        "decision_log": [
+          "阶段4：10个机制簇及核心/机制/边界/干预树已冻结。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "5_decision_forks",
+      "output_summary": "对10个候选作双向钢人，登记A/B/混合答案、动作与反转；以四类竞争机制组织判别证据。",
+      "artifact_refs": [
+        "stage://5_decision_forks"
+      ],
+      "payload": {
+        "bidirectional_steelman": [
+          {
+            "candidate_id": "C01",
+            "steelman_a": "校正比原始probe更接近未见问法的事实保持排序；最强依据为E01,E07,E12",
+            "steelman_b": "校正无增益或使排序更差；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "先部署校准后的监测器，保留通用CE护栏",
+              "B": "继续用原始对比probe与CE双指标"
+            },
+            "reversal": "校正跨参考提示不稳定，或原始排序更好时撤回校正"
+          },
+          {
+            "candidate_id": "C02",
+            "steelman_a": "关系约束比等预算文本重放更好地保持未约束事实；最强依据为E01,E11,E13",
+            "steelman_b": "收益局限于训练probe或不如文本重放；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "保留文本CE并加关系对比约束，进入与CPLUS的正式比较",
+              "B": "保留文本重放或既有梯度保护"
+            },
+            "reversal": "训练probe改善而持出事实下降时撤回关系约束"
+          },
+          {
+            "candidate_id": "C03",
+            "steelman_a": "不含事实标签的对齐即可改善持出事实判断；最强依据为E02,E06,E14",
+            "steelman_b": "对齐无效且独立行为测量也下降；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "先维护跨检查点对齐读出，再判断是否需要知识重放",
+              "B": "追加事实恢复试探，评估表征损失"
+            },
+            "reversal": "对齐对随机标签同样有效或跨实体失效则停止解释为知识保持"
+          },
+          {
+            "candidate_id": "C04",
+            "steelman_a": "平均CE稳定但事实子群退化；最强依据为E01,E04",
+            "steelman_b": "事实子群也稳定；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "加事实族分层指标",
+              "B": "继续平均CE监控"
+            },
+            "reversal": "多模板重复后子群差异消失则不用加复杂监控"
+          },
+          {
+            "candidate_id": "C05",
+            "steelman_a": "聚合后误报减少；最强依据为E07,E08,E09",
+            "steelman_b": "聚合未改善或引入噪声；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "维护核查过且互斥的别名集合",
+              "B": "保留规范答案加人工错误复核"
+            },
+            "reversal": "开放式聚合误算重叠字符串时撤销"
+          },
+          {
+            "candidate_id": "C06",
+            "steelman_a": "知识梯度更能预测持出事实损失；最强依据为E04,E13",
+            "steelman_b": "通用CE梯度相当或更强；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "优先知识梯度控制器",
+              "B": "保留通用梯度控制"
+            },
+            "reversal": "跨种子预测失效或新任务明显受损时撤回"
+          },
+          {
+            "candidate_id": "C07",
+            "steelman_a": "难负例改变保持结论；最强依据为E01,E05,E08",
+            "steelman_b": "原结论对负例稳定；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "更新负例并重新报告结果",
+              "B": "保留原探针"
+            },
+            "reversal": "人工确认难负例歧义导致反转则撤回"
+          },
+          {
+            "candidate_id": "C08",
+            "steelman_a": "若某一已定义目标被probe完整覆盖；最强依据为E01,E04",
+            "steelman_b": "若probe未覆盖其他能力；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "尚需定义目标后才可比较",
+              "B": "同样需定义目标后才可比较"
+            },
+            "reversal": "无法定义综合成功即停止"
+          },
+          {
+            "candidate_id": "C09",
+            "steelman_a": "存在差距；最强依据为E02,E05,E06",
+            "steelman_b": "特定模型上未见差距；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "引用已有论文，再寻找可检验增量",
+              "B": "仍需引用已有论文，再寻找可检验增量"
+            },
+            "reversal": "新观察推翻既有设定时才重新注册"
+          },
+          {
+            "candidate_id": "C10",
+            "steelman_a": "辨认差距预测无事实重放恢复；最强依据为E02,E03,E05",
+            "steelman_b": "差距不预测或反向预测；应考虑校正损害、读出适配或约束过拟合等反例。",
+            "unknown_or_mixed": "效应可能仅限特定答案频率、关系或检查点，需保留分层结果。",
+            "action_fork": {
+              "A": "优先提取对齐",
+              "B": "优先事实重放对照"
+            },
+            "reversal": "匹配难度后预测消失时撤回"
+          }
+        ],
+        "analysis_of_competing_hypotheses": [
+          {
+            "hypothesis": "Hprior：答案偏好漂移",
+            "predicts": "原始M变化而跨匹配主体差分D稳定；偏好干预可重现",
+            "disconfirm": "D与独立跨问法保持同时下降，且校正排序不改善"
+          },
+          {
+            "hypothesis": "Hrelation：关系特异证据受损",
+            "predicts": "不同模板的D/行为辨认一起下降，答案偏好控制不能恢复",
+            "disconfirm": "只改读法或无目标事实的对齐即恢复"
+          },
+          {
+            "hypothesis": "Haccess：提取/读出失配",
+            "predicts": "自由生成或固定probe下降但独立可读性稳定",
+            "disconfirm": "对齐/提取试探不恢复且多个独立事实测量同步下降"
+          },
+          {
+            "hypothesis": "Hshortcut：探针捷径/数据泄漏",
+            "predicts": "训练probe高分但事实/实体持出失败；换难负例反转",
+            "disconfirm": "严格事实持出及多模板仍保持增益"
+          }
+        ],
+        "identification_limit": "Hprior、Hrelation与Haccess可以共存；单个条件概率和单一probe不能唯一分解存储知识。"
+      },
+      "session_updates": {
+        "candidate_questions": [
+          {
+            "candidate_id": "C01",
+            "short_title": "先验校正能否改善训练排序",
+            "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+            "research_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+            "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+            "signal_ids": [
+              "E01",
+              "E07",
+              "E12"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E12",
+              "E08"
+            ],
+            "question_family": "比较",
+            "cluster_id": "answer-prior",
+            "question_identity": {
+              "unit_of_analysis": "事实级训练前后变化",
+              "comparison": "原始probe与参考上下文校正probe",
+              "outcome": "对未见问法事实保持排序的一致性",
+              "scope": "多任务文本训练方案比较"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否校准知识监测器后再选多任务配比",
+              "answer_a": "校正比原始probe更接近未见问法的事实保持排序",
+              "action_a": "先部署校准后的监测器，保留通用CE护栏",
+              "answer_b": "校正无增益或使排序更差",
+              "action_b": "继续用原始对比probe与CE双指标",
+              "uncertain_action": "仅在验证有效的关系族使用校正，其余保持原指标",
+              "reversal_condition": "校正跨参考提示不稳定，或原始排序更好时撤回校正"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C02",
+            "short_title": "关系约束能否迁移",
+            "plain_question": "用一批知识题约束训练，能保住没用来约束的事实吗？",
+            "research_question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+            "why_it_matters": "决定把额外训练预算用于通用文本重放、关系对比损失还是已有自探针梯度保护。",
+            "signal_ids": [
+              "E01",
+              "E11",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13",
+              "E11"
+            ],
+            "question_family": "干预",
+            "cluster_id": "objective-transfer",
+            "question_identity": {
+              "unit_of_analysis": "未参与约束的事实",
+              "comparison": "关系对比约束与通用文本重放",
+              "outcome": "持出事实的生成与辨认保持",
+              "scope": "多任务文本后训练"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "额外训练预算用于何种保持目标",
+              "answer_a": "关系约束比等预算文本重放更好地保持未约束事实",
+              "action_a": "保留文本CE并加关系对比约束，进入与CPLUS的正式比较",
+              "answer_b": "收益局限于训练probe或不如文本重放",
+              "action_b": "保留文本重放或既有梯度保护",
+              "uncertain_action": "先限制已验证实体/关系覆盖，不将训练probe高分当泛化",
+              "reversal_condition": "训练probe改善而持出事实下降时撤回关系约束"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C03",
+            "short_title": "旧探针是否读错新表示",
+            "plain_question": "训练后旧探针变差，能否只调整读法就恢复判断？",
+            "research_question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+            "why_it_matters": "决定是重训知识、重训probe，还是只校正probe与新表示之间的读出失配。",
+            "signal_ids": [
+              "E02",
+              "E06",
+              "E14"
+            ],
+            "closest_prior_ids": [
+              "E14",
+              "E02",
+              "E06"
+            ],
+            "question_family": "测量",
+            "cluster_id": "probe-transport",
+            "question_identity": {
+              "unit_of_analysis": "固定隐藏层事实正确性probe",
+              "comparison": "不做对齐与无标签表示对齐",
+              "outcome": "持出事实保持判断的准确性",
+              "scope": "多任务训练前后同一模型层"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "固定隐藏probe退化后是否重训模型",
+              "answer_a": "不含事实标签的对齐即可改善持出事实判断",
+              "action_a": "先维护跨检查点对齐读出，再判断是否需要知识重放",
+              "answer_b": "对齐无效且独立行为测量也下降",
+              "action_b": "追加事实恢复试探，评估表征损失",
+              "uncertain_action": "降低隐藏probe权重并请求更多独立测量",
+              "reversal_condition": "对齐对随机标签同样有效或跨实体失效则停止解释为知识保持"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C04",
+            "short_title": "平均损失的稀释",
+            "plain_question": "平均文本损失没变时，稀有事实会被掩盖吗？",
+            "research_question": "通用文本平均损失保持时长尾事实的条件似然是否仍会下降？",
+            "why_it_matters": "决定是否补充事实分层监测，避免只看平均损失。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E04"
+            ],
+            "question_family": "边界",
+            "cluster_id": "averaging",
+            "question_identity": {
+              "unit_of_analysis": "长尾事实子群",
+              "comparison": "整体平均损失与事实子群条件损失",
+              "outcome": "子群损失下降的检出",
+              "scope": "多任务训练日志"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "常见token能否抵消事实token损失？"
+              ],
+              "boundary": [
+                "事实token占比是否控制稀释强度？"
+              ],
+              "intervention": [
+                "按事实族等权是否增加检出率？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否加入事实分层监控",
+              "answer_a": "平均CE稳定但事实子群退化",
+              "action_a": "加事实族分层指标",
+              "answer_b": "事实子群也稳定",
+              "action_b": "继续平均CE监控",
+              "uncertain_action": "扩大子群覆盖再判断",
+              "reversal_condition": "多模板重复后子群差异消失则不用加复杂监控"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C05",
+            "short_title": "别名造成的假遗忘",
+            "plain_question": "同一个答案换种叫法，会让探针误报遗忘吗？",
+            "research_question": "答案别名概率聚合是否减少跨训练检查点的事实遗忘误报？",
+            "why_it_matters": "决定是否为知识保持评测维护答案别名集合。",
+            "signal_ids": [
+              "E07",
+              "E08",
+              "E09"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E08"
+            ],
+            "question_family": "机制",
+            "cluster_id": "alias-mass",
+            "question_identity": {
+              "unit_of_analysis": "同事实多个答案表述",
+              "comparison": "单一表述评分与互斥别名聚合",
+              "outcome": "跨问法一致的遗忘判断",
+              "scope": "固定候选事实与检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "概率是否转移到另一个正确表述？"
+              ],
+              "boundary": [
+                "开放式别名集合覆盖不足是否产生偏差？"
+              ],
+              "intervention": [
+                "规范化或语义裁判哪种更可靠？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否维护别名概率集合",
+              "answer_a": "聚合后误报减少",
+              "action_a": "维护核查过且互斥的别名集合",
+              "answer_b": "聚合未改善或引入噪声",
+              "action_b": "保留规范答案加人工错误复核",
+              "uncertain_action": "仅开放确证的别名集合",
+              "reversal_condition": "开放式聚合误算重叠字符串时撤销"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C06",
+            "short_title": "任务梯度冲突",
+            "plain_question": "任务互相干扰时，保护知识题的梯度比保护普通文本更有效吗？",
+            "research_question": "关系对比梯度是否比通用文本梯度更准确地识别损害持出事实的任务更新？",
+            "why_it_matters": "决定是否用知识梯度而非通用CE梯度调节多任务权重。",
+            "signal_ids": [
+              "E04",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13"
+            ],
+            "question_family": "因果",
+            "cluster_id": "gradient-predictor",
+            "question_identity": {
+              "unit_of_analysis": "每个任务的单步更新",
+              "comparison": "关系对比梯度与通用CE梯度",
+              "outcome": "持出事实损失增量预测",
+              "scope": "相同参数位置的短程更新"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "负余弦是否反映关系而非输出频率？"
+              ],
+              "boundary": [
+                "一阶预测在何种步长失效？"
+              ],
+              "intervention": [
+                "投影冲突梯度能否改善任务折衷？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "选择哪类梯度作为多任务权重信号",
+              "answer_a": "知识梯度更能预测持出事实损失",
+              "action_a": "优先知识梯度控制器",
+              "answer_b": "通用CE梯度相当或更强",
+              "action_b": "保留通用梯度控制",
+              "uncertain_action": "限制短步长一阶有效范围",
+              "reversal_condition": "跨种子预测失效或新任务明显受损时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C07",
+            "short_title": "辨认题的捷径",
+            "plain_question": "能选对答案，是知道事实还是干扰项太弱？",
+            "research_question": "困难干扰项是否改变多任务训练后事实辨认保持的评估结论？",
+            "why_it_matters": "决定是否重做探针负例，避免把辨认高分直接当知识保留。",
+            "signal_ids": [
+              "E01",
+              "E05",
+              "E08"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E08"
+            ],
+            "question_family": "描述",
+            "cluster_id": "distractor",
+            "question_identity": {
+              "unit_of_analysis": "同一事实的辨认题",
+              "comparison": "随机负例与类型频率匹配困难负例",
+              "outcome": "保持结论的稳定性",
+              "scope": "固定答案位置和模板"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "类型线索是否替代实体关系线索？"
+              ],
+              "boundary": [
+                "长尾答案是否更受负例难度影响？"
+              ],
+              "intervention": [
+                "双向事实对是否抑制捷径？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否升级探针负例",
+              "answer_a": "难负例改变保持结论",
+              "action_a": "更新负例并重新报告结果",
+              "answer_b": "原结论对负例稳定",
+              "action_b": "保留原探针",
+              "uncertain_action": "只修订受影响的关系族",
+              "reversal_condition": "人工确认难负例歧义导致反转则撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C08",
+            "short_title": "直接替换PPL",
+            "plain_question": "把PPL换成知识分数就够了吗？",
+            "research_question": "单一知识探针能否替代全部多任务训练的预训练损失？",
+            "why_it_matters": "原始提案保留为负面对照，暴露尚未定义的语言质量、知识范围和训练目标。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01"
+            ],
+            "question_family": "价值",
+            "cluster_id": "undefined-replacement",
+            "question_identity": {
+              "unit_of_analysis": "全部多任务训练目标",
+              "comparison": "单一probe与预训练CE",
+              "outcome": "尚未定义的综合成功",
+              "scope": "未限定任务与知识范围"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "替换的是验证指标还是训练项？"
+              ],
+              "boundary": [
+                "被probe忽略的语言能力怎样评估？"
+              ],
+              "intervention": [
+                "能否先缩为一个保持目标？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否直接删除预训练CE",
+              "answer_a": "若某一已定义目标被probe完整覆盖",
+              "action_a": "尚需定义目标后才可比较",
+              "answer_b": "若probe未覆盖其他能力",
+              "action_b": "同样需定义目标后才可比较",
+              "uncertain_action": "先区分监测指标与训练项，不直接替换",
+              "reversal_condition": "无法定义综合成功即停止"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C09",
+            "short_title": "复述辨认差距是否存在",
+            "plain_question": "模型会不会知道却说不出来？",
+            "research_question": "大模型是否存在辨认正确但不能生成正确答案的事实？",
+            "why_it_matters": "登记用户线索对应的已有问题，防止把已知现象当成本轮新贡献。",
+            "signal_ids": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "closest_prior_ids": [
+              "E02",
+              "E05"
+            ],
+            "question_family": "描述",
+            "cluster_id": "known-gap",
+            "question_identity": {
+              "unit_of_analysis": "静态事实QA",
+              "comparison": "辨认与自由生成",
+              "outcome": "二者差距是否存在",
+              "scope": "已研究模型设定"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "读出方式为何不同？"
+              ],
+              "boundary": [
+                "差距是否受候选答案提供影响？"
+              ],
+              "intervention": [
+                "能否通过提取而非重学恢复？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否把复述辨认差距当作新发现",
+              "answer_a": "存在差距",
+              "action_a": "引用已有论文，再寻找可检验增量",
+              "answer_b": "特定模型上未见差距",
+              "action_b": "仍需引用已有论文，再寻找可检验增量",
+              "uncertain_action": "当前不投入重复证明已知现象",
+              "reversal_condition": "新观察推翻既有设定时才重新注册"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C10",
+            "short_title": "差距能否预测恢复",
+            "plain_question": "训练后说不出但能辨认的事实，更容易恢复吗？",
+            "research_question": "训练后的生成辨认差距能否预测无目标事实重放的提取恢复？",
+            "why_it_matters": "决定把恢复预算先投向提取对齐还是事实重放。",
+            "signal_ids": [
+              "E02",
+              "E03",
+              "E05"
+            ],
+            "closest_prior_ids": [
+              "E03",
+              "E05"
+            ],
+            "question_family": "机制",
+            "cluster_id": "recovery-prediction",
+            "question_identity": {
+              "unit_of_analysis": "训练后生成失败的事实",
+              "comparison": "有辨认优势与无辨认优势事实",
+              "outcome": "不见目标事实的恢复概率",
+              "scope": "多任务后检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "差距是否指向可访问性而非知识丢失？"
+              ],
+              "boundary": [
+                "难负例下预测是否还成立？"
+              ],
+              "intervention": [
+                "任务格式重对齐是否足够？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "先做提取对齐还是事实重放",
+              "answer_a": "辨认差距预测无事实重放恢复",
+              "action_a": "优先提取对齐",
+              "answer_b": "差距不预测或反向预测",
+              "action_b": "优先事实重放对照",
+              "uncertain_action": "只作为分层变量不作恢复指令",
+              "reversal_condition": "匹配难度后预测消失时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": false,
+              "action_divergent": false,
+              "neutral": false,
+              "answerable": false,
+              "ethical": false,
+              "readable": false,
+              "atomic": false,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "阶段6之前不评价；0为未评分占位，不参与排序。"
+              }
+            }
+          }
+        ],
+        "decision_log": [
+          "阶段5：C08与C09动作分叉弱，仅保留到硬门槛显式淘汰，不包装成新研究贡献。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "6_rank",
+      "output_summary": "先过九项硬门槛，淘汰两项，再用六维评分入围C01/C03/C02；与用户提案及五个历史基线比较。",
+      "artifact_refs": [
+        "stage://6_rank"
+      ],
+      "payload": {
+        "hard_gate_reviews": [
+          {
+            "candidate_id": "C01",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C02",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C03",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C04",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C05",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C06",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C07",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          },
+          {
+            "candidate_id": "C08",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": false,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "reason": "全部多任务与全部知识缺少操作化范围；无单一成功标准，不能决定何时允许删除CE。"
+          },
+          {
+            "candidate_id": "C09",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": false,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "差距存在已有直接研究，A/B对本轮动作均为引用既有结论并找增量。"
+          },
+          {
+            "candidate_id": "C10",
+            "gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "reason": "有一手来源；A/B动作不同；核心单一中性；可用公开事实+小模型/缓存路径回答；无敏感数据；双层表述可读。"
+          }
+        ],
+        "scores": [
+          {
+            "candidate_id": "C01",
+            "total": 11,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C02",
+            "total": 9,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C03",
+            "total": 10,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C04",
+            "total": 7,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C05",
+            "total": 8,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C06",
+            "total": 8,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C07",
+            "total": 7,
+            "eligible": true
+          },
+          {
+            "candidate_id": "C08",
+            "total": 0,
+            "eligible": false
+          },
+          {
+            "candidate_id": "C09",
+            "total": 0,
+            "eligible": false
+          },
+          {
+            "candidate_id": "C10",
+            "total": 8,
+            "eligible": true
+          }
+        ],
+        "shortlist": [
+          "C01",
+          "C03",
+          "C02"
+        ],
+        "score_limits": "0–2分是本轮相对判断，不是效果量或客观概率；未过门槛的0不参与排序。",
+        "incumbent_comparison": {
+          "user_proposal": "C01先检验probe作为选择器是否有效，优于未定义的直接替换PPL。",
+          "historical": "闭环验证器复用、删失、修复位置、prompt倍率和完成顺序仍有效；它们服务RL/异步基础设施，而非用户本轮的知识保持监测决策。此次优先仅限主题适配，不声称长期科学价值更高。"
+        },
+        "voi": "选错监测器会使多任务配比追逐词项偏好；离线校正审计成本低。主问题的信息价值高，但是否真有排序提升仍未知。"
+      },
+      "session_updates": {
+        "candidate_questions": [
+          {
+            "candidate_id": "C01",
+            "short_title": "先验校正能否改善训练排序",
+            "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+            "research_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+            "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+            "signal_ids": [
+              "E01",
+              "E07",
+              "E12"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E12",
+              "E08"
+            ],
+            "question_family": "比较",
+            "cluster_id": "answer-prior",
+            "question_identity": {
+              "unit_of_analysis": "事实级训练前后变化",
+              "comparison": "原始probe与参考上下文校正probe",
+              "outcome": "对未见问法事实保持排序的一致性",
+              "scope": "多任务文本训练方案比较"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否校准知识监测器后再选多任务配比",
+              "answer_a": "校正比原始probe更接近未见问法的事实保持排序",
+              "action_a": "先部署校准后的监测器，保留通用CE护栏",
+              "answer_b": "校正无增益或使排序更差",
+              "action_b": "继续用原始对比probe与CE双指标",
+              "uncertain_action": "仅在验证有效的关系族使用校正，其余保持原指标",
+              "reversal_condition": "校正跨参考提示不稳定，或原始排序更好时撤回校正"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "直接改变配比/检查点选择"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "操纵答案偏好与关系对比可区分混淆"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "KR-Test/PMI/内容分解均为真实信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "先做离线反例，再用缓存概率排序"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "静态校准已知，剩余为训练方案保持排序的有效性"
+              },
+              "cost_benefit": {
+                "value": 2,
+                "reason": "低成本监测器审计可避免错误训练投入"
+              }
+            }
+          },
+          {
+            "candidate_id": "C02",
+            "short_title": "关系约束能否迁移",
+            "plain_question": "用一批知识题约束训练，能保住没用来约束的事实吗？",
+            "research_question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+            "why_it_matters": "决定把额外训练预算用于通用文本重放、关系对比损失还是已有自探针梯度保护。",
+            "signal_ids": [
+              "E01",
+              "E11",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13",
+              "E11"
+            ],
+            "question_family": "干预",
+            "cluster_id": "objective-transfer",
+            "question_identity": {
+              "unit_of_analysis": "未参与约束的事实",
+              "comparison": "关系对比约束与通用文本重放",
+              "outcome": "持出事实的生成与辨认保持",
+              "scope": "多任务文本后训练"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "额外训练预算用于何种保持目标",
+              "answer_a": "关系约束比等预算文本重放更好地保持未约束事实",
+              "action_a": "保留文本CE并加关系对比约束，进入与CPLUS的正式比较",
+              "answer_b": "收益局限于训练probe或不如文本重放",
+              "action_b": "保留文本重放或既有梯度保护",
+              "uncertain_action": "先限制已验证实体/关系覆盖，不将训练probe高分当泛化",
+              "reversal_condition": "训练probe改善而持出事实下降时撤回关系约束"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "决定额外保持预算"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "持出事实与训练probe分离能识别过拟合"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "近期CPLUS和探针泄漏提供直接邻近依据"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "需真实短程更新且无现成用户算力"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "probe保护已知，关系约束的迁移收益待证"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "后续训练成本中等，先做零空间反例"
+              }
+            }
+          },
+          {
+            "candidate_id": "C03",
+            "short_title": "旧探针是否读错新表示",
+            "plain_question": "训练后旧探针变差，能否只调整读法就恢复判断？",
+            "research_question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+            "why_it_matters": "决定是重训知识、重训probe，还是只校正probe与新表示之间的读出失配。",
+            "signal_ids": [
+              "E02",
+              "E06",
+              "E14"
+            ],
+            "closest_prior_ids": [
+              "E14",
+              "E02",
+              "E06"
+            ],
+            "question_family": "测量",
+            "cluster_id": "probe-transport",
+            "question_identity": {
+              "unit_of_analysis": "固定隐藏层事实正确性probe",
+              "comparison": "不做对齐与无标签表示对齐",
+              "outcome": "持出事实保持判断的准确性",
+              "scope": "多任务训练前后同一模型层"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "固定隐藏probe退化后是否重训模型",
+              "answer_a": "不含事实标签的对齐即可改善持出事实判断",
+              "action_a": "先维护跨检查点对齐读出，再判断是否需要知识重放",
+              "answer_b": "对齐无效且独立行为测量也下降",
+              "action_b": "追加事实恢复试探，评估表征损失",
+              "uncertain_action": "降低隐藏probe权重并请求更多独立测量",
+              "reversal_condition": "对齐对随机标签同样有效或跨实体失效则停止解释为知识保持"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "决定维护probe还是重训模型"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "无标签对齐与破坏表征对照可区分读出失配"
+              },
+              "reality_grounding": {
+                "value": 1,
+                "reason": "主要来自相邻持续学习和静态事实probe"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有缓存激活即可离线验证"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "固定probe失配已知，事实诊断的无标签迁移待证"
+              },
+              "cost_benefit": {
+                "value": 2,
+                "reason": "先做旋转反例无需模型训练"
+              }
+            }
+          },
+          {
+            "candidate_id": "C04",
+            "short_title": "平均损失的稀释",
+            "plain_question": "平均文本损失没变时，稀有事实会被掩盖吗？",
+            "research_question": "通用文本平均损失保持时长尾事实的条件似然是否仍会下降？",
+            "why_it_matters": "决定是否补充事实分层监测，避免只看平均损失。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E04"
+            ],
+            "question_family": "边界",
+            "cluster_id": "averaging",
+            "question_identity": {
+              "unit_of_analysis": "长尾事实子群",
+              "comparison": "整体平均损失与事实子群条件损失",
+              "outcome": "子群损失下降的检出",
+              "scope": "多任务训练日志"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "常见token能否抵消事实token损失？"
+              ],
+              "boundary": [
+                "事实token占比是否控制稀释强度？"
+              ],
+              "intervention": [
+                "按事实族等权是否增加检出率？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否加入事实分层监控",
+              "answer_a": "平均CE稳定但事实子群退化",
+              "action_a": "加事实族分层指标",
+              "answer_b": "事实子群也稳定",
+              "action_b": "继续平均CE监控",
+              "uncertain_action": "扩大子群覆盖再判断",
+              "reversal_condition": "多模板重复后子群差异消失则不用加复杂监控"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C05",
+            "short_title": "别名造成的假遗忘",
+            "plain_question": "同一个答案换种叫法，会让探针误报遗忘吗？",
+            "research_question": "答案别名概率聚合是否减少跨训练检查点的事实遗忘误报？",
+            "why_it_matters": "决定是否为知识保持评测维护答案别名集合。",
+            "signal_ids": [
+              "E07",
+              "E08",
+              "E09"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E08"
+            ],
+            "question_family": "机制",
+            "cluster_id": "alias-mass",
+            "question_identity": {
+              "unit_of_analysis": "同事实多个答案表述",
+              "comparison": "单一表述评分与互斥别名聚合",
+              "outcome": "跨问法一致的遗忘判断",
+              "scope": "固定候选事实与检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "概率是否转移到另一个正确表述？"
+              ],
+              "boundary": [
+                "开放式别名集合覆盖不足是否产生偏差？"
+              ],
+              "intervention": [
+                "规范化或语义裁判哪种更可靠？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否维护别名概率集合",
+              "answer_a": "聚合后误报减少",
+              "action_a": "维护核查过且互斥的别名集合",
+              "answer_b": "聚合未改善或引入噪声",
+              "action_b": "保留规范答案加人工错误复核",
+              "uncertain_action": "仅开放确证的别名集合",
+              "reversal_condition": "开放式聚合误算重叠字符串时撤销"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C06",
+            "short_title": "任务梯度冲突",
+            "plain_question": "任务互相干扰时，保护知识题的梯度比保护普通文本更有效吗？",
+            "research_question": "关系对比梯度是否比通用文本梯度更准确地识别损害持出事实的任务更新？",
+            "why_it_matters": "决定是否用知识梯度而非通用CE梯度调节多任务权重。",
+            "signal_ids": [
+              "E04",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13"
+            ],
+            "question_family": "因果",
+            "cluster_id": "gradient-predictor",
+            "question_identity": {
+              "unit_of_analysis": "每个任务的单步更新",
+              "comparison": "关系对比梯度与通用CE梯度",
+              "outcome": "持出事实损失增量预测",
+              "scope": "相同参数位置的短程更新"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "负余弦是否反映关系而非输出频率？"
+              ],
+              "boundary": [
+                "一阶预测在何种步长失效？"
+              ],
+              "intervention": [
+                "投影冲突梯度能否改善任务折衷？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "选择哪类梯度作为多任务权重信号",
+              "answer_a": "知识梯度更能预测持出事实损失",
+              "action_a": "优先知识梯度控制器",
+              "answer_b": "通用CE梯度相当或更强",
+              "action_b": "保留通用梯度控制",
+              "uncertain_action": "限制短步长一阶有效范围",
+              "reversal_condition": "跨种子预测失效或新任务明显受损时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C07",
+            "short_title": "辨认题的捷径",
+            "plain_question": "能选对答案，是知道事实还是干扰项太弱？",
+            "research_question": "困难干扰项是否改变多任务训练后事实辨认保持的评估结论？",
+            "why_it_matters": "决定是否重做探针负例，避免把辨认高分直接当知识保留。",
+            "signal_ids": [
+              "E01",
+              "E05",
+              "E08"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E08"
+            ],
+            "question_family": "描述",
+            "cluster_id": "distractor",
+            "question_identity": {
+              "unit_of_analysis": "同一事实的辨认题",
+              "comparison": "随机负例与类型频率匹配困难负例",
+              "outcome": "保持结论的稳定性",
+              "scope": "固定答案位置和模板"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "类型线索是否替代实体关系线索？"
+              ],
+              "boundary": [
+                "长尾答案是否更受负例难度影响？"
+              ],
+              "intervention": [
+                "双向事实对是否抑制捷径？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否升级探针负例",
+              "answer_a": "难负例改变保持结论",
+              "action_a": "更新负例并重新报告结果",
+              "answer_b": "原结论对负例稳定",
+              "action_b": "保留原探针",
+              "uncertain_action": "只修订受影响的关系族",
+              "reversal_condition": "人工确认难负例歧义导致反转则撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C08",
+            "short_title": "直接替换PPL",
+            "plain_question": "把PPL换成知识分数就够了吗？",
+            "research_question": "单一知识探针能否替代全部多任务训练的预训练损失？",
+            "why_it_matters": "原始提案保留为负面对照，暴露尚未定义的语言质量、知识范围和训练目标。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01"
+            ],
+            "question_family": "价值",
+            "cluster_id": "undefined-replacement",
+            "question_identity": {
+              "unit_of_analysis": "全部多任务训练目标",
+              "comparison": "单一probe与预训练CE",
+              "outcome": "尚未定义的综合成功",
+              "scope": "未限定任务与知识范围"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "替换的是验证指标还是训练项？"
+              ],
+              "boundary": [
+                "被probe忽略的语言能力怎样评估？"
+              ],
+              "intervention": [
+                "能否先缩为一个保持目标？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否直接删除预训练CE",
+              "answer_a": "若某一已定义目标被probe完整覆盖",
+              "action_a": "尚需定义目标后才可比较",
+              "answer_b": "若probe未覆盖其他能力",
+              "action_b": "同样需定义目标后才可比较",
+              "uncertain_action": "先区分监测指标与训练项，不直接替换",
+              "reversal_condition": "无法定义综合成功即停止"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": false,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C09",
+            "short_title": "复述辨认差距是否存在",
+            "plain_question": "模型会不会知道却说不出来？",
+            "research_question": "大模型是否存在辨认正确但不能生成正确答案的事实？",
+            "why_it_matters": "登记用户线索对应的已有问题，防止把已知现象当成本轮新贡献。",
+            "signal_ids": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "closest_prior_ids": [
+              "E02",
+              "E05"
+            ],
+            "question_family": "描述",
+            "cluster_id": "known-gap",
+            "question_identity": {
+              "unit_of_analysis": "静态事实QA",
+              "comparison": "辨认与自由生成",
+              "outcome": "二者差距是否存在",
+              "scope": "已研究模型设定"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "读出方式为何不同？"
+              ],
+              "boundary": [
+                "差距是否受候选答案提供影响？"
+              ],
+              "intervention": [
+                "能否通过提取而非重学恢复？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否把复述辨认差距当作新发现",
+              "answer_a": "存在差距",
+              "action_a": "引用已有论文，再寻找可检验增量",
+              "answer_b": "特定模型上未见差距",
+              "action_b": "仍需引用已有论文，再寻找可检验增量",
+              "uncertain_action": "当前不投入重复证明已知现象",
+              "reversal_condition": "新观察推翻既有设定时才重新注册"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": false,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C10",
+            "short_title": "差距能否预测恢复",
+            "plain_question": "训练后说不出但能辨认的事实，更容易恢复吗？",
+            "research_question": "训练后的生成辨认差距能否预测无目标事实重放的提取恢复？",
+            "why_it_matters": "决定把恢复预算先投向提取对齐还是事实重放。",
+            "signal_ids": [
+              "E02",
+              "E03",
+              "E05"
+            ],
+            "closest_prior_ids": [
+              "E03",
+              "E05"
+            ],
+            "question_family": "机制",
+            "cluster_id": "recovery-prediction",
+            "question_identity": {
+              "unit_of_analysis": "训练后生成失败的事实",
+              "comparison": "有辨认优势与无辨认优势事实",
+              "outcome": "不见目标事实的恢复概率",
+              "scope": "多任务后检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "差距是否指向可访问性而非知识丢失？"
+              ],
+              "boundary": [
+                "难负例下预测是否还成立？"
+              ],
+              "intervention": [
+                "任务格式重对齐是否足够？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "先做提取对齐还是事实重放",
+              "answer_a": "辨认差距预测无事实重放恢复",
+              "action_a": "优先提取对齐",
+              "answer_b": "差距不预测或反向预测",
+              "action_b": "优先事实重放对照",
+              "uncertain_action": "只作为分层变量不作恢复指令",
+              "reversal_condition": "匹配难度后预测消失时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "阶段7执行来源碰撞与可区分性试探。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          }
+        ],
+        "decision_log": [
+          "阶段6：C01=11，C03=10，C02=9；其他已过门槛候选6–8分。只有三项进入阶段7。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "7_probe",
+      "output_summary": "完成前三项常识与三路先行研究审查，运行三个可区分性反例；均缩小为待验证增量，不声称真实模型效果。",
+      "artifact_refs": [
+        "stage://7_probe"
+      ],
+      "payload": {
+        "common_knowledge_reviews": {
+          "C01": {
+            "closest": [
+              "E01",
+              "E07",
+              "E08",
+              "E12"
+            ],
+            "baseline": "PPL包含风格与频率，PMI能校正答案偏好；这些不是新发现。",
+            "residual": "校正能否在训练方案比较中改善对未见问法事实保持的排序，而非仅改善静态选择题分数？",
+            "boundary": "偏好变化若真实降低自由生成，校正可能把真实退化消掉；稀有词可能被过度抬高。",
+            "overlap": "KR-Test已有正确/错误对比；PMI已有先验归一化；Dissecting已有主题/风格/事实区分。补充S01也已研究跨检查点置信度校准。",
+            "increment": "测试目标是任务配比/检查点保持排序对独立跨问法事实测量的外推，不声称发明PMI或首发现概率/知识分离。",
+            "queries": [
+              "Q10",
+              "Q11",
+              "Q12"
+            ]
+          },
+          "C03": {
+            "closest": [
+              "E14",
+              "E02",
+              "E06"
+            ],
+            "baseline": "固定probe可能因坐标漂移失效，重拟合probe可能恢复，这是既有表征研究的基本区分。",
+            "residual": "仅用不含目标事实实体的无标签锚文本对齐，能否改善事实probe跨检查点的保持判断？",
+            "boundary": "信息已损失或漂移非线性时正交对齐应失败；锚文本覆盖不够也会失败。",
+            "overlap": "表征遗忘研究已用最优线性读出；Inside-Out/PIR已有事实读出。补充S02推导固定头margin与漂移投影，S05已做事实性probe跨分布迁移。",
+            "increment": "待检验的是不重新标注事实的同模型跨检查点诊断修复；不是证明旋转不等于遗忘，也不是宣称任意probe可迁移。",
+            "queries": [
+              "Q13",
+              "Q14",
+              "Q15"
+            ]
+          },
+          "C02": {
+            "closest": [
+              "E13",
+              "E11",
+              "E04"
+            ],
+            "baseline": "probe上优化不保证持出泛化；文本重放与自探针梯度保护已有方法。",
+            "residual": "关系对比约束相对文本重放和自探针梯度保护，是否对未参与约束的事实有可重复净收益？",
+            "boundary": "只重复少数关系/答案可能抬高训练probe而伤害未约束关系；更新也可能落在约束零空间。",
+            "overlap": "CPLUS已有probe梯度优于同probe重放及benchmark迁移；补充S04已有事实导向重放理论与STOC，故简单probe进loss绝非空白。",
+            "increment": "只保留关系对比目标的跨事实迁移比较，需以CPLUS/STOC为强基线；当前只是条件性实验方向，不能声称普遍优于重放。",
+            "queries": [
+              "Q16",
+              "Q17",
+              "Q18"
+            ]
+          }
+        },
+        "search_query_ids": [
+          "Q10",
+          "Q11",
+          "Q12",
+          "Q13",
+          "Q14",
+          "Q15",
+          "Q16",
+          "Q17",
+          "Q18"
+        ],
+        "supplemental_sources": [
+          [
+            "S01",
+            "Q10",
+            "https://arxiv.org/abs/2609.38797",
+            "2026-09-30",
+            "已研究跨检查点persistent calibration，削弱将动态校准本身视为新颖的理由；未从摘要找到答案先验校正对训练方案事实保持排序的直接结论。"
+          ],
+          [
+            "S02",
+            "Q14",
+            "https://arxiv.org/abs/2610.14921",
+            "2026-10-10",
+            "近期研究表征漂移、固定头margin及任务输入依赖；不据其摘要推断无标签事实probe运输已解决。"
+          ],
+          [
+            "S03",
+            "Q10",
+            "https://aclanthology.org/2025.acl-long.722/",
+            "2025-07",
+            "CogCalib研究已知/新知识对校准的影响，与答案词项先验是不同意义的prior。"
+          ],
+          [
+            "S04",
+            "Q16",
+            "https://proceedings.mlr.press/v306/wang26go.html",
+            "2026-07-06",
+            "STOC研究持续事实获取及事实片段重放，作为C02必须比较的强基线。"
+          ],
+          [
+            "S05",
+            "Q13",
+            "https://aclanthology.org/2024.acl-long.668/",
+            "2024-08",
+            "PiNose研究无人工标签的事实性probe训练与跨分布迁移，不能把无标签或迁移本身当创新。"
+          ]
+        ],
+        "actual_probe_result": {
+          "status": "design_check_only",
+          "real_model_evidence": false,
+          "C01": {
+            "cases": [
+              {
+                "name": "before",
+                "answer_probability": 0.8807970779778823,
+                "raw_margin": 2,
+                "reference_margin": 0,
+                "calibrated_margin": 2,
+                "matched_context_difference": 4
+              },
+              {
+                "name": "answer_bias_only",
+                "answer_probability": 0.11920292202211755,
+                "raw_margin": -2,
+                "reference_margin": -4,
+                "calibrated_margin": 2,
+                "matched_context_difference": 4
+              },
+              {
+                "name": "relation_damage_only",
+                "answer_probability": 0.6224593312018546,
+                "raw_margin": 0.5,
+                "reference_margin": 0,
+                "calibrated_margin": 0.5,
+                "matched_context_difference": 1.0
+              }
+            ],
+            "interpretation": "已知加性logit模型下，答案偏好可改变原始margin而不改关系差分；校正是否改善真实跨问法排序仍未回答。",
+            "counterexample": "词项偏好也可能真实损害生成可用性；消去它可能掩盖服务能力退化。"
+          },
+          "C02": {
+            "before": [
+              1,
+              1
+            ],
+            "after": [
+              1,
+              -1
+            ],
+            "protected_probe_unchanged": true,
+            "heldout_coordinate_damaged": true,
+            "interpretation": "只证明保护有限probe不逻辑蕴含持出事实保持，不能预测实际迁移效果。"
+          },
+          "C03": {
+            "initial_accuracy": 1.0,
+            "frozen_after_rotation": 0.0,
+            "aligned_accuracy": 1.0,
+            "collapsed_accuracy": 0.5,
+            "interpretation": "只证明无标签坐标对应可恢复旋转失配；非线性漂移或真实信息损失未被解决。"
+          }
+        },
+        "consider_the_opposite": [
+          "校正可能掩盖真实生成损害，因此不自动把D升高当更懂知识。",
+          "CPLUS/STOC已证明部分probe/重放泛化，故不能把关系损失写成首创。",
+          "无标签对齐若锚不覆盖事实输入方向，即便平均表示相近也可能失败。"
+        ],
+        "availability": "论文给出可独立实现的对比公式；KR-Test实现链接本轮404。WikiProfile作者提供数据链接但本轮未下载/核查许可。没有用户训练日志/模型检查点，真实模型试探尚未执行。",
+        "disposition": {
+          "C01": "narrow",
+          "C03": "narrow",
+          "C02": "narrow"
+        },
+        "evidence_limit": "解析与合成反例只验证可区分性/识别边界，不能给出真实效应大小、新颖性证明或训练收益。"
+      },
+      "session_updates": {
+        "candidate_questions": [
+          {
+            "candidate_id": "C01",
+            "short_title": "先验校正能否改善训练排序",
+            "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+            "research_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+            "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+            "signal_ids": [
+              "E01",
+              "E07",
+              "E12"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E12",
+              "E08"
+            ],
+            "question_family": "比较",
+            "cluster_id": "answer-prior",
+            "question_identity": {
+              "unit_of_analysis": "事实级训练前后变化",
+              "comparison": "原始probe与参考上下文校正probe",
+              "outcome": "对未见问法事实保持排序的一致性",
+              "scope": "多任务文本训练方案比较"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否校准知识监测器后再选多任务配比",
+              "answer_a": "校正比原始probe更接近未见问法的事实保持排序",
+              "action_a": "先部署校准后的监测器，保留通用CE护栏",
+              "answer_b": "校正无增益或使排序更差",
+              "action_b": "继续用原始对比probe与CE双指标",
+              "uncertain_action": "仅在验证有效的关系族使用校正，其余保持原指标",
+              "reversal_condition": "校正跨参考提示不稳定，或原始排序更好时撤回校正"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "已核对来源与二元logit反例；无真实模型概率缓存。",
+              "procedure": "运行三种已知生成机制的反例：原模型、仅答案偏好变化、仅关系信号变化。真实下一步：96个事实、3种问法、3任务配比×3种子，以事实族分割，比较raw、领域PMI与匹配主体差分对持出问法生成/辨认保持的成对排序一致率。",
+              "possible_outcomes": [
+                "只改偏好使raw下降但关系对比不变",
+                "真实跨问法能力也下降，校正可能遮蔽服务退化"
+              ],
+              "decision_rules": {
+                "keep": "真实模型上校正排序一致率改善至少0.10、事实族bootstrap区间排除0，且不同参考上下文方向一致；此为前瞻筛选门槛，非现有结果。",
+                "narrow": "只在某些关系族或罕见答案上改善则限于该子群。",
+                "rewrite": "若校正只追踪关系可分性而非生成可用性，明确改称关系特异证据监测。",
+                "reject": "校正无稳定增益或更差，停止建设校正控制器。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "直接改变配比/检查点选择"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "操纵答案偏好与关系对比可区分混淆"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "KR-Test/PMI/内容分解均为真实信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "先做离线反例，再用缓存概率排序"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "静态校准已知，剩余为训练方案保持排序的有效性"
+              },
+              "cost_benefit": {
+                "value": 2,
+                "reason": "低成本监测器审计可避免错误训练投入"
+              }
+            }
+          },
+          {
+            "candidate_id": "C02",
+            "short_title": "关系约束能否迁移",
+            "plain_question": "用一批知识题约束训练，能保住没用来约束的事实吗？",
+            "research_question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+            "why_it_matters": "决定把额外训练预算用于通用文本重放、关系对比损失还是已有自探针梯度保护。",
+            "signal_ids": [
+              "E01",
+              "E11",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13",
+              "E11"
+            ],
+            "question_family": "干预",
+            "cluster_id": "objective-transfer",
+            "question_identity": {
+              "unit_of_analysis": "未参与约束的事实",
+              "comparison": "关系对比约束与通用文本重放",
+              "outcome": "持出事实的生成与辨认保持",
+              "scope": "多任务文本后训练"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "额外训练预算用于何种保持目标",
+              "answer_a": "关系约束比等预算文本重放更好地保持未约束事实",
+              "action_a": "保留文本CE并加关系对比约束，进入与CPLUS的正式比较",
+              "answer_b": "收益局限于训练probe或不如文本重放",
+              "action_b": "保留文本重放或既有梯度保护",
+              "uncertain_action": "先限制已验证实体/关系覆盖，不将训练probe高分当泛化",
+              "reversal_condition": "训练probe改善而持出事实下降时撤回关系约束"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "已运行保护坐标/持出坐标反例；未进行LLM训练。",
+              "procedure": "展示有限probe约束的零空间可容许持出方向受损；真实下一步比较无保持、文本重放、关系对比约束、自探针梯度保护，均固定新任务token、训练FLOP和保持预算。STOC作为事实重放基线。",
+              "possible_outcomes": [
+                "训练probe不变但持出坐标受损",
+                "共享结构有可能带来迁移，须真实训练判定"
+              ],
+              "decision_rules": {
+                "keep": "持出事实保持至少提高5个百分点且新任务下降不超过1个百分点，跨3种子方向一致。",
+                "narrow": "只在共享关系内有效则限关系内迁移。",
+                "rewrite": "如果只提高别名或模板匹配，改称输出对齐，不声称知识保持。",
+                "reject": "训练probe上升而持出退化或不及强重放/梯度基线则淘汰。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "决定额外保持预算"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "持出事实与训练probe分离能识别过拟合"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "近期CPLUS和探针泄漏提供直接邻近依据"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "需真实短程更新且无现成用户算力"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "probe保护已知，关系约束的迁移收益待证"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "后续训练成本中等，先做零空间反例"
+              }
+            }
+          },
+          {
+            "candidate_id": "C03",
+            "short_title": "旧探针是否读错新表示",
+            "plain_question": "训练后旧探针变差，能否只调整读法就恢复判断？",
+            "research_question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+            "why_it_matters": "决定是重训知识、重训probe，还是只校正probe与新表示之间的读出失配。",
+            "signal_ids": [
+              "E02",
+              "E06",
+              "E14"
+            ],
+            "closest_prior_ids": [
+              "E14",
+              "E02",
+              "E06"
+            ],
+            "question_family": "测量",
+            "cluster_id": "probe-transport",
+            "question_identity": {
+              "unit_of_analysis": "固定隐藏层事实正确性probe",
+              "comparison": "不做对齐与无标签表示对齐",
+              "outcome": "持出事实保持判断的准确性",
+              "scope": "多任务训练前后同一模型层"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "固定隐藏probe退化后是否重训模型",
+              "answer_a": "不含事实标签的对齐即可改善持出事实判断",
+              "action_a": "先维护跨检查点对齐读出，再判断是否需要知识重放",
+              "answer_b": "对齐无效且独立行为测量也下降",
+              "action_b": "追加事实恢复试探，评估表征损失",
+              "uncertain_action": "降低隐藏probe权重并请求更多独立测量",
+              "reversal_condition": "对齐对随机标签同样有效或跨实体失效则停止解释为知识保持"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "已运行二维旋转/信息坍缩反例；没有真实检查点激活。",
+              "procedure": "比较原读出、固定读出、用无标签锚对应恢复后的读出，以及信息坍缩负对照。真实下一步在同层缓存激活上用排除评测实体的锚文本拟合正交映射，事实族持出检验。",
+              "possible_outcomes": [
+                "纯旋转时固定probe失效而对齐恢复",
+                "坍缩时对齐不能恢复到原准确率"
+              ],
+              "decision_rules": {
+                "keep": "真实持出事实判断误差减少至少20%，而随机锚映射/随机标签对照无同等收益。",
+                "narrow": "仅某些层或轻微漂移有效则限定范围。",
+                "rewrite": "若必须用事实标签重拟合，改称监督校准而非无标签运输。",
+                "reject": "只有训练锚恢复、实体持出失败或独立行为证据相反则淘汰。"
+              }
+            },
+            "probe_disposition": "narrow",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "决定维护probe还是重训模型"
+              },
+              "discriminating_power": {
+                "value": 2,
+                "reason": "无标签对齐与破坏表征对照可区分读出失配"
+              },
+              "reality_grounding": {
+                "value": 1,
+                "reason": "主要来自相邻持续学习和静态事实probe"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有缓存激活即可离线验证"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "固定probe失配已知，事实诊断的无标签迁移待证"
+              },
+              "cost_benefit": {
+                "value": 2,
+                "reason": "先做旋转反例无需模型训练"
+              }
+            }
+          },
+          {
+            "candidate_id": "C04",
+            "short_title": "平均损失的稀释",
+            "plain_question": "平均文本损失没变时，稀有事实会被掩盖吗？",
+            "research_question": "通用文本平均损失保持时长尾事实的条件似然是否仍会下降？",
+            "why_it_matters": "决定是否补充事实分层监测，避免只看平均损失。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E04"
+            ],
+            "question_family": "边界",
+            "cluster_id": "averaging",
+            "question_identity": {
+              "unit_of_analysis": "长尾事实子群",
+              "comparison": "整体平均损失与事实子群条件损失",
+              "outcome": "子群损失下降的检出",
+              "scope": "多任务训练日志"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "常见token能否抵消事实token损失？"
+              ],
+              "boundary": [
+                "事实token占比是否控制稀释强度？"
+              ],
+              "intervention": [
+                "按事实族等权是否增加检出率？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否加入事实分层监控",
+              "answer_a": "平均CE稳定但事实子群退化",
+              "action_a": "加事实族分层指标",
+              "answer_b": "事实子群也稳定",
+              "action_b": "继续平均CE监控",
+              "uncertain_action": "扩大子群覆盖再判断",
+              "reversal_condition": "多模板重复后子群差异消失则不用加复杂监控"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C05",
+            "short_title": "别名造成的假遗忘",
+            "plain_question": "同一个答案换种叫法，会让探针误报遗忘吗？",
+            "research_question": "答案别名概率聚合是否减少跨训练检查点的事实遗忘误报？",
+            "why_it_matters": "决定是否为知识保持评测维护答案别名集合。",
+            "signal_ids": [
+              "E07",
+              "E08",
+              "E09"
+            ],
+            "closest_prior_ids": [
+              "E07",
+              "E08"
+            ],
+            "question_family": "机制",
+            "cluster_id": "alias-mass",
+            "question_identity": {
+              "unit_of_analysis": "同事实多个答案表述",
+              "comparison": "单一表述评分与互斥别名聚合",
+              "outcome": "跨问法一致的遗忘判断",
+              "scope": "固定候选事实与检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "概率是否转移到另一个正确表述？"
+              ],
+              "boundary": [
+                "开放式别名集合覆盖不足是否产生偏差？"
+              ],
+              "intervention": [
+                "规范化或语义裁判哪种更可靠？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否维护别名概率集合",
+              "answer_a": "聚合后误报减少",
+              "action_a": "维护核查过且互斥的别名集合",
+              "answer_b": "聚合未改善或引入噪声",
+              "action_b": "保留规范答案加人工错误复核",
+              "uncertain_action": "仅开放确证的别名集合",
+              "reversal_condition": "开放式聚合误算重叠字符串时撤销"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C06",
+            "short_title": "任务梯度冲突",
+            "plain_question": "任务互相干扰时，保护知识题的梯度比保护普通文本更有效吗？",
+            "research_question": "关系对比梯度是否比通用文本梯度更准确地识别损害持出事实的任务更新？",
+            "why_it_matters": "决定是否用知识梯度而非通用CE梯度调节多任务权重。",
+            "signal_ids": [
+              "E04",
+              "E13"
+            ],
+            "closest_prior_ids": [
+              "E13"
+            ],
+            "question_family": "因果",
+            "cluster_id": "gradient-predictor",
+            "question_identity": {
+              "unit_of_analysis": "每个任务的单步更新",
+              "comparison": "关系对比梯度与通用CE梯度",
+              "outcome": "持出事实损失增量预测",
+              "scope": "相同参数位置的短程更新"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "负余弦是否反映关系而非输出频率？"
+              ],
+              "boundary": [
+                "一阶预测在何种步长失效？"
+              ],
+              "intervention": [
+                "投影冲突梯度能否改善任务折衷？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "选择哪类梯度作为多任务权重信号",
+              "answer_a": "知识梯度更能预测持出事实损失",
+              "action_a": "优先知识梯度控制器",
+              "answer_b": "通用CE梯度相当或更强",
+              "action_b": "保留通用梯度控制",
+              "uncertain_action": "限制短步长一阶有效范围",
+              "reversal_condition": "跨种子预测失效或新任务明显受损时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C07",
+            "short_title": "辨认题的捷径",
+            "plain_question": "能选对答案，是知道事实还是干扰项太弱？",
+            "research_question": "困难干扰项是否改变多任务训练后事实辨认保持的评估结论？",
+            "why_it_matters": "决定是否重做探针负例，避免把辨认高分直接当知识保留。",
+            "signal_ids": [
+              "E01",
+              "E05",
+              "E08"
+            ],
+            "closest_prior_ids": [
+              "E01",
+              "E08"
+            ],
+            "question_family": "描述",
+            "cluster_id": "distractor",
+            "question_identity": {
+              "unit_of_analysis": "同一事实的辨认题",
+              "comparison": "随机负例与类型频率匹配困难负例",
+              "outcome": "保持结论的稳定性",
+              "scope": "固定答案位置和模板"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "类型线索是否替代实体关系线索？"
+              ],
+              "boundary": [
+                "长尾答案是否更受负例难度影响？"
+              ],
+              "intervention": [
+                "双向事实对是否抑制捷径？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否升级探针负例",
+              "answer_a": "难负例改变保持结论",
+              "action_a": "更新负例并重新报告结果",
+              "answer_b": "原结论对负例稳定",
+              "action_b": "保留原探针",
+              "uncertain_action": "只修订受影响的关系族",
+              "reversal_condition": "人工确认难负例歧义导致反转则撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 1,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 2,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          },
+          {
+            "candidate_id": "C08",
+            "short_title": "直接替换PPL",
+            "plain_question": "把PPL换成知识分数就够了吗？",
+            "research_question": "单一知识探针能否替代全部多任务训练的预训练损失？",
+            "why_it_matters": "原始提案保留为负面对照，暴露尚未定义的语言质量、知识范围和训练目标。",
+            "signal_ids": [
+              "E01",
+              "E04"
+            ],
+            "closest_prior_ids": [
+              "E01"
+            ],
+            "question_family": "价值",
+            "cluster_id": "undefined-replacement",
+            "question_identity": {
+              "unit_of_analysis": "全部多任务训练目标",
+              "comparison": "单一probe与预训练CE",
+              "outcome": "尚未定义的综合成功",
+              "scope": "未限定任务与知识范围"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "替换的是验证指标还是训练项？"
+              ],
+              "boundary": [
+                "被probe忽略的语言能力怎样评估？"
+              ],
+              "intervention": [
+                "能否先缩为一个保持目标？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否直接删除预训练CE",
+              "answer_a": "若某一已定义目标被probe完整覆盖",
+              "action_a": "尚需定义目标后才可比较",
+              "answer_b": "若probe未覆盖其他能力",
+              "action_b": "同样需定义目标后才可比较",
+              "uncertain_action": "先区分监测指标与训练项，不直接替换",
+              "reversal_condition": "无法定义综合成功即停止"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": false,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": false,
+              "value_visible": false
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C09",
+            "short_title": "复述辨认差距是否存在",
+            "plain_question": "模型会不会知道却说不出来？",
+            "research_question": "大模型是否存在辨认正确但不能生成正确答案的事实？",
+            "why_it_matters": "登记用户线索对应的已有问题，防止把已知现象当成本轮新贡献。",
+            "signal_ids": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "closest_prior_ids": [
+              "E02",
+              "E05"
+            ],
+            "question_family": "描述",
+            "cluster_id": "known-gap",
+            "question_identity": {
+              "unit_of_analysis": "静态事实QA",
+              "comparison": "辨认与自由生成",
+              "outcome": "二者差距是否存在",
+              "scope": "已研究模型设定"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "读出方式为何不同？"
+              ],
+              "boundary": [
+                "差距是否受候选答案提供影响？"
+              ],
+              "intervention": [
+                "能否通过提取而非重学恢复？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "是否把复述辨认差距当作新发现",
+              "answer_a": "存在差距",
+              "action_a": "引用已有论文，再寻找可检验增量",
+              "answer_b": "特定模型上未见差距",
+              "action_b": "仍需引用已有论文，再寻找可检验增量",
+              "uncertain_action": "当前不投入重复证明已知现象",
+              "reversal_condition": "新观察推翻既有设定时才重新注册"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": false,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "discriminating_power": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "reality_grounding": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "answerability": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "novelty_nonredundancy": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              },
+              "cost_benefit": {
+                "value": 0,
+                "reason": "硬门槛未通过，不进入评分；0为结构占位。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C10",
+            "short_title": "差距能否预测恢复",
+            "plain_question": "训练后说不出但能辨认的事实，更容易恢复吗？",
+            "research_question": "训练后的生成辨认差距能否预测无目标事实重放的提取恢复？",
+            "why_it_matters": "决定把恢复预算先投向提取对齐还是事实重放。",
+            "signal_ids": [
+              "E02",
+              "E03",
+              "E05"
+            ],
+            "closest_prior_ids": [
+              "E03",
+              "E05"
+            ],
+            "question_family": "机制",
+            "cluster_id": "recovery-prediction",
+            "question_identity": {
+              "unit_of_analysis": "训练后生成失败的事实",
+              "comparison": "有辨认优势与无辨认优势事实",
+              "outcome": "不见目标事实的恢复概率",
+              "scope": "多任务后检查点"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "差距是否指向可访问性而非知识丢失？"
+              ],
+              "boundary": [
+                "难负例下预测是否还成立？"
+              ],
+              "intervention": [
+                "任务格式重对齐是否足够？"
+              ]
+            },
+            "decision_fork": {
+              "decision": "先做提取对齐还是事实重放",
+              "answer_a": "辨认差距预测无事实重放恢复",
+              "action_a": "优先提取对齐",
+              "answer_b": "差距不预测或反向预测",
+              "action_b": "优先事实重放对照",
+              "uncertain_action": "只作为分层变量不作恢复指令",
+              "reversal_condition": "匹配难度后预测消失时撤回"
+            },
+            "evidence_path": "固定事实与实体分割，保存训练前后相同tokenizer的完整答案span概率；以未见问法自由生成和匹配辨认分别验证。C03另需固定层激活。",
+            "cheap_probe": {
+              "input": "阶段7待检；当前无用户训练检查点。",
+              "procedure": "未入围，不执行现实试探；不因此声称其假设为假。",
+              "possible_outcomes": [
+                "支持继续",
+                "缩小或停止"
+              ],
+              "decision_rules": {
+                "keep": "阶段7待执行，不作实证结论。",
+                "narrow": "阶段7待执行，不作实证结论。",
+                "rewrite": "阶段7待执行，不作实证结论。",
+                "reject": "阶段7待执行，不作实证结论。"
+              }
+            },
+            "probe_disposition": "reject",
+            "hard_gates": {
+              "source_grounded": true,
+              "action_divergent": true,
+              "neutral": true,
+              "answerable": true,
+              "ethical": true,
+              "readable": true,
+              "atomic": true,
+              "low_concept_burden": true,
+              "value_visible": true
+            },
+            "scores": {
+              "decision_leverage": {
+                "value": 2,
+                "reason": "改变局部评测或训练动作"
+              },
+              "discriminating_power": {
+                "value": 1,
+                "reason": "仍存在多个可兼容解释"
+              },
+              "reality_grounding": {
+                "value": 2,
+                "reason": "已有论文信号"
+              },
+              "answerability": {
+                "value": 1,
+                "reason": "有小规模证据路径"
+              },
+              "novelty_nonredundancy": {
+                "value": 1,
+                "reason": "与已有方法重叠较多"
+              },
+              "cost_benefit": {
+                "value": 1,
+                "reason": "相对当前决策的成本收益一般"
+              }
+            }
+          }
+        ],
+        "decision_log": [
+          "阶段7：9条逐项先行检索、3组常识审查和3组incremental碰撞审查完成；新增5项补充来源仅存账本。",
+          "三项已执行的廉价试探均为design_check_only；真实模型检查点比较仍待数据，不能报告为实验成功。"
+        ]
+      }
+    },
+    {
+      "schema_version": "1.0",
+      "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+      "stage_id": "8_contract",
+      "output_summary": "交付一个测量主问题和两个机制不同备选，冻结概念、前瞻实验、动作、反转、停止与证据限制。",
+      "artifact_refs": [
+        "stage://8_contract"
+      ],
+      "payload": {
+        "primary": {
+          "short_title": "先验校正能否改善训练排序",
+          "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+          "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+          "final_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+          "question_identity": {
+            "unit_of_analysis": "事实级训练前后变化",
+            "comparison": "原始probe与参考上下文校正probe",
+            "outcome": "对未见问法事实保持排序的一致性",
+            "scope": "多任务文本训练方案比较"
+          },
+          "secondary_questions": {
+            "mechanism": [
+              "答案词项偏好漂移是否中介原始排序变化？"
+            ],
+            "boundary": [
+              "答案稀有度或参考上下文变化时校正会失效吗？"
+            ],
+            "intervention": [
+              "同答案跨主体差分能否替代领域PMI？"
+            ]
+          },
+          "triggering_signal_ids": [
+            "E01",
+            "E07",
+            "E12"
+          ],
+          "users_and_decision": "多任务文本后训练研究者：决定知识probe是否需要先验校正后才能用于任务配比/检查点选择；本轮不批准删除通用CE。",
+          "decision_deadline": "2026-11-06；建议的两周规划节点，非用户承诺期限。",
+          "key_concepts_and_boundaries": [
+            "PPL=exp(平均token CE)。优化常用CE；替换监测指标与替换训练损失是两个决策。",
+            "probe分为固定行为对比、隐藏层读出和可微训练辅助项；主问题只比较固定行为对比的监测有效性。",
+            "M(q)=log p(a|q)-log p(b|q)；p为完整答案span的自回归概率，不对不完整答案截断。",
+            "C(q)=M(q)-M(q0)，q0是格式与领域匹配但不指明目标主体的参考提示，只是词项偏好代理。",
+            "D=M(q_s)-M(q_s_prime)，使用同关系的已知匹配主体及互换答案；不得选关系无效或未知真值的随机主体。",
+            "C与D是诊断对比，不能无假设地解释为纯知识或因果分解。",
+            "事实族/实体划分约束训练、校准和最终评测；评测问法不出现候选答案；辨认与自由生成分别报告。",
+            "tokenizer、答案span、前导空格和终止边界固定；多token答案报告总对数概率，长度匹配为主，按token均值仅为敏感性分析。",
+            "先固定任务、模型与训练预算，不在没有数据时外推真实效应；联合训练与先行持续学习结果区分。"
+          ],
+          "competing_answers": {
+            "a": "校正比原始probe更接近未见问法的事实保持排序",
+            "b": "校正无增益或使排序更差",
+            "unknown": "部分关系有效或不同参考提示结果相反；词项偏好与关系损伤可共存。"
+          },
+          "action_mapping": {
+            "if_a": "先部署校准后的监测器，保留通用CE护栏",
+            "if_b": "继续用原始对比probe与CE双指标",
+            "if_uncertain": "仅在验证有效的关系族使用校正，其余保持原指标"
+          },
+          "discriminating_evidence": "在独立问法上，校正相对raw能否更准确排序各训练方案相对base的事实保持；另以已知答案偏好干预和已知关系扰动正负对照检验，而不是拿D本身充当真值。",
+          "reversal_result": "校正跨参考提示不稳定，或原始排序更好时撤回校正",
+          "minimum_probe": "运行三种已知生成机制的反例：原模型、仅答案偏好变化、仅关系信号变化。真实下一步：96个事实、3种问法、3任务配比×3种子，以事实族分割，比较raw、领域PMI与匹配主体差分对持出问法生成/辨认保持的成对排序一致率。 已执行的只有二元logit可识别性反例；真实模型部分待提供检查点或经确认的小规模训练环境。",
+          "cost_risk_ethics": "本轮只运行无依赖解析反例，无API或GPU成本。后续先离线缓存评估；训练算力未核定，优先已有检查点。用公开或人工构造事实，不把受试资料写入训练。",
+          "stopping_condition": "若校正相对raw的成对排序一致率改善不足0.10、区间跨0或参考提示改变方向，停止将校正作为控制器；若只改进辨认不改进生成，保持双指标，不替换PPL/CE。阈值为前瞻推进规则。",
+          "residual_unknowns": [
+            "用户所指探针到底是行为题还是隐藏层分类器。",
+            "目标模型、任务配比、联合训练方式和已有检查点。",
+            "真实效应大小、答案先验代理可迁移性和不同事实族的覆盖。",
+            "probe被放进训练损失后的跨事实迁移属于C02，不由主问题自动回答。"
+          ]
+        },
+        "backups": [
+          {
+            "candidate_id": "C02",
+            "short_title": "关系约束能否迁移",
+            "plain_question": "用一批知识题约束训练，能保住没用来约束的事实吗？",
+            "why_it_matters": "决定把额外训练预算用于通用文本重放、关系对比损失还是已有自探针梯度保护。",
+            "research_question": "关系对比约束能否比通用文本重放更好地保持未参与约束的事实？",
+            "secondary_questions": {
+              "mechanism": [
+                "约束收益是否只来自重复答案词项？"
+              ],
+              "boundary": [
+                "新实体和新关系上的迁移是否不同？"
+              ],
+              "intervention": [
+                "对比损失与自探针梯度保护如何取舍？"
+              ]
+            },
+            "cheap_probe": {
+              "input": "已运行保护坐标/持出坐标反例；未进行LLM训练。",
+              "procedure": "展示有限probe约束的零空间可容许持出方向受损；真实下一步比较无保持、文本重放、关系对比约束、自探针梯度保护，均固定新任务token、训练FLOP和保持预算。STOC作为事实重放基线。",
+              "possible_outcomes": [
+                "训练probe不变但持出坐标受损",
+                "共享结构有可能带来迁移，须真实训练判定"
+              ],
+              "decision_rules": {
+                "keep": "持出事实保持至少提高5个百分点且新任务下降不超过1个百分点，跨3种子方向一致。",
+                "narrow": "只在共享关系内有效则限关系内迁移。",
+                "rewrite": "如果只提高别名或模板匹配，改称输出对齐，不声称知识保持。",
+                "reject": "训练probe上升而持出退化或不及强重放/梯度基线则淘汰。"
+              }
+            }
+          },
+          {
+            "candidate_id": "C03",
+            "short_title": "旧探针是否读错新表示",
+            "plain_question": "训练后旧探针变差，能否只调整读法就恢复判断？",
+            "why_it_matters": "决定是重训知识、重训probe，还是只校正probe与新表示之间的读出失配。",
+            "research_question": "无事实标签的表征对齐能否改善固定知识探针跨训练检查点的保持判断？",
+            "secondary_questions": {
+              "mechanism": [
+                "表示坐标漂移是否足以解释固定probe退化？"
+              ],
+              "boundary": [
+                "非线性漂移是否超过正交对齐可修复范围？"
+              ],
+              "intervention": [
+                "只用不含评测实体的锚文本拟合映射是否有效？"
+              ]
+            },
+            "cheap_probe": {
+              "input": "已运行二维旋转/信息坍缩反例；没有真实检查点激活。",
+              "procedure": "比较原读出、固定读出、用无标签锚对应恢复后的读出，以及信息坍缩负对照。真实下一步在同层缓存激活上用排除评测实体的锚文本拟合正交映射，事实族持出检验。",
+              "possible_outcomes": [
+                "纯旋转时固定probe失效而对齐恢复",
+                "坍缩时对齐不能恢复到原准确率"
+              ],
+              "decision_rules": {
+                "keep": "真实持出事实判断误差减少至少20%，而随机锚映射/随机标签对照无同等收益。",
+                "narrow": "仅某些层或轻微漂移有效则限定范围。",
+                "rewrite": "若必须用事实标签重拟合，改称监督校准而非无标签运输。",
+                "reject": "只有训练锚恢复、实体持出失败或独立行为证据相反则淘汰。"
+              }
+            }
+          }
+        ],
+        "recommendation": "先做PPL/词项偏好/关系对比/生成可用性的并列诊断，再讨论知识约束；不把已有方法重新包装成空白。",
+        "report_path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-10-23-ppl-knowledge-probe-mode2-run-06.md"
+      },
+      "session_updates": {
+        "selection": {
+          "outcome": "selected",
+          "primary_candidate_id": "C01",
+          "backup_candidate_ids": [
+            "C03",
+            "C02"
+          ],
+          "why_this_question": "C01把未定义的直接替换PPL收敛为监测器有效性问题，可先以离线缓存评估，A/B会改变是否建设校准控制器。仅对本轮指定主题更合适；不是全局研究价值优于五个历史问题的证明。",
+          "incumbent_comparison": {
+            "incumbent_question_refs": [
+              "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-21-shared-funnel-mode2-run-01.json",
+              "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-25-shared-funnel-mode2-run-02.json",
+              "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-27-shared-funnel-mode2-run-03.json",
+              "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-08-28-shared-funnel-mode2-run-04.json",
+              "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\results\\2026-09-03-shared-funnel-mode2-run-05.json",
+              "conversation://current/user-ppl-replacement"
+            ],
+            "outcome": "new-question-better",
+            "reason": "比用户的直接替换提案更可操作、更中性，且显式处理已有研究覆盖。历史五问题继续有效，但服务RL数据/异步优化决策；本轮用户改为知识保持主题，因此C01在本轮主题适配、证据直接性与离线试探成本上优先。"
+          },
+          "research_question_contract": {
+            "short_title": "先验校正能否改善训练排序",
+            "plain_question": "剔除答案本身的偏好后，探针能更准地选出保住事实的训练方案吗？",
+            "why_it_matters": "若校正会改变方案排序，应先校准监测器，再用它调任务权重；若无增益，保留更简单指标。",
+            "final_question": "答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性？",
+            "question_identity": {
+              "unit_of_analysis": "事实级训练前后变化",
+              "comparison": "原始probe与参考上下文校正probe",
+              "outcome": "对未见问法事实保持排序的一致性",
+              "scope": "多任务文本训练方案比较"
+            },
+            "secondary_questions": {
+              "mechanism": [
+                "答案词项偏好漂移是否中介原始排序变化？"
+              ],
+              "boundary": [
+                "答案稀有度或参考上下文变化时校正会失效吗？"
+              ],
+              "intervention": [
+                "同答案跨主体差分能否替代领域PMI？"
+              ]
+            },
+            "triggering_signal_ids": [
+              "E01",
+              "E07",
+              "E12"
+            ],
+            "users_and_decision": "多任务文本后训练研究者：决定知识probe是否需要先验校正后才能用于任务配比/检查点选择；本轮不批准删除通用CE。",
+            "decision_deadline": "2026-11-06；建议的两周规划节点，非用户承诺期限。",
+            "key_concepts_and_boundaries": [
+              "PPL=exp(平均token CE)。优化常用CE；替换监测指标与替换训练损失是两个决策。",
+              "probe分为固定行为对比、隐藏层读出和可微训练辅助项；主问题只比较固定行为对比的监测有效性。",
+              "M(q)=log p(a|q)-log p(b|q)；p为完整答案span的自回归概率，不对不完整答案截断。",
+              "C(q)=M(q)-M(q0)，q0是格式与领域匹配但不指明目标主体的参考提示，只是词项偏好代理。",
+              "D=M(q_s)-M(q_s_prime)，使用同关系的已知匹配主体及互换答案；不得选关系无效或未知真值的随机主体。",
+              "C与D是诊断对比，不能无假设地解释为纯知识或因果分解。",
+              "事实族/实体划分约束训练、校准和最终评测；评测问法不出现候选答案；辨认与自由生成分别报告。",
+              "tokenizer、答案span、前导空格和终止边界固定；多token答案报告总对数概率，长度匹配为主，按token均值仅为敏感性分析。",
+              "先固定任务、模型与训练预算，不在没有数据时外推真实效应；联合训练与先行持续学习结果区分。"
+            ],
+            "competing_answers": {
+              "a": "校正比原始probe更接近未见问法的事实保持排序",
+              "b": "校正无增益或使排序更差",
+              "unknown": "部分关系有效或不同参考提示结果相反；词项偏好与关系损伤可共存。"
+            },
+            "action_mapping": {
+              "if_a": "先部署校准后的监测器，保留通用CE护栏",
+              "if_b": "继续用原始对比probe与CE双指标",
+              "if_uncertain": "仅在验证有效的关系族使用校正，其余保持原指标"
+            },
+            "discriminating_evidence": "在独立问法上，校正相对raw能否更准确排序各训练方案相对base的事实保持；另以已知答案偏好干预和已知关系扰动正负对照检验，而不是拿D本身充当真值。",
+            "reversal_result": "校正跨参考提示不稳定，或原始排序更好时撤回校正",
+            "minimum_probe": "运行三种已知生成机制的反例：原模型、仅答案偏好变化、仅关系信号变化。真实下一步：96个事实、3种问法、3任务配比×3种子，以事实族分割，比较raw、领域PMI与匹配主体差分对持出问法生成/辨认保持的成对排序一致率。 已执行的只有二元logit可识别性反例；真实模型部分待提供检查点或经确认的小规模训练环境。",
+            "cost_risk_ethics": "本轮只运行无依赖解析反例，无API或GPU成本。后续先离线缓存评估；训练算力未核定，优先已有检查点。用公开或人工构造事实，不把受试资料写入训练。",
+            "stopping_condition": "若校正相对raw的成对排序一致率改善不足0.10、区间跨0或参考提示改变方向，停止将校正作为控制器；若只改进辨认不改进生成，保持双指标，不替换PPL/CE。阈值为前瞻推进规则。",
+            "residual_unknowns": [
+              "用户所指探针到底是行为题还是隐藏层分类器。",
+              "目标模型、任务配比、联合训练方式和已有检查点。",
+              "真实效应大小、答案先验代理可迁移性和不同事实族的覆盖。",
+              "probe被放进训练损失后的跨事实迁移属于C02，不由主问题自动回答。"
+            ]
+          }
+        },
+        "decision_log": [
+          "阶段8：研究发现完成；没有真实LLM训练或保持效果结论。主问题身份、来源和次级树保持不变。"
+        ]
+      }
+    }
+  ]
+}

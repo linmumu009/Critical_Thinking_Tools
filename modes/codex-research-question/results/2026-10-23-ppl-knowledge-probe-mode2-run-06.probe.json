@@ -1,0 +1,54 @@
+{
+  "status": "design_check_only",
+  "real_model_evidence": false,
+  "C01": {
+    "cases": [
+      {
+        "name": "before",
+        "answer_probability": 0.8807970779778823,
+        "raw_margin": 2,
+        "reference_margin": 0,
+        "calibrated_margin": 2,
+        "matched_context_difference": 4
+      },
+      {
+        "name": "answer_bias_only",
+        "answer_probability": 0.11920292202211755,
+        "raw_margin": -2,
+        "reference_margin": -4,
+        "calibrated_margin": 2,
+        "matched_context_difference": 4
+      },
+      {
+        "name": "relation_damage_only",
+        "answer_probability": 0.6224593312018546,
+        "raw_margin": 0.5,
+        "reference_margin": 0,
+        "calibrated_margin": 0.5,
+        "matched_context_difference": 1.0
+      }
+    ],
+    "interpretation": "已知加性logit模型下，答案偏好可改变原始margin而不改关系差分；校正是否改善真实跨问法排序仍未回答。",
+    "counterexample": "词项偏好也可能真实损害生成可用性；消去它可能掩盖服务能力退化。"
+  },
+  "C02": {
+    "before": [
+      1,
+      1
+    ],
+    "after": [
+      1,
+      -1
+    ],
+    "protected_probe_unchanged": true,
+    "heldout_coordinate_damaged": true,
+    "interpretation": "只证明保护有限probe不逻辑蕴含持出事实保持，不能预测实际迁移效果。"
+  },
+  "C03": {
+    "initial_accuracy": 1.0,
+    "frozen_after_rotation": 0.0,
+    "aligned_accuracy": 1.0,
+    "collapsed_accuracy": 0.5,
+    "interpretation": "只证明无标签坐标对应可恢复旋转失配；非线性漂移或真实信息损失未被解决。"
+  }
+}

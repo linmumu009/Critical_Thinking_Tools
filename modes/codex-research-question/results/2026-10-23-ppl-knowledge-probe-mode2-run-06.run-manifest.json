@@ -1,0 +1,88 @@
+{
+  "manifest_version": "1.0",
+  "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+  "mode": "2",
+  "engine": "current_codex",
+  "completed_at_utc": "2026-10-23T02:43:36.755322+00:00",
+  "audit": {
+    "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+    "passed": true,
+    "structural_error": null,
+    "semantic_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "candidate_count": 10,
+        "evidence_count": 14,
+        "eligible_candidate_count": 3,
+        "selected_scores": {
+          "C01": 11,
+          "C03": 10,
+          "C02": 9
+        },
+        "top_eligible_score": 11,
+        "unique_evidence_locations": 14,
+        "selection_outcome": "selected"
+      }
+    },
+    "evidence_ledger_audit": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "query_count": 18,
+        "source_decision_count": 21,
+        "collision_review_count": 3,
+        "common_knowledge_review_count": 3,
+        "online_evidence_count": 14
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\session.json",
+      "sha256": "c1a9b8d2d5f7b2a4f7c133ca856ab7da0c8771f6c818251aed18027eb2c08337"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\evidence-ledger.json",
+      "sha256": "fe360efc311fab571142fde3845d6c79098dd031c76db565a90fc110cc0aac35"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\0_goal.json",
+      "sha256": "a698f8c46189fe6ee4d4331870a4faecc86353ce4ef02e16bb09964e4e6d5154"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\1_reality_signals.json",
+      "sha256": "5d150c9ced5cec96c4544ec35a4c0b2caa5297c2207cf05eafbff931013eb327"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\2_reframe.json",
+      "sha256": "b6164c61e9ac1c9753ec48fc486a24b263dd646ff8a37da6391274348302a940"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\3_expand.json",
+      "sha256": "9121d355349997dfc2535d31319ee8d7f582b6cd283599327b167d746c1e7155"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\4_cluster.json",
+      "sha256": "c657997ec3c4dc1541d2658e5ff2528d815db682e0f729366560b01f13e9c84b"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\5_decision_forks.json",
+      "sha256": "153f9427e9f7075d7b9f19dfb371403b89ffa2925b1d66aac8fa412ce7ea63cb"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\6_rank.json",
+      "sha256": "730a0a71c83ed3368bfcbf69961083aa00b7afc054c1709eaed86704141543cd"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\7_probe.json",
+      "sha256": "760f4b76f2c3b0abf268eb9fd547643014f27af52345d98b1027c3791dcbe0dc"
+    },
+    {
+      "path": "D:\\Files\\ShunFengWork\\Critical_Thinking_Tools\\modes\\codex-research-question\\runs\\2026-10-23-ppl-knowledge-probe-mode2-run-06b\\stages\\8_contract.json",
+      "sha256": "64acfd76b10d0fb71510e5989af78fd326afc41762aaf618bb8c82c0eddcc5d3"
+    }
+  ]
+}

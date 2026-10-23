@@ -24,6 +24,10 @@
 
 对应的 [v2.1 结构化会话](2026-09-03-shared-funnel-mode2-run-05.json)、[证据账本](2026-09-03-shared-funnel-mode2-run-05.evidence-ledger.json)和[运行清单](2026-09-03-shared-funnel-mode2-run-05.run-manifest.json)已通过结构、语义与账本完整审计。该结果只批准 256–512 条缓存轨迹的真实/随机/版本平衡顺序重放探针；玩具与解析试探只证明可区分性，不表示真实模型效果或新颖性已经得到实验证实。
 
+- [模式 2 正式运行 06：是词变生疏了，还是关系忘了？](2026-10-23-ppl-knowledge-probe-mode2-run-06.md)：完整执行共享阶段 0–8，从 14 项初始一手来源和 10 个候选中，选择“答案先验校正能否提高知识探针对多任务训练方案跨问法事实保持的排序一致性”为主问题；保留无标签读出对齐与关系约束跨事实迁移两个备选。
+
+对应的 [v2.1 会话](2026-10-23-ppl-knowledge-probe-mode2-run-06.json)、[完整阶段包](2026-10-23-ppl-knowledge-probe-mode2-run-06.stages.json)、[证据账本](2026-10-23-ppl-knowledge-probe-mode2-run-06.evidence-ledger.json)及[审计清单](2026-10-23-ppl-knowledge-probe-mode2-run-06.run-manifest.json)通过结构、语义和账本完整审计。[可复现反例](2026-10-23-ppl-knowledge-probe-mode2-run-06.probe.py)及其[结果](2026-10-23-ppl-knowledge-probe-mode2-run-06.probe.json)均为 `design_check_only`，不表示真实模型效果或新颖性已获实验证实。
+
 ## 后续最小探针
 
 - [完成顺序偏差探针合成验收](2026-09-05-completion-order-bias-probe-dry-run.md)：实现固定轨迹集合、四条件、三种子和剂量反应审计；验收数据明确标记为 `pipeline_check_only`，只证明管线可执行。真实 rollout 缓存尚未提供，因此没有模型效果结论。

@@ -1,0 +1,526 @@
+{
+  "ledger_version": "1.1",
+  "run_id": "2026-10-23-ppl-knowledge-probe-mode2-run-06b",
+  "created_at_utc": "2026-10-23T02:30:11.775995+00:00",
+  "updated_at_utc": "2026-10-23T02:40:26.630661+00:00",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "text": "language model perplexity factual knowledge probing term frequency conditional probability recognition recall",
+      "provider": "web.run",
+      "scope": "发现批次1；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.042937+00:00",
+      "result_count": 32
+    },
+    {
+      "query_id": "Q02",
+      "text": "language model knowledge forgetting multi task fine tuning perplexity factual probes 2025 2026",
+      "provider": "web.run",
+      "scope": "发现批次1；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.044936+00:00",
+      "result_count": 32
+    },
+    {
+      "query_id": "Q03",
+      "text": "language models know more than they can tell probing knowledge extraction recognition generation",
+      "provider": "web.run",
+      "scope": "发现批次1；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.046440+00:00",
+      "result_count": 32
+    },
+    {
+      "query_id": "Q04",
+      "text": "site.aclanthology.org language model probing factual knowledge frequency calibration PMI answer probability",
+      "provider": "web.run",
+      "scope": "发现批次2；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.047446+00:00",
+      "result_count": 26
+    },
+    {
+      "query_id": "Q05",
+      "text": "site.arxiv.org multi task fine tuning knowledge retention loss perplexity factual probe 2025 2026",
+      "provider": "web.run",
+      "scope": "发现批次2；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.048446+00:00",
+      "result_count": 26
+    },
+    {
+      "query_id": "Q06",
+      "text": "site.aclanthology.org \"Surface Form Competition\" Holtzman",
+      "provider": "web.run",
+      "scope": "发现批次3；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.049444+00:00",
+      "result_count": 26
+    },
+    {
+      "query_id": "Q07",
+      "text": "site.arxiv.org factual probing answer prior frequency bias PMI multi task knowledge retention",
+      "provider": "web.run",
+      "scope": "发现批次3；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.050960+00:00",
+      "result_count": 26
+    },
+    {
+      "query_id": "Q08",
+      "text": "site.arxiv.org language model fine tuning factual knowledge preservation auxiliary contrastive loss multi task probes",
+      "provider": "web.run",
+      "scope": "发现批次4；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.052965+00:00",
+      "result_count": 31
+    },
+    {
+      "query_id": "Q09",
+      "text": "site.arxiv.org probing representation drift fine tuning frozen probe knowledge forgetting",
+      "provider": "web.run",
+      "scope": "发现批次4；近18个月优先，允许追溯基础工作；result_count为该批次合并显示的搜索条目数，提供者未返回逐查询命中数，禁止跨同批次累加。",
+      "purpose": "discovery",
+      "executed_at_utc": "2026-10-23T02:31:20.053965+00:00",
+      "result_count": 31
+    },
+    {
+      "query_id": "Q10",
+      "text": "knowledge retention fine tuning ranking checkpoints PMI calibration answer priors",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-10-23T02:40:26.586183+00:00",
+      "result_count": 20
+    },
+    {
+      "query_id": "Q11",
+      "text": "multi task fine tuning answer prior drift factual probing calibration",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-10-23T02:36:52.817Z",
+      "result_count": 21
+    },
+    {
+      "query_id": "Q12",
+      "text": "label shift invariant likelihood ratio factual forgetting evaluation",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-10-23T02:36:51.599Z",
+      "result_count": 21
+    },
+    {
+      "query_id": "Q13",
+      "text": "factual knowledge probe transfer across fine tuning checkpoints unsupervised alignment",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-10-23T02:36:53.313Z",
+      "result_count": 21
+    },
+    {
+      "query_id": "Q14",
+      "text": "orthogonal procrustes frozen probe representation drift language model forgetting",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-10-23T02:36:49.410Z",
+      "result_count": 23
+    },
+    {
+      "query_id": "Q15",
+      "text": "unsupervised probe transfer representation forgetting linear classifier",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-10-23T02:36:50.070Z",
+      "result_count": 18
+    },
+    {
+      "query_id": "Q16",
+      "text": "factual knowledge retention contrastive auxiliary loss held out facts replay language model",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "exact-question",
+      "executed_at_utc": "2026-10-23T02:36:49.665Z",
+      "result_count": 23
+    },
+    {
+      "query_id": "Q17",
+      "text": "knowledge probe loss optimization shortcuts generalization unseen entities",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "mechanism",
+      "executed_at_utc": "2026-10-23T02:36:52.387Z",
+      "result_count": 21
+    },
+    {
+      "query_id": "Q18",
+      "text": "continual learning self probe gradients CPLUS replay factual retention",
+      "provider": "web.run",
+      "scope": "逐条查询的一手来源优先先行研究审查；result_count为提供者可见结果条目数，不代表完整命中数。Q10时间为账本补录时间，其余为工具返回时刻。",
+      "purpose": "adjacent-terminology",
+      "executed_at_utc": "2026-10-23T02:36:50.405Z",
+      "result_count": 24
+    }
+  ],
+  "source_decisions": [
+    {
+      "evidence_id": "E01",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2601.03505",
+      "source_type": "primary_paper",
+      "claim_supported": "KR-Test以正确/错误续写条件似然比较测量事实保持，已展示LoRA中PPL与知识指标分离。",
+      "reason": "已打开一手论文/官方论文页核对。简单将PPL换成对比probe已有直接先行工作。",
+      "checked_at_utc": "2026-10-23T02:31:20.055509+00:00"
+    },
+    {
+      "evidence_id": "E02",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2503.15299",
+      "source_type": "primary_paper",
+      "claim_supported": "在其QA设定中，隐藏表示正确性分类器比外部概率评分识别更多正确答案。",
+      "reason": "已打开一手论文/官方论文页核对。内部可读、候选可辨认与自由生成须分开。v4为2025-08-06；初版略早于18个月窗口，作为基础机制。",
+      "checked_at_utc": "2026-10-23T02:31:20.056520+00:00"
+    },
+    {
+      "evidence_id": "E03",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/a774503daed55eb53c634847ae071ec7-Abstract-Conference.html",
+      "source_type": "primary_paper",
+      "claim_supported": "持续学习中的旧任务性能可在少量恢复训练后回升，论文将部分下降解释为任务对齐退化。",
+      "reason": "已打开一手论文/官方论文页核对。行为下降不直接等于存储知识消失；持续学习结果不能直接外推同时联合训练。",
+      "checked_at_utc": "2026-10-23T02:31:20.057689+00:00"
+    },
+    {
+      "evidence_id": "E04",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "include",
+      "source_location": "https://proceedings.mlr.press/v267/bethune25a.html",
+      "source_type": "primary_paper",
+      "claim_supported": "在论文研究条件下，少量预训练数据混入可减轻预训练集上的遗忘。",
+      "reason": "已打开一手论文/官方论文页核对。预训练分布保持是合理基线，不能只因probe更专门就删除通用CE。",
+      "checked_at_utc": "2026-10-23T02:31:20.059698+00:00"
+    },
+    {
+      "evidence_id": "E05",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2602.14080",
+      "source_type": "primary_paper",
+      "claim_supported": "提出事实级行为画像，区分编码与可访问性，并配套WikiProfile。",
+      "reason": "已打开一手论文/官方论文页核对。复述/辨认差距已被直接研究，需找训练期间的增量。",
+      "checked_at_utc": "2026-10-23T02:31:20.060699+00:00"
+    },
+    {
+      "evidence_id": "E06",
+      "query_ids": [
+        "Q03"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2609.21996",
+      "source_type": "primary_paper",
+      "claim_supported": "PIR预印本报告在所测隐藏答案情境下可读内部辨认，unlearning后辨认下降。",
+      "reason": "已打开一手论文/官方论文页核对。可作为隐藏/移除的相邻鉴别思路，不能视作普适知识真值。",
+      "checked_at_utc": "2026-10-23T02:31:20.062778+00:00"
+    },
+    {
+      "evidence_id": "E07",
+      "query_ids": [
+        "Q06"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2021.emnlp-main.564/",
+      "source_type": "primary_paper",
+      "claim_supported": "提出domain-conditional PMI，按任务上下文的先验似然重新加权答案。",
+      "reason": "已打开一手论文/官方论文页核对。词项先验校正本身并非新方法；老论文作为必要先行工作。",
+      "checked_at_utc": "2026-10-23T02:31:20.064778+00:00"
+    },
+    {
+      "evidence_id": "E08",
+      "query_ids": [
+        "Q06"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2023.emnlp-main.522/",
+      "source_type": "primary_paper",
+      "claim_supported": "多种减少表面形式竞争的归一化或提示方法可能无效甚至损害准确率。",
+      "reason": "已打开一手论文/官方论文页核对。必须考虑先验校正伤害长尾或真实关系信号的反例。基础反证在窗口外。",
+      "checked_at_utc": "2026-10-23T02:31:20.065797+00:00"
+    },
+    {
+      "evidence_id": "E09",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2024.naacl-long.46/",
+      "source_type": "primary_paper",
+      "claim_supported": "MONITOR比较同一事实在不同提示/上下文下的输出分布，研究事实可靠性。",
+      "reason": "已打开一手论文/官方论文页核对。泛化到改写和上下文应作为测量检验。窗口外方法基线。",
+      "checked_at_utc": "2026-10-23T02:31:20.067780+00:00"
+    },
+    {
+      "evidence_id": "E10",
+      "query_ids": [
+        "Q04"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2021.tacl-1.57/",
+      "source_type": "primary_paper",
+      "claim_supported": "QA候选概率与正确率并不天然校准，研究了多类校准策略。",
+      "reason": "已打开一手论文/官方论文页核对。概率低不等于事实缺失；校准与知识区分。基础先行工作。",
+      "checked_at_utc": "2026-10-23T02:31:20.068845+00:00"
+    },
+    {
+      "evidence_id": "E11",
+      "query_ids": [
+        "Q07"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2104.05240",
+      "source_type": "primary_paper",
+      "claim_supported": "提示优化可利用探针训练事实的分布规律，提高预测而不只读取原有知识。",
+      "reason": "已打开一手论文/官方论文页核对。训练损失probe与独立诊断probe必须按事实和实体分割。基础泄漏控制。",
+      "checked_at_utc": "2026-10-23T02:31:20.070858+00:00"
+    },
+    {
+      "evidence_id": "E12",
+      "query_ids": [
+        "Q08"
+      ],
+      "disposition": "include",
+      "source_location": "https://proceedings.iclr.cc/paper_files/paper/2024/file/c4de749a4bd8802f0b4033d09a7867db-Paper-Conference.pdf",
+      "source_type": "primary_paper",
+      "claim_supported": "控制文本比较中，主题/风格偏好变化解释了较多微调概率变化，论文也比较事实/反事实。",
+      "reason": "已打开一手论文/官方论文页核对。已经直接处理概率变化与事实变化的混淆；只是把该分解搬到联合训练不足以构成新贡献。窗口外关键先行工作。",
+      "checked_at_utc": "2026-10-23T02:31:20.071865+00:00"
+    },
+    {
+      "evidence_id": "E13",
+      "query_ids": [
+        "Q08"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2609.32771",
+      "source_type": "primary_paper",
+      "claim_supported": "CPLUS以自探针和旧样本梯度约束新更新，报告在未用于训练的benchmark上也减轻遗忘。",
+      "reason": "已打开一手论文/官方论文页核对。用probe保护旧行为已有近期方法；本轮不能以probe进loss本身声称创新。预印本。",
+      "checked_at_utc": "2026-10-23T02:31:20.073871+00:00"
+    },
+    {
+      "evidence_id": "E14",
+      "query_ids": [
+        "Q09"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2203.13381",
+      "source_type": "primary_paper",
+      "claim_supported": "用最优线性分类器比较表征遗忘，展示任务性能下降与表征损失可以不同步。",
+      "reason": "已打开一手论文/官方论文页核对。固定probe失效与表征遗忘不同是已知；外推事实LLM需检验。窗口外相邻领域方法基线。",
+      "checked_at_utc": "2026-10-23T02:31:20.074786+00:00"
+    },
+    {
+      "evidence_id": "X01",
+      "query_ids": [
+        "Q01"
+      ],
+      "disposition": "exclude",
+      "source_location": "https://en.wikipedia.org/wiki/Perplexity",
+      "source_type": "secondary_page",
+      "claim_supported": "仅为搜索出现结果，不支持研究结论。",
+      "reason": "技术结论采用一手来源。",
+      "checked_at_utc": "2026-10-23T02:31:20.076860+00:00"
+    },
+    {
+      "evidence_id": "X02",
+      "query_ids": [
+        "Q02"
+      ],
+      "disposition": "exclude",
+      "source_location": "https://github.com/soheilzi/KR-Test",
+      "source_type": "author_repository",
+      "claim_supported": "论文提供实现链接，但本轮打开返回404。",
+      "reason": "不能据此声称实现已可用；后续可从论文公式独立实现，数据许可和可用性待核查。",
+      "checked_at_utc": "2026-10-23T02:31:20.078778+00:00"
+    },
+    {
+      "evidence_id": "S01",
+      "query_ids": [
+        "Q10"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2609.38797",
+      "source_type": "primary_paper",
+      "claim_supported": "已研究跨检查点persistent calibration，削弱将动态校准本身视为新颖的理由；未从摘要找到答案先验校正对训练方案事实保持排序的直接结论。",
+      "reason": "阶段7补充碰撞来源；已打开一手论文页核查。作为账本补充，未改写阶段1冻结的14项信号。published_date=2026-09-30",
+      "checked_at_utc": "2026-10-23T02:40:26.610378+00:00"
+    },
+    {
+      "evidence_id": "S02",
+      "query_ids": [
+        "Q14"
+      ],
+      "disposition": "include",
+      "source_location": "https://arxiv.org/abs/2610.14921",
+      "source_type": "primary_paper",
+      "claim_supported": "近期研究表征漂移、固定头margin及任务输入依赖；不据其摘要推断无标签事实probe运输已解决。",
+      "reason": "阶段7补充碰撞来源；已打开一手论文页核查。作为账本补充，未改写阶段1冻结的14项信号。published_date=2026-10-10",
+      "checked_at_utc": "2026-10-23T02:40:26.612376+00:00"
+    },
+    {
+      "evidence_id": "S03",
+      "query_ids": [
+        "Q10"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2025.acl-long.722/",
+      "source_type": "primary_paper",
+      "claim_supported": "CogCalib研究已知/新知识对校准的影响，与答案词项先验是不同意义的prior。",
+      "reason": "阶段7补充碰撞来源；已打开一手论文页核查。作为账本补充，未改写阶段1冻结的14项信号。published_date=2025-07",
+      "checked_at_utc": "2026-10-23T02:40:26.615404+00:00"
+    },
+    {
+      "evidence_id": "S04",
+      "query_ids": [
+        "Q16"
+      ],
+      "disposition": "include",
+      "source_location": "https://proceedings.mlr.press/v306/wang26go.html",
+      "source_type": "primary_paper",
+      "claim_supported": "STOC研究持续事实获取及事实片段重放，作为C02必须比较的强基线。",
+      "reason": "阶段7补充碰撞来源；已打开一手论文页核查。作为账本补充，未改写阶段1冻结的14项信号。published_date=2026-07-06",
+      "checked_at_utc": "2026-10-23T02:40:26.618385+00:00"
+    },
+    {
+      "evidence_id": "S05",
+      "query_ids": [
+        "Q13"
+      ],
+      "disposition": "include",
+      "source_location": "https://aclanthology.org/2024.acl-long.668/",
+      "source_type": "primary_paper",
+      "claim_supported": "PiNose研究无人工标签的事实性probe训练与跨分布迁移，不能把无标签或迁移本身当创新。",
+      "reason": "阶段7补充碰撞来源；已打开一手论文页核查。作为账本补充，未改写阶段1冻结的14项信号。published_date=2024-08",
+      "checked_at_utc": "2026-10-23T02:40:26.621241+00:00"
+    }
+  ],
+  "collision_reviews": [
+    {
+      "candidate_id": "C01",
+      "query_ids": [
+        "Q10",
+        "Q11",
+        "Q12"
+      ],
+      "closest_evidence_ids": [
+        "E01",
+        "E07",
+        "E08",
+        "E12"
+      ],
+      "overlap": "KR-Test已有正确/错误对比；PMI已有先验归一化；Dissecting已有主题/风格/事实区分。补充S01也已研究跨检查点置信度校准。",
+      "nonredundant_increment": "测试目标是任务配比/检查点保持排序对独立跨问法事实测量的外推，不声称发明PMI或首发现概率/知识分离。",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.624446+00:00"
+    },
+    {
+      "candidate_id": "C03",
+      "query_ids": [
+        "Q13",
+        "Q14",
+        "Q15"
+      ],
+      "closest_evidence_ids": [
+        "E14",
+        "E02",
+        "E06"
+      ],
+      "overlap": "表征遗忘研究已用最优线性读出；Inside-Out/PIR已有事实读出。补充S02推导固定头margin与漂移投影，S05已做事实性probe跨分布迁移。",
+      "nonredundant_increment": "待检验的是不重新标注事实的同模型跨检查点诊断修复；不是证明旋转不等于遗忘，也不是宣称任意probe可迁移。",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.626659+00:00"
+    },
+    {
+      "candidate_id": "C02",
+      "query_ids": [
+        "Q16",
+        "Q17",
+        "Q18"
+      ],
+      "closest_evidence_ids": [
+        "E13",
+        "E11",
+        "E04"
+      ],
+      "overlap": "CPLUS已有probe梯度优于同probe重放及benchmark迁移；补充S04已有事实导向重放理论与STOC，故简单probe进loss绝非空白。",
+      "nonredundant_increment": "只保留关系对比目标的跨事实迁移比较，需以CPLUS/STOC为强基线；当前只是条件性实验方向，不能声称普遍优于重放。",
+      "prior_art_verdict": "incremental",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.629663+00:00"
+    }
+  ],
+  "common_knowledge_reviews": [
+    {
+      "candidate_id": "C01",
+      "basis_evidence_ids": [
+        "E01",
+        "E07",
+        "E08",
+        "E12"
+      ],
+      "obvious_baseline": "PPL包含风格与频率，PMI能校正答案偏好；这些不是新发现。",
+      "residual_uncertainty": "校正能否在训练方案比较中改善对未见问法事实保持的排序，而非仅改善静态选择题分数？",
+      "counterexample_or_boundary": "偏好变化若真实降低自由生成，校正可能把真实退化消掉；稀有词可能被过度抬高。",
+      "verdict": "context-dependent",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.576238+00:00"
+    },
+    {
+      "candidate_id": "C03",
+      "basis_evidence_ids": [
+        "E14",
+        "E02",
+        "E06"
+      ],
+      "obvious_baseline": "固定probe可能因坐标漂移失效，重拟合probe可能恢复，这是既有表征研究的基本区分。",
+      "residual_uncertainty": "仅用不含目标事实实体的无标签锚文本对齐，能否改善事实probe跨检查点的保持判断？",
+      "counterexample_or_boundary": "信息已损失或漂移非线性时正交对齐应失败；锚文本覆盖不够也会失败。",
+      "verdict": "context-dependent",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.580399+00:00"
+    },
+    {
+      "candidate_id": "C02",
+      "basis_evidence_ids": [
+        "E13",
+        "E11",
+        "E04"
+      ],
+      "obvious_baseline": "probe上优化不保证持出泛化；文本重放与自探针梯度保护已有方法。",
+      "residual_uncertainty": "关系对比约束相对文本重放和自探针梯度保护，是否对未参与约束的事实有可重复净收益？",
+      "counterexample_or_boundary": "只重复少数关系/答案可能抬高训练probe而伤害未约束关系；更新也可能落在约束零空间。",
+      "verdict": "context-dependent",
+      "disposition": "narrow",
+      "checked_at_utc": "2026-10-23T02:40:26.583205+00:00"
+    }
+  ]
+}
